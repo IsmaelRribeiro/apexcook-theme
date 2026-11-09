@@ -72,6 +72,21 @@
 </apex-buy-box>
 
 {% stylesheet %}
+  /* Samsung-style split on desktop: gallery ≈ 56%, details ≈ 44% (13:10), with a clear gap. */
+  @media screen and (min-width: 990px) {
+    .shopify-section .product-information__grid.product-information--media-left:has(apex-buy-box) {
+      grid-template-columns: minmax(0, 13fr) minmax(0, 10fr);
+
+      .product-information__media {
+        padding-inline-end: 24px;
+      }
+
+      .product-details {
+        padding-inline-start: 24px;
+      }
+    }
+  }
+
   .apex-buy-box {
     display: block;
     padding: 24px;

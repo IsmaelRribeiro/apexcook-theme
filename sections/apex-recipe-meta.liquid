@@ -1,0 +1,90 @@
+{% comment %}
+  Section contract.
+  Recipe facts for an article: prep time, servings, difficulty and ingredients (recipe.* metafields),
+  plus Recipe structured data. Renders nothing for articles without recipe data.
+  @example
+  <!-- Article template "recipe", above the article content -->
+{% endcomment %}
+{%- liquid
+  assign r = article.metafields.recipe
+  assign minutes = r.prep_minutes.value
+  assign servings = r.servings.value
+  assign difficulty = r.difficulty.value
+  assign ingredients = r.ingredients.value | newline_to_br | split: '<br />'
+-%}
+{%- if minutes or servings or difficulty or r.ingredients.value != blank -%}
+  <div class="apex-recipe-meta section section--page-width">
+    <div>
+      <ul class="apex-recipe-meta__facts" role="list">
+        {%- if minutes -%}<li>{{ 'apex.recipe.prep_time' | t: minutes: minutes }}</li>{%- endif -%}
+        {%- if servings -%}<li>{{ 'apex.recipe.serves' | t: count: servings }}</li>{%- endif -%}
+        {%- if difficulty -%}<li>{{ 'apex.recipe.difficulty' | t }}: {{ difficulty | escape }}</li>{%- endif -%}
+      </ul>
+      {%- if r.ingredients.value != blank -%}
+        <h2 class="apex-recipe-meta__heading">{{ 'apex.recipe.ingredients' | t }}</h2>
+        <ul class="apex-recipe-meta__ingredients">
+          {%- for line in ingredients -%}
+            {%- assign item = line | strip -%}
+            {%- if item != blank -%}<li>{{ item | escape }}</li>{%- endif -%}
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+  </div>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Recipe",
+      "name": {{ article.title | json }},
+      {%- if article.image -%}"image": {{ article.image | image_url: width: 1200 | prepend: 'https:' | json }},{%- endif -%}
+      {%- if minutes -%}"totalTime": "PT{{ minutes }}M",{%- endif -%}
+      {%- if servings -%}"recipeYield": {{ servings | append: '' | json }},{%- endif -%}
+      "recipeIngredient": [
+        {%- assign first = true -%}
+        {%- for line in ingredients -%}
+          {%- assign item = line | strip -%}
+          {%- if item != blank -%}{% unless first %},{% endunless %}{{ item | json }}{%- assign first = false -%}{%- endif -%}
+        {%- endfor -%}
+      ],
+      "datePublished": {{ article.published_at | date: '%Y-%m-%d' | json }},
+      "author": { "@type": "Organization", "name": {{ shop.name | json }} }
+    }
+  </script>
+{%- endif -%}
+
+{% stylesheet %}
+  .apex-recipe-meta {
+    padding-block: 24px;
+  }
+
+  .apex-recipe-meta__facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 24px;
+    padding: 0;
+    list-style: none;
+  }
+
+  .apex-recipe-meta__facts li {
+    padding: 6px 12px;
+    background: rgb(var(--color-foreground-rgb) / 0.06);
+    font-size: 0.875rem;
+  }
+
+  .apex-recipe-meta__heading {
+    margin: 0 0 12px;
+    font-size: 1.25rem;
+  }
+
+  .apex-recipe-meta__ingredients {
+    display: grid;
+    gap: 6px;
+    margin: 0;
+    padding-inline-start: 20px;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{ "name": "ApexCook recipe facts", "tag": "section", "class": "apex-section", "enabled_on": { "templates": ["article"] }, "settings": [], "presets": [{ "name": "ApexCook recipe facts" }] }
+{% endschema %}

@@ -86,7 +86,8 @@
     "palette_primary_button_background": "{{ settings.color_palette.color1 }}",
     "palette_primary_button_border": "{{ settings.color_palette.color1 }}",
     "palette_primary_button_text": "{{ settings.color_palette.background }}",
-    "empty_state_collection": "cookware"
+    "empty_state_collection": "cookware",
+    "apex_hero_product": "titanium-pro-frying-pan"
   },
   "presets": {
     "Default": {
@@ -166,4 +167,3 @@
     }
   }
 }
-

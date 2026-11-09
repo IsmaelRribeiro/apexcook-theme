@@ -1,0 +1,73 @@
+{% doc %}
+  "Which size should I buy?" link opening the product's apex.size_guide metafield in a popover.
+{% enddoc %}
+{%- assign guide = closest.product.metafields.apex.size_guide -%}
+{%- if guide != blank -%}
+  {%- assign popover_id = 'ApexSizeGuide-' | append: block.id -%}
+  <div class="apex-size-guide" {{ block.shopify_attributes }}>
+    <button type="button" class="apex-size-guide__link" popovertarget="{{ popover_id }}">
+      {{- 'apex.size_guide.link' | t -}}
+    </button>
+    <div id="{{ popover_id }}" class="apex-size-guide__panel" popover>
+      <div class="apex-size-guide__header">
+        <h2 class="apex-size-guide__title">{{ 'apex.size_guide.link' | t }}</h2>
+        <button type="button" class="apex-size-guide__close" popovertarget="{{ popover_id }}" popovertargetaction="hide">
+          <span class="visually-hidden">{{ 'apex.size_guide.close' | t }}</span>
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="rte">{{ guide | metafield_tag }}</div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .apex-size-guide__link {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    font-size: 0.8125rem;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .apex-size-guide__panel {
+    width: min(480px, calc(100vw - 32px));
+    padding: 24px;
+    border: 0;
+    background: var(--color-background);
+    color: var(--color-foreground);
+    box-shadow: 0 12px 40px rgb(0 0 0 / 0.2);
+  }
+
+  .apex-size-guide__panel::backdrop {
+    background: rgb(0 0 0 / 0.4);
+  }
+
+  .apex-size-guide__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .apex-size-guide__title {
+    margin: 0;
+    font-size: 1.125rem;
+  }
+
+  .apex-size-guide__close {
+    padding: 4px 8px;
+    border: 0;
+    background: none;
+    color: inherit;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{ "name": "ApexCook size guide", "settings": [] }
+{% endschema %}

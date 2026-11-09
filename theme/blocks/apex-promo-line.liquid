@@ -1,0 +1,22 @@
+{% doc %}
+  Promo line above the product title, from the product's apex.promo_line metafield.
+{% enddoc %}
+{%- assign promo = closest.product.metafields.apex.promo_line.value -%}
+{%- if promo != blank -%}
+  <p class="apex-promo-line" {{ block.shopify_attributes }}>{{ promo | escape }}</p>
+{%- endif -%}
+
+{% stylesheet %}
+  .apex-promo-line {
+    margin: 0;
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "ApexCook promo line",
+  "settings": [{ "type": "paragraph", "content": "Edit the text in the product's 'Promo line' metafield." }]
+}
+{% endschema %}

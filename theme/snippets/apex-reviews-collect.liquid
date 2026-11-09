@@ -1,0 +1,61 @@
+{% doc %}
+  Collects the product's ApexCook reviews (metaobject apex_review whose `product` matches).
+  mode 'json' outputs a JSON array of {rating, author, title, body, date, displayDate, source, size, photos};
+  mode 'summary' outputs "count|sum". Capture the output to use it.
+
+  @param {object} product - Product whose reviews to collect
+  @param {string} mode - 'json' or 'summary'
+
+  @example
+  {%- capture summary -%}{% render 'apex-reviews-collect', product: product, mode: 'summary' %}{%- endcapture -%}
+{% enddoc %}
+{%- liquid
+  assign count = 0
+  assign sum = 0
+  assign first = true
+  if mode == 'json'
+    echo '['
+  endif
+  for review in shop.metaobjects.apex_review.values
+    if review.product.value.id != product.id
+      continue
+    endif
+    assign count = count | plus: 1
+    assign sum = sum | plus: review.rating.value
+    if mode == 'json'
+      unless first
+        echo ','
+      endunless
+      assign first = false
+      echo '{"rating":'
+      echo review.rating.value | json
+      echo ',"author":'
+      echo review.author.value | json
+      echo ',"title":'
+      echo review.title.value | default: '' | json
+      echo ',"body":'
+      echo review.body.value | default: '' | json
+      echo ',"date":'
+      echo review.review_date.value | date: '%Y-%m-%d' | json
+      echo ',"displayDate":'
+      echo review.review_date.value | date: format: 'date' | json
+      echo ',"source":'
+      echo review.source.value | json
+      echo ',"size":'
+      echo review.size.value | default: nil | json
+      echo ',"photos":['
+      for photo in review.photos.value
+        unless forloop.first
+          echo ','
+        endunless
+        echo photo | image_url: width: 600 | json
+      endfor
+      echo ']}'
+    endif
+  endfor
+  if mode == 'json'
+    echo ']'
+  else
+    echo count | append: '|' | append: sum
+  endif
+-%}

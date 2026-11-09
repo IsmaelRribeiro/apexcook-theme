@@ -1,0 +1,37 @@
+{% doc %}
+  Average star rating and review count linking to #reviews. Hidden when the product has no reviews.
+{% enddoc %}
+{%- capture summary -%}{% render 'apex-reviews-collect', product: closest.product, mode: 'summary' %}{%- endcapture -%}
+{%- liquid
+  assign parts = summary | strip | split: '|'
+  assign count = parts[0] | plus: 0
+  assign sum = parts[1] | plus: 0
+-%}
+{%- if count > 0 -%}
+  {%- assign average = sum | times: 10.0 | divided_by: count | round | divided_by: 10.0 -%}
+  <a class="apex-rating-link" href="#reviews" {{ block.shopify_attributes }}>
+    {% render 'apex-stars', rating: average %}
+    <span>{{ average }}</span>
+    <span class="apex-rating-link__count">({{ 'apex.reviews.based_on' | t: count: count }})</span>
+  </a>
+{%- endif -%}
+
+{% stylesheet %}
+  .apex-rating-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: inherit;
+    font-size: 0.875rem;
+    text-decoration: none;
+  }
+
+  .apex-rating-link__count {
+    text-decoration: underline;
+    opacity: 0.75;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{ "name": "ApexCook rating", "settings": [] }
+{% endschema %}

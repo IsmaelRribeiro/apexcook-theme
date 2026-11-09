@@ -146,8 +146,12 @@
               >
                 {% assign list_id = 'MegaMenuList-' | append: forloop.index %}
                 <div class="mega-menu section section--full-width-margin section--{{ section.settings.section_width }}">
+                  {%- comment -%} ApexCook: Samsung-style "Shop Highlights" panel for collection images {%- endcomment -%}
+                  {%- if menu_content_type == 'collection_images' -%}
+                    <p class="apex-mega__heading">{{ 'apex.nav.shop_highlights' | t }}</p>
+                  {%- endif -%}
                   <div
-                    class="mega-menu__grid"
+                    class="mega-menu__grid{% if menu_content_type == 'collection_images' %} apex-mega__grid{% endif %}"
                     data-menu-grid-id="{{ list_id }}"
                   >
                     {% render 'mega-menu-list',
@@ -156,7 +160,7 @@
                       section: section,
                       grid_columns_count: 6,
                       grid_columns_count_tablet: 4,
-                      grid_columns_count_collection_images: 8,
+                      grid_columns_count_collection_images: 2,
                       menu_content_type: menu_content_type,
                       content_aspect_ratio: ratio,
                       image_border_radius: image_border_radius
@@ -949,6 +953,23 @@
   /* Hide product cards in collapsed submenus from the IntersectionObserver that fires product view events */
   .menu-list__list-item:not(:has([aria-expanded='true'])) > .menu-list__submenu product-component {
     display: none;
+  }
+
+  /* ApexCook: Shop Highlights panel (heading + 2-column image tiles, left aligned) */
+  .apex-mega__heading {
+    margin: 0 0 20px;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .mega-menu__grid.apex-mega__grid {
+    max-width: 600px;
+    margin-inline: 0;
+  }
+
+  .apex-mega__grid .mega-menu__link-image,
+  .apex-mega__grid img {
+    border-radius: 0;
   }
 {% endstylesheet %}
 

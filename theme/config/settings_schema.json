@@ -2119,13 +2119,13 @@
     ]
   },
   {
-    "name": "t:apex.settings.group",
+    "name": "ApexCook",
     "settings": [
       {
         "type": "range",
         "id": "apex_free_delivery_threshold",
-        "label": "t:apex.settings.free_delivery_threshold",
-        "info": "t:apex.settings.free_delivery_threshold_info",
+        "label": "Free delivery threshold",
+        "info": "Must match the free delivery rate in Settings → Shipping. 0 = always free.",
         "min": 0,
         "max": 200,
         "step": 5,
@@ -2135,27 +2135,27 @@
       {
         "type": "product",
         "id": "apex_hero_product",
-        "label": "t:apex.settings.hero_product",
-        "info": "t:apex.settings.hero_product_info"
+        "label": "Hero product",
+        "info": "Linked from the empty basket and empty collections."
       },
       {
         "type": "header",
-        "content": "t:apex.settings.company_header"
+        "content": "Company details (shown in footer)"
       },
       {
         "type": "text",
         "id": "apex_company_name",
-        "label": "t:apex.settings.company_name"
+        "label": "Company name"
       },
       {
         "type": "textarea",
         "id": "apex_company_address",
-        "label": "t:apex.settings.company_address"
+        "label": "Registered address"
       },
       {
         "type": "text",
         "id": "apex_company_email",
-        "label": "t:apex.settings.company_email"
+        "label": "Contact email"
       }
     ]
   }

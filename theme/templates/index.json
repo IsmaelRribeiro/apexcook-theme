@@ -56,153 +56,21 @@
       }
     },
     "list_kitchen": {
-      "type": "product-list",
-      "blocks": {
-        "static-header": {
-          "type": "_product-list-content",
-          "name": "t:names.header",
-          "static": true,
-          "settings": {
-            "content_direction": "row",
-            "horizontal_alignment": "center"
-          },
-          "blocks": {
-            "product_list_text_YFtzcL": {
-              "type": "_product-list-text",
-              "name": "t:names.collection_title",
-              "settings": {
-                "text": "<h2>Complete your ApexCook kitchen</h2>"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "product_list_text_YFtzcL"
-          ]
-        },
-        "static-product-card": {
-          "type": "_product-card",
-          "name": "t:names.product_card",
-          "static": true,
-          "settings": {},
-          "blocks": {
-            "product_card_gallery_677WP3": {
-              "type": "_product-card-gallery",
-              "name": "t:names.product_card_media",
-              "settings": {},
-              "blocks": {}
-            },
-            "product_title_YXxMTj": {
-              "type": "product-title",
-              "name": "t:names.product_title",
-              "settings": {},
-              "blocks": {}
-            },
-            "price_JQzVV4": {
-              "type": "price",
-              "name": "t:names.product_price",
-              "settings": {},
-              "blocks": {}
-            },
-            "apex_cta": {
-              "type": "apex-card-cta",
-              "settings": {}
-            }
-          },
-          "block_order": [
-            "product_card_gallery_677WP3",
-            "product_title_YXxMTj",
-            "price_JQzVV4",
-            "apex_cta"
-          ]
-        }
-      },
-      "name": "t:names.featured_collection",
+      "type": "apex-product-carousel",
       "settings": {
+        "heading": "Complete your ApexCook kitchen",
         "collection": "cookware",
-        "layout_type": "grid",
-        "carousel_on_mobile": true,
-        "max_products": 4,
-        "columns": 4,
-        "mobile_columns": "2",
-        "section_width": "page-width",
-        "padding-block-start": 48,
-        "padding-block-end": 48
+        "limit": 8,
+        "show_button": false
       }
     },
     "list_life": {
-      "type": "product-list",
-      "blocks": {
-        "static-header": {
-          "type": "_product-list-content",
-          "name": "t:names.header",
-          "static": true,
-          "settings": {
-            "content_direction": "row",
-            "horizontal_alignment": "center"
-          },
-          "blocks": {
-            "product_list_text_YFtzcL": {
-              "type": "_product-list-text",
-              "name": "t:names.collection_title",
-              "settings": {
-                "text": "<h2>Simplify your life, enjoy your family</h2>"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "product_list_text_YFtzcL"
-          ]
-        },
-        "static-product-card": {
-          "type": "_product-card",
-          "name": "t:names.product_card",
-          "static": true,
-          "settings": {},
-          "blocks": {
-            "product_card_gallery_677WP3": {
-              "type": "_product-card-gallery",
-              "name": "t:names.product_card_media",
-              "settings": {},
-              "blocks": {}
-            },
-            "product_title_YXxMTj": {
-              "type": "product-title",
-              "name": "t:names.product_title",
-              "settings": {},
-              "blocks": {}
-            },
-            "price_JQzVV4": {
-              "type": "price",
-              "name": "t:names.product_price",
-              "settings": {},
-              "blocks": {}
-            },
-            "apex_cta": {
-              "type": "apex-card-cta",
-              "settings": {}
-            }
-          },
-          "block_order": [
-            "product_card_gallery_677WP3",
-            "product_title_YXxMTj",
-            "price_JQzVV4",
-            "apex_cta"
-          ]
-        }
-      },
-      "name": "t:names.featured_collection",
+      "type": "apex-product-carousel",
       "settings": {
+        "heading": "Simplify your life, enjoy your family",
         "collection": "accessories",
-        "layout_type": "grid",
-        "carousel_on_mobile": true,
-        "max_products": 4,
-        "columns": 4,
-        "mobile_columns": "2",
-        "section_width": "page-width",
-        "padding-block-start": 48,
-        "padding-block-end": 48
+        "limit": 8,
+        "show_button": false
       }
     },
     "banner": {

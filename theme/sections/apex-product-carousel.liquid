@@ -1,0 +1,227 @@
+{% comment %}
+  Section contract.
+  Samsung-style "Recommended for you" product carousel: left-aligned heading, cards with a grey
+  image tile, bold title, bold price with previous price and saving, a progress bar and
+  previous/next arrows. Products come from a collection.
+  @example
+  <!-- Home page; pick a collection -->
+{% endcomment %}
+{%- liquid
+  assign collection = section.settings.collection
+  assign products = collection.products
+-%}
+<script src="{{ 'apex-carousel.js' | asset_url }}" type="module" fetchpriority="low"></script>
+<div class="apex-pcarousel section section--page-width">
+  <apex-carousel class="apex-pcarousel__inner">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="apex-pcarousel__heading">{{ section.settings.heading | escape }}</h2>
+    {%- endif -%}
+    <ul class="apex-pcarousel__track" role="list" data-track tabindex="0" aria-label="{{ section.settings.heading | escape }}">
+      {%- for product in products limit: section.settings.limit -%}
+        {%- assign variant = product.selected_or_first_available_variant -%}
+        <li class="apex-pcarousel__item">
+          <a class="apex-pcarousel__card" href="{{ product.url }}">
+            <span class="apex-pcarousel__media">
+              {%- if product.featured_image -%}
+                {{ product.featured_image | image_url: width: 800 | image_tag: loading: 'lazy', widths: '300, 500, 800', sizes: '(min-width: 990px) 22vw, 70vw', alt: product.featured_image.alt | default: product.title }}
+              {%- endif -%}
+            </span>
+            <span class="apex-pcarousel__title">{{ product.title | escape }}</span>
+          </a>
+          <div class="apex-pcarousel__price">
+            {% render 'apex-price-was', product: product, variant: variant %}
+          </div>
+          {%- if section.settings.show_button -%}
+            {% render 'apex-card-cta-button', product: product %}
+          {%- endif -%}
+        </li>
+      {%- else -%}
+        {%- for i in (1..4) -%}
+          <li class="apex-pcarousel__item">
+            <span class="apex-pcarousel__media"></span>
+            <span class="apex-pcarousel__title">Product title</span>
+          </li>
+        {%- endfor -%}
+      {%- endfor -%}
+    </ul>
+    <div class="apex-pcarousel__controls">
+      <div class="apex-pcarousel__progress" aria-hidden="true"><span data-progress></span></div>
+      <div class="apex-pcarousel__arrows">
+        <button type="button" class="apex-pcarousel__arrow" data-prev aria-label="{{ 'apex.reviews.previous' | t }}">←</button>
+        <button type="button" class="apex-pcarousel__arrow" data-next aria-label="{{ 'apex.reviews.next' | t }}">→</button>
+      </div>
+    </div>
+  </apex-carousel>
+</div>
+
+{% stylesheet %}
+  .apex-pcarousel {
+    padding-block: 48px;
+  }
+
+  .apex-pcarousel__heading {
+    margin: 0 0 40px;
+    font-size: clamp(1.75rem, 3vw, 2.75rem);
+    font-weight: 700;
+    text-align: start;
+  }
+
+  .apex-pcarousel__track {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 72%;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    overflow-x: auto;
+    list-style: none;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+  }
+
+  .apex-pcarousel__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .apex-pcarousel__item {
+    display: grid;
+    align-content: start;
+    gap: 12px;
+    min-width: 0;
+    scroll-snap-align: start;
+  }
+
+  .apex-pcarousel__card {
+    display: grid;
+    gap: 20px;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .apex-pcarousel__media {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: 16px;
+    background: #f4f4f4;
+  }
+
+  .apex-pcarousel__media img {
+    width: 70%;
+    height: 70%;
+    object-fit: contain;
+  }
+
+  .apex-pcarousel__title {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.3;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .apex-pcarousel__price .apex-price__now {
+    flex-basis: 100%;
+    font-size: 1.375rem;
+    font-weight: 700;
+  }
+
+  .apex-pcarousel__price .apex-price__was {
+    font-size: 0.9375rem;
+  }
+
+  .apex-pcarousel__price .apex-price__save {
+    font-size: 0.9375rem;
+  }
+
+  .apex-pcarousel__controls {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 24px;
+    margin-top: 32px;
+  }
+
+  .apex-pcarousel__progress {
+    height: 2px;
+    background: rgb(var(--color-foreground-rgb) / 0.15);
+  }
+
+  .apex-pcarousel__progress span {
+    display: block;
+    width: var(--apex-progress-size, 25%);
+    height: 100%;
+    margin-inline-start: var(--apex-progress-offset, 0%);
+    background: var(--color-foreground);
+    transition: margin 200ms ease;
+  }
+
+  .apex-pcarousel__arrows {
+    display: flex;
+    gap: 12px;
+  }
+
+  .apex-pcarousel__arrow {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid rgb(var(--color-foreground-rgb) / 0.25);
+    border-radius: 50%;
+    background: var(--color-background);
+    color: inherit;
+    font-size: 1.125rem;
+    cursor: pointer;
+  }
+
+  .apex-pcarousel__arrow:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  @media screen and (min-width: 750px) {
+    .apex-pcarousel__track {
+      grid-auto-columns: calc((100% - 3 * 12px) / 3.3);
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-pcarousel__track {
+      grid-auto-columns: calc((100% - 4 * 12px) / 4.4);
+    }
+
+    .apex-pcarousel__controls {
+      grid-template-columns: minmax(0, 2fr) 1fr;
+      padding-inline: 20%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .apex-pcarousel__track {
+      scroll-behavior: auto;
+    }
+
+    .apex-pcarousel__progress span {
+      transition: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "ApexCook product carousel",
+  "tag": "section",
+  "class": "apex-section",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Recommended for you" },
+    { "type": "collection", "id": "collection", "label": "Collection" },
+    { "type": "range", "id": "limit", "label": "Products shown", "min": 4, "max": 16, "step": 1, "default": 8 },
+    { "type": "checkbox", "id": "show_button", "label": "Show Add / Choose size button", "default": false }
+  ],
+  "presets": [{ "name": "ApexCook product carousel" }]
+}
+{% endschema %}

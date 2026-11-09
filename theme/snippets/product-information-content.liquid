@@ -43,10 +43,9 @@
   endif
 
   # Check if product has media
+  # ApexCook: always keep the media column; the gallery block shows a placeholder box when a
+  # product has no images yet (snippets/apex-media-placeholder.liquid).
   assign product_has_media = true
-  if product.media.size == 0
-    assign product_has_media = false
-  endif
 
   # Build product grid class
   assign product_grid_class = 'product-information__grid'

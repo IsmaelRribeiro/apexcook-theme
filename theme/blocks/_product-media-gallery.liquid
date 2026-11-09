@@ -1,11 +1,15 @@
-{% render 'product-media-gallery-content',
-  media_presentation: block.settings.media_presentation,
-  block_settings: block.settings,
-  block_id: block.id,
-  block_shopify_attributes: block.shopify_attributes,
-  block: block,
-  section: section
-%}
+{%- if closest.product != blank and closest.product.media.size == 0 -%}
+  <div {{ block.shopify_attributes }}>{% render 'apex-media-placeholder' %}</div>
+{%- else -%}
+  {% render 'product-media-gallery-content',
+    media_presentation: block.settings.media_presentation,
+    block_settings: block.settings,
+    block_id: block.id,
+    block_shopify_attributes: block.shopify_attributes,
+    block: block,
+    section: section
+  %}
+{%- endif -%}
 
 {% schema %}
 {

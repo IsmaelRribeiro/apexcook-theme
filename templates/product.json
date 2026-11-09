@@ -9,6 +9,12 @@
  */
 {
   "sections": {
+    "apex_nav": {
+      "type": "apex-pdp-anchor-nav",
+      "settings": {
+        "buy_box_anchor": "buy"
+      }
+    },
     "main": {
       "type": "product-information",
       "blocks": {
@@ -65,6 +71,10 @@
             "padding-inline-end": 0
           },
           "blocks": {
+            "apex_promo": {
+              "type": "apex-promo-line",
+              "settings": {}
+            },
             "group_icgrde": {
               "type": "group",
               "name": "t:names.header",
@@ -127,46 +137,15 @@
                     "padding-inline-end": 0
                   },
                   "blocks": {}
-                },
-                "price_tVjtKg": {
-                  "type": "price",
-                  "settings": {
-                    "show_sale_price_first": true,
-                    "show_installments": true,
-                    "show_tax_info": true,
-                    "type_preset": "paragraph",
-                    "width": "100%",
-                    "alignment": "left",
-                    "font": "var(--font-body--family)",
-                    "font_size": "1rem",
-                    "line_height": "normal",
-                    "letter_spacing": "normal",
-                    "case": "none",
-                    "padding-block-start": 4,
-                    "padding-block-end": 0,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
-                  },
-                  "blocks": {}
                 }
               },
               "block_order": [
-                "text_xpVMaM",
-                "price_tVjtKg"
+                "text_xpVMaM"
               ]
             },
-            "divider_VJhene": {
-              "type": "_divider",
-              "name": "t:names.divider",
-              "settings": {
-                "thickness": 1,
-                "corner_radius": "square",
-                "divider_color": "{{ settings.color_palette.color3 }}",
-                "width_percent": 100,
-                "padding-block-start": 0,
-                "padding-block-end": 0
-              },
-              "blocks": {}
+            "apex_rating": {
+              "type": "apex-rating-link",
+              "settings": {}
             },
             "variant_picker_R3rGDr": {
               "type": "variant-picker",
@@ -181,87 +160,40 @@
               },
               "blocks": {}
             },
-            "buy_buttons_eYQEYi": {
-              "type": "buy-buttons",
-              "settings": {
-                "stacking": true,
-                "show_pickup_availability": false,
-                "gift_card_form": true,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {
-                "quantity": {
-                  "type": "quantity",
-                  "static": true,
-                  "settings": {},
-                  "blocks": {}
-                },
-                "add-to-cart": {
-                  "type": "add-to-cart",
-                  "static": true,
-                  "settings": {
-                    "style_class": "button"
-                  },
-                  "blocks": {}
-                },
-                "accelerated-checkout": {
-                  "type": "accelerated-checkout",
-                  "static": true,
-                  "settings": {},
-                  "blocks": {}
-                }
-              },
-              "block_order": []
+            "apex_size_guide": {
+              "type": "apex-size-guide",
+              "settings": {}
             },
-            "text_aEtTtq": {
-              "type": "text",
-              "name": "t:names.product_description",
+            "apex_addons": {
+              "type": "apex-addons",
               "settings": {
-                "text": "{{ closest.product.description }}",
-                "width": "100%",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "rte",
-                "font": "var(--font-body--family)",
-                "font_size": "",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
+                "visible_count": 3
+              }
+            },
+            "apex_buy_box": {
+              "type": "apex-buy-box",
+              "settings": {}
+            },
+            "apex_trust": {
+              "type": "apex-trust-badges",
+              "settings": {
+                "show_secure": false
+              }
             }
           },
           "block_order": [
+            "apex_promo",
             "group_icgrde",
-            "divider_VJhene",
+            "apex_rating",
             "variant_picker_R3rGDr",
-            "buy_buttons_eYQEYi",
-            "text_aEtTtq"
+            "apex_size_guide",
+            "apex_addons",
+            "apex_buy_box",
+            "apex_trust"
           ]
-        },
-        "disclosures": {
-          "type": "disclosures",
-          "settings": {
-            "padding-block-start": 0,
-            "padding-block-end": 0
-          },
-          "blocks": {}
         }
       },
-      "block_order": [
-        "disclosures"
-      ],
+      "block_order": [],
       "settings": {
         "content_width": "content-center-aligned",
         "desktop_media_position": "left",
@@ -272,144 +204,266 @@
         "padding-block-end": 0
       }
     },
-    "product_recommendations_qggXJq": {
-      "type": "product-recommendations",
+    "apex_testimonials": {
+      "type": "apex-testimonials",
+      "settings": {
+        "anchor": "features",
+        "section_title": "Features",
+        "eyebrow": "Customer stories",
+        "heading": "See what people are saying",
+        "limit": 4,
+        "background_color": "#000000",
+        "text_color": "#FFFFFF",
+        "enable_animation": true
+      }
+    },
+    "apex_press": {
+      "type": "apex-press",
       "blocks": {
-        "text_cbcgyb": {
-          "type": "text",
-          "name": "t:names.header",
+        "c1": {
+          "type": "card",
           "settings": {
-            "text": "<h2>You may also like </h2>",
-            "width": "fit-content",
-            "max_width": "normal",
-            "alignment": "left",
-            "type_preset": "h4",
-            "font": "var(--font-body--family)",
-            "font_size": "",
-            "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "none",
-            "wrap": "pretty",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
+            "eyebrow": "Chef highlight",
+            "title": "Add a highlight"
+          }
         },
-        "static-product-card": {
-          "type": "_product-card",
-          "name": "t:names.product_card",
-          "static": true,
+        "c2": {
+          "type": "card",
           "settings": {
-            "product_card_gap": 8,
-            "border": "none",
-            "border_width": 1,
-            "border_opacity": 100,
-            "border_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 8,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {
-            "product_card_gallery_DNizbJ": {
-              "type": "_product-card-gallery",
-              "name": "t:names.product_card_media",
-              "settings": {
-                "image_ratio": "adapt",
-                "border": "none",
-                "border_width": 1,
-                "border_opacity": 100,
-                "border_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "product_title_M7MJkb": {
-              "type": "product-title",
-              "name": "t:names.product_title",
-              "settings": {
-                "width": "100%",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "paragraph",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 4,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "price_gLWgA6": {
-              "type": "price",
-              "settings": {
-                "show_sale_price_first": true,
-                "show_installments": false,
-                "show_tax_info": false,
-                "type_preset": "h6",
-                "width": "100%",
-                "alignment": "left",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "product_card_gallery_DNizbJ",
-            "product_title_M7MJkb",
-            "price_gLWgA6"
-          ]
+            "eyebrow": "Chef highlight",
+            "title": "Add a highlight"
+          }
         }
       },
       "block_order": [
-        "text_cbcgyb"
+        "c1",
+        "c2"
       ],
-      "name": "t:names.product_recommendations",
       "settings": {
-        "product": "{{ closest.product }}",
-        "recommendation_type": "related",
-        "layout_type": "grid",
-        "carousel_on_mobile": false,
-        "max_products": 4,
-        "columns": 4,
-        "mobile_columns": "2",
-        "columns_gap": 12,
-        "rows_gap": 24,
-        "icons_style": "arrow",
-        "icons_shape": "none",
-        "section_width": "page-width",
-        "gap": 28,
-        "padding-block-start": 48,
-        "padding-block-end": 48
+        "eyebrow": "Chef highlights",
+        "heading": "Trusted in professional kitchens",
+        "logos_title": "Featured in",
+        "background_color": "#000000",
+        "text_color": "#FFFFFF",
+        "enable_animation": true
+      }
+    },
+    "apex_story": {
+      "type": "apex-sticky-story",
+      "blocks": {
+        "s1": {
+          "type": "step",
+          "settings": {
+            "eyebrow": "Titanium",
+            "heading": "No hidden chemicals",
+            "text": "<p>Coated pans wear out and can end up in your food. Titanium Pro has nothing to break down. Claims must match your supplier's test reports.</p>"
+          }
+        },
+        "s2": {
+          "type": "step",
+          "settings": {
+            "eyebrow": "",
+            "heading": "PFAS-free. Truly.",
+            "text": "<p>Add the verified PFAS-free statement from your supplier here.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "s1",
+        "s2"
+      ],
+      "settings": {
+        "background_color": "#000000",
+        "text_color": "#FFFFFF",
+        "enable_animation": true
+      }
+    },
+    "apex_slider": {
+      "type": "apex-compare-slider",
+      "blocks": {
+        "slider": {
+          "type": "comparison-slider",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "slider"
+      ],
+      "settings": {
+        "heading": "",
+        "left_label": "Toxic",
+        "left_caption": "Non-stick coating",
+        "right_label": "Safe",
+        "right_caption": "Pure titanium"
+      }
+    },
+    "apex_compare": {
+      "type": "apex-comparison-table",
+      "settings": {
+        "heading": "How Titanium Pro compares",
+        "attribute_label": "Feature",
+        "ours_label": "Titanium Pro",
+        "theirs_label": "Coated pan",
+        "background_color": "#000000",
+        "text_color": "#FFFFFF",
+        "enable_animation": true
+      }
+    },
+    "apex_uses": {
+      "type": "apex-use-cards",
+      "blocks": {
+        "u1": {
+          "type": "card",
+          "settings": {
+            "label": "Frying"
+          }
+        },
+        "u2": {
+          "type": "card",
+          "settings": {
+            "label": "Searing"
+          }
+        },
+        "u3": {
+          "type": "card",
+          "settings": {
+            "label": "Sautéing"
+          }
+        },
+        "u4": {
+          "type": "card",
+          "settings": {
+            "label": "Eggs & pancakes"
+          }
+        }
+      },
+      "block_order": [
+        "u1",
+        "u2",
+        "u3",
+        "u4"
+      ],
+      "settings": {
+        "heading": "One pan for everything",
+        "background_color": "#000000",
+        "text_color": "#FFFFFF",
+        "enable_animation": true
+      }
+    },
+    "apex_benefits": {
+      "type": "apex-benefits",
+      "blocks": {
+        "b1": {
+          "type": "benefit",
+          "settings": {
+            "title": "Free UK delivery",
+            "text": "On orders over £50.",
+            "link_label": "Learn more",
+            "link": "/policies/shipping-policy"
+          }
+        },
+        "b2": {
+          "type": "benefit",
+          "settings": {
+            "title": "30-day returns",
+            "text": "Changed your mind? Send it back within 30 days.",
+            "link_label": "Learn more",
+            "link": "/policies/refund-policy"
+          }
+        },
+        "b3": {
+          "type": "benefit",
+          "settings": {
+            "title": "10-year guarantee",
+            "text": "Built to last, backed for a decade.",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "b4": {
+          "type": "benefit",
+          "settings": {
+            "title": "Secure checkout",
+            "text": "Apple Pay, Google Pay, Shop Pay and cards.",
+            "link_label": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2",
+        "b3",
+        "b4"
+      ],
+      "settings": {
+        "heading": "Join ApexCook. Enjoy the benefits",
+        "enable_animation": true
+      }
+    },
+    "apex_specs": {
+      "type": "apex-specs",
+      "settings": {
+        "heading": "Specifications",
+        "default_group": "General"
+      }
+    },
+    "apex_reviews": {
+      "type": "apex-reviews",
+      "settings": {
+        "per_page": 10
+      }
+    },
+    "apex_support": {
+      "type": "apex-support",
+      "blocks": {
+        "l1": {
+          "type": "link",
+          "settings": {
+            "title": "Delivery",
+            "text": "3–7 working days. Free over £50.",
+            "link": "/policies/shipping-policy"
+          }
+        },
+        "l2": {
+          "type": "link",
+          "settings": {
+            "title": "Returns",
+            "text": "30 days to change your mind.",
+            "link": "/policies/refund-policy"
+          }
+        },
+        "l3": {
+          "type": "link",
+          "settings": {
+            "title": "Contact us",
+            "text": "We reply within one working day.",
+            "link": "/pages/contact"
+          }
+        }
+      },
+      "block_order": [
+        "l1",
+        "l2",
+        "l3"
+      ],
+      "settings": {
+        "heading": "Care & support"
       }
     }
   },
   "order": [
+    "apex_nav",
     "main",
-    "product_recommendations_qggXJq"
+    "apex_testimonials",
+    "apex_press",
+    "apex_story",
+    "apex_slider",
+    "apex_compare",
+    "apex_uses",
+    "apex_benefits",
+    "apex_specs",
+    "apex_reviews",
+    "apex_support"
   ]
 }

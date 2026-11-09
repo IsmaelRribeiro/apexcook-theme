@@ -1,0 +1,277 @@
+{% comment %}
+  Section contract.
+  Reviews for this product from the apex_review metaobjects: average, count, star distribution,
+  filters (stars, size, photos), sort and pagination. Every review shows its source and date.
+  Server-renders the first page; apex-reviews-list.js handles filtering. AggregateRating JSON-LD
+  is only emitted when there is at least one review.
+  @example
+  <!-- Product template; anchor id "reviews" -->
+{% endcomment %}
+{%- capture reviews_json -%}{% render 'apex-reviews-collect', product: product, mode: 'json' %}{%- endcapture -%}
+{%- capture summary -%}{% render 'apex-reviews-collect', product: product, mode: 'summary' %}{%- endcapture -%}
+{%- liquid
+  assign parts = summary | strip | split: '|'
+  assign count = parts[0] | plus: 0
+  assign sum = parts[1] | plus: 0
+  assign average = 0
+  if count > 0
+    assign average = sum | times: 10.0 | divided_by: count | round | divided_by: 10.0
+  endif
+-%}
+<script src="{{ 'apex-reviews-list.js' | asset_url }}" type="module" fetchpriority="low"></script>
+<div id="reviews" class="apex-reviews section section--page-width">
+  <apex-reviews-list
+    data-per-page="{{ section.settings.per_page }}"
+    data-t-source-date="{{ 'apex.reviews.source_date' | t: source: '__SOURCE__', date: '__DATE__' | escape }}"
+    data-t-results="{{ 'apex.reviews.results' | t: count: '__COUNT__' | escape }}"
+    data-t-page="{{ 'apex.reviews.page' | t: page: '__PAGE__', total: '__TOTAL__' | escape }}"
+    data-t-rating="{{ 'apex.reviews.rating_label' | t: rating: '__RATING__' | escape }}"
+  >
+    <h2 class="apex-reviews__heading">{{ 'apex.reviews.title' | t }}</h2>
+
+    {%- if count == 0 -%}
+      <p class="apex-reviews__empty">{{ 'apex.reviews.empty' | t }}</p>
+    {%- else -%}
+      <div class="apex-reviews__summary">
+        <div class="apex-reviews__score">
+          <span class="apex-reviews__average">{{ average }}</span>
+          {% render 'apex-stars', rating: average %}
+          <span class="apex-reviews__count">{{ 'apex.reviews.based_on' | t: count: count }}</span>
+        </div>
+        <ul class="apex-reviews__bars" role="list" data-apex-bars></ul>
+      </div>
+
+      <div class="apex-reviews__controls">
+        <label>
+          <span>{{ 'apex.reviews.filter_rating' | t }}</span>
+          <select data-filter="rating">
+            <option value="">{{ 'apex.reviews.all' | t }}</option>
+            {%- for n in (1..5) reversed -%}
+              <option value="{{ n }}">{{ 'apex.reviews.stars' | t: count: n }}</option>
+            {%- endfor -%}
+          </select>
+        </label>
+        {%- unless product.has_only_default_variant -%}
+          <label>
+            <span>{{ 'apex.reviews.filter_size' | t }}</span>
+            <select data-filter="size">
+              <option value="">{{ 'apex.reviews.all' | t }}</option>
+              {%- for value in product.options_with_values.first.values -%}
+                <option value="{{ value | escape }}">{{ value | escape }}</option>
+              {%- endfor -%}
+            </select>
+          </label>
+        {%- endunless -%}
+        <label class="apex-reviews__check">
+          <input type="checkbox" data-filter="photos">
+          <span>{{ 'apex.reviews.with_photos' | t }}</span>
+        </label>
+        <label>
+          <span>{{ 'apex.reviews.sort' | t }}</span>
+          <select data-sort>
+            <option value="newest">{{ 'apex.reviews.sort_newest' | t }}</option>
+            <option value="highest">{{ 'apex.reviews.sort_highest' | t }}</option>
+            <option value="lowest">{{ 'apex.reviews.sort_lowest' | t }}</option>
+          </select>
+        </label>
+      </div>
+
+      <p class="apex-reviews__status" role="status" aria-live="polite" data-apex-status></p>
+      <ol class="apex-reviews__list" role="list" data-apex-list></ol>
+      <nav class="apex-reviews__pager" data-apex-pager hidden>
+        <button type="button" data-page="prev">{{ 'apex.reviews.previous' | t }}</button>
+        <span data-apex-page></span>
+        <button type="button" data-page="next">{{ 'apex.reviews.next' | t }}</button>
+      </nav>
+
+      <script type="application/json" data-apex-reviews>{{ reviews_json }}</script>
+      <noscript>
+        <p>{{ 'apex.reviews.based_on' | t: count: count }}</p>
+      </noscript>
+    {%- endif -%}
+  </apex-reviews-list>
+</div>
+
+{%- if count > 0 -%}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "name": {{ product.title | json }},
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": {{ average | json }},
+        "reviewCount": {{ count | json }},
+        "bestRating": 5,
+        "worstRating": 1
+      }
+    }
+  </script>
+{%- endif -%}
+
+{% stylesheet %}
+  .apex-reviews {
+    padding-block: 48px;
+  }
+
+  .apex-reviews__heading {
+    margin: 0 0 24px;
+  }
+
+  .apex-reviews__summary {
+    display: grid;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+
+  .apex-reviews__score {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .apex-reviews__average {
+    font-size: 2.5rem;
+    font-weight: 600;
+  }
+
+  .apex-reviews__count {
+    font-size: 0.875rem;
+    opacity: 0.75;
+  }
+
+  .apex-reviews__bars {
+    display: grid;
+    gap: 4px;
+    max-width: 360px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.8125rem;
+  }
+
+  .apex-reviews__bar {
+    display: grid;
+    grid-template-columns: 3ch 1fr 3ch;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .apex-reviews__bar-track {
+    height: 6px;
+    background: rgb(var(--color-foreground-rgb) / 0.1);
+  }
+
+  .apex-reviews__bar-fill {
+    display: block;
+    height: 100%;
+    background: #f5a623;
+  }
+
+  .apex-reviews__controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 16px;
+    align-items: end;
+    padding-block: 16px;
+    border-block: 1px solid rgb(var(--color-foreground-rgb) / 0.12);
+  }
+
+  .apex-reviews__controls label {
+    display: grid;
+    gap: 4px;
+    font-size: 0.75rem;
+  }
+
+  .apex-reviews__controls .apex-reviews__check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .apex-reviews__controls select {
+    min-width: 140px;
+    padding: 8px;
+    font: inherit;
+    font-size: 0.875rem;
+  }
+
+  .apex-reviews__status {
+    margin: 12px 0 0;
+    font-size: 0.8125rem;
+    opacity: 0.75;
+  }
+
+  .apex-reviews__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .apex-reviews__item {
+    display: grid;
+    gap: 8px;
+    padding-block: 24px;
+    border-bottom: 1px solid rgb(var(--color-foreground-rgb) / 0.12);
+  }
+
+  .apex-reviews__meta {
+    font-size: 0.75rem;
+    opacity: 0.7;
+  }
+
+  .apex-reviews__title {
+    margin: 0;
+    font-size: 1rem;
+  }
+
+  .apex-reviews__body {
+    margin: 0;
+    font-size: 0.875rem;
+  }
+
+  .apex-reviews__photos {
+    display: flex;
+    gap: 8px;
+  }
+
+  .apex-reviews__photos img {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+  }
+
+  .apex-reviews__pager {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding-top: 16px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .apex-reviews__summary {
+      grid-template-columns: auto 1fr;
+      align-items: center;
+    }
+
+    .apex-reviews__item {
+      grid-template-columns: 200px 1fr;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "ApexCook reviews",
+  "tag": "section",
+  "class": "apex-section",
+  "enabled_on": { "templates": ["product"] },
+  "settings": [
+    { "type": "range", "id": "per_page", "label": "Reviews per page", "min": 5, "max": 20, "step": 5, "default": 10 },
+    { "type": "paragraph", "content": "Reviews come from Content → Metaobjects → Review. Publish every genuine review (including negative ones) with its original source." }
+  ],
+  "presets": [{ "name": "ApexCook reviews" }]
+}
+{% endschema %}

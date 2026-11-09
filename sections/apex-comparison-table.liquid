@@ -1,0 +1,109 @@
+{% comment %}
+  Section contract.
+  "How Titanium Pro compares": two-column table from the product's apex.comparison metaobjects.
+  Rows reveal one after another. Renders nothing when the product has no comparison rows.
+  @example
+  <!-- Product template; anchor id "compare" -->
+{% endcomment %}
+{%- assign rows = product.metafields.apex.comparison.value -%}
+{%- if rows != blank -%}
+  {%- if section.settings.enable_animation -%}{% render 'apex-motion-styles' %}{%- endif -%}
+  <div id="compare" class="apex-compare section section--full-width" style="--apex-bg: {{ section.settings.background_color }}; --apex-fg: {{ section.settings.text_color }};">
+    <div class="section section--page-width">
+      <div>
+        <h2 class="apex-compare__heading">{{ section.settings.heading | escape }}</h2>
+        <table class="apex-compare__table">
+          <thead>
+            <tr>
+              <th scope="col"><span class="visually-hidden">{{ section.settings.attribute_label | escape }}</span></th>
+              <th scope="col">{{ section.settings.ours_label | escape }}</th>
+              <th scope="col">{{ section.settings.theirs_label | escape }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {%- for row in rows -%}
+              <tr {% if section.settings.enable_animation %}data-apex-reveal style="--apex-reveal-index: {{ forloop.index0 }};"{% endif %}>
+                <th scope="row">
+                  {%- if row.icon.value != blank -%}
+                    {{ row.icon.value | image_url: width: 64 | image_tag: loading: 'lazy', alt: '', class: 'apex-compare__icon' }}
+                  {%- endif -%}
+                  {{ row.attribute.value | escape }}
+                </th>
+                <td>{{ row.apexcook_value.value | escape }}</td>
+                <td>{{ row.coated_value.value | escape }}</td>
+              </tr>
+            {%- endfor -%}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .apex-compare {
+    padding-block: 64px;
+    background: var(--apex-bg);
+    color: var(--apex-fg);
+  }
+
+  .apex-compare__heading {
+    margin: 0 0 32px;
+    color: inherit;
+    text-align: center;
+  }
+
+  .apex-compare__table {
+    width: 100%;
+    max-width: 760px;
+    margin-inline: auto;
+    border-collapse: collapse;
+    text-align: center;
+  }
+
+  .apex-compare__table th,
+  .apex-compare__table td {
+    padding: 16px 8px;
+    border-bottom: 1px solid rgb(255 255 255 / 0.15);
+  }
+
+  .apex-compare__table tbody th {
+    font-weight: 500;
+    text-align: start;
+  }
+
+  .apex-compare__table thead th {
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    opacity: 0.8;
+  }
+
+  .apex-compare__icon {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    margin-inline-end: 8px;
+    vertical-align: middle;
+    object-fit: contain;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "ApexCook comparison table",
+  "tag": "section",
+  "class": "apex-section",
+  "enabled_on": { "templates": ["product"] },
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "How Titanium Pro compares" },
+    { "type": "text", "id": "attribute_label", "label": "Feature column label (screen readers)", "default": "Feature" },
+    { "type": "text", "id": "ours_label", "label": "Our column", "default": "Titanium Pro" },
+    { "type": "text", "id": "theirs_label", "label": "Comparison column", "default": "Coated pan" },
+    { "type": "paragraph", "content": "Rows come from the product's 'Comparison rows' metafield. Comparative claims must be fair and verifiable." },
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#000000" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#FFFFFF" },
+    { "type": "checkbox", "id": "enable_animation", "label": "Enable animation", "default": true }
+  ],
+  "presets": [{ "name": "ApexCook comparison table" }]
+}
+{% endschema %}

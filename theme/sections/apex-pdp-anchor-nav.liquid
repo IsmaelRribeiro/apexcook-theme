@@ -19,7 +19,9 @@
   <div class="section section--page-width">
     <div class="apex-anchor-nav__grid">
       <div class="apex-anchor-nav__info">
-        <p class="apex-anchor-nav__title">{{ product.title | escape }}</p>
+        {%- assign promo = product.metafields.apex.promo_line.value -%}
+        {%- if promo != blank -%}<p class="apex-anchor-nav__promo">{{ promo | escape }}</p>{%- endif -%}
+        <h1 class="apex-anchor-nav__title">{{ product.title | escape }}</h1>
         {%- if count > 0 -%}
           {%- assign average = sum | times: 10.0 | divided_by: count | round | divided_by: 10.0 -%}
           <a class="apex-anchor-nav__rating" href="#reviews">
@@ -65,7 +67,7 @@
     grid-template-areas: 'info buy' 'links links';
     align-items: center;
     gap: 4px 24px;
-    padding-block: 10px 0;
+    padding-block: 16px 0;
   }
 
   .apex-anchor-nav__info {
@@ -77,13 +79,20 @@
     min-width: 0;
   }
 
-  .apex-anchor-nav__title {
+  .apex-anchor-nav__promo {
+    flex-basis: 100%;
     margin: 0;
-    overflow: hidden;
-    font-size: 1rem;
+    color: var(--color-primary-button-background);
+    font-size: 0.75rem;
     font-weight: 600;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+  }
+
+  .apex-anchor-nav__title {
+    flex-basis: 100%;
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.2;
   }
 
   .apex-anchor-nav__rating {
@@ -162,7 +171,7 @@
     }
 
     .apex-anchor-nav__title {
-      font-size: 1.25rem;
+      font-size: clamp(1.25rem, 2vw, 1.75rem);
     }
   }
 

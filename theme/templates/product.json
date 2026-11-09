@@ -69,82 +69,6 @@
             "padding-inline-end": 0
           },
           "blocks": {
-            "apex_promo": {
-              "type": "apex-promo-line",
-              "settings": {}
-            },
-            "group_icgrde": {
-              "type": "group",
-              "name": "t:names.header",
-              "settings": {
-                "content_direction": "column",
-                "vertical_on_mobile": true,
-                "horizontal_alignment": "flex-start",
-                "vertical_alignment": "center",
-                "align_baseline": false,
-                "horizontal_alignment_flex_direction_column": "flex-start",
-                "vertical_alignment_flex_direction_column": "center",
-                "gap": 12,
-                "width": "fill",
-                "custom_width": 100,
-                "width_mobile": "fill",
-                "custom_width_mobile": 100,
-                "height": "fit",
-                "custom_height": 100,
-                "background_media": "none",
-                "video_position": "cover",
-                "background_image_position": "cover",
-                "toggle_overlay": false,
-                "overlay_color": "#00000026",
-                "overlay_style": "solid",
-                "gradient_direction": "to top",
-                "border": "none",
-                "border_width": 1,
-                "border_opacity": 100,
-                "border_radius": 0,
-                "link": "",
-                "open_in_new_tab": false,
-                "placeholder": "",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {
-                "text_xpVMaM": {
-                  "type": "text",
-                  "name": "t:names.title",
-                  "settings": {
-                    "text": "<h1>{{ closest.product.title }}</h1>",
-                    "width": "fit-content",
-                    "max_width": "normal",
-                    "alignment": "left",
-                    "type_preset": "h3",
-                    "font": "var(--font-body--family)",
-                    "font_size": "1rem",
-                    "line_height": "normal",
-                    "letter_spacing": "normal",
-                    "case": "none",
-                    "wrap": "pretty",
-                    "background": false,
-                    "background_color": "#00000026",
-                    "corner_radius": 0,
-                    "padding-block-start": 0,
-                    "padding-block-end": 0,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "text_xpVMaM"
-              ]
-            },
-            "apex_rating": {
-              "type": "apex-rating-link",
-              "settings": {}
-            },
             "variant_picker_R3rGDr": {
               "type": "variant-picker",
               "settings": {
@@ -180,9 +104,6 @@
             }
           },
           "block_order": [
-            "apex_promo",
-            "group_icgrde",
-            "apex_rating",
             "variant_picker_R3rGDr",
             "apex_size_guide",
             "apex_addons",
@@ -447,11 +368,64 @@
       "settings": {
         "heading": "Care & support"
       }
+    },
+    "apex_promo_strip": {
+      "type": "apex-promo-strip",
+      "settings": {
+        "text": "Free UK delivery on orders over £50",
+        "background_color": "#000000",
+        "text_color": "#FFFFFF"
+      }
+    },
+    "apex_highlights": {
+      "type": "apex-highlights",
+      "blocks": {
+        "h1": {
+          "type": "highlight",
+          "settings": {
+            "title": "Pure titanium",
+            "text": "No coating to chip or peel"
+          }
+        },
+        "h2": {
+          "type": "highlight",
+          "settings": {
+            "title": "PFAS-free",
+            "text": "Add your verified claim here"
+          }
+        },
+        "h3": {
+          "type": "highlight",
+          "settings": {
+            "title": "Every hob",
+            "text": "Gas, electric and induction"
+          }
+        },
+        "h4": {
+          "type": "highlight",
+          "settings": {
+            "title": "10-year guarantee",
+            "text": "Built to last"
+          }
+        }
+      },
+      "block_order": [
+        "h1",
+        "h2",
+        "h3",
+        "h4"
+      ],
+      "settings": {
+        "heading": "Highlights",
+        "enable_animation": true
+      }
     }
   },
   "order": [
+    "apex_promo_strip",
     "apex_nav",
     "main",
+    "apex_highlights",
     "apex_testimonials",
     "apex_press",
     "apex_story",

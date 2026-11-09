@@ -51,7 +51,7 @@
 
 {% stylesheet %}
   /* The section wrapper is the sticky element: the nav alone is as tall as its parent. */
-  .shopify-section:has(> .apex-anchor-nav) {
+  .shopify-section.apex-section:not(.header-section):has(> .apex-anchor-nav) {
     position: sticky;
     top: 0;
     z-index: 4;
@@ -62,8 +62,8 @@
     border-bottom: 1px solid rgb(var(--color-foreground-rgb) / 0.12);
   }
 
-  body:has(#header-component[sticky='always']) .shopify-section:has(> .apex-anchor-nav),
-  body:has(#header-component[data-sticky-state='active']) .shopify-section:has(> .apex-anchor-nav) {
+  body:has(#header-component[sticky='always']) .shopify-section.apex-section:not(.header-section):has(> .apex-anchor-nav),
+  body:has(#header-component[data-sticky-state='active']) .shopify-section.apex-section:not(.header-section):has(> .apex-anchor-nav) {
     top: calc(var(--header-height, 60px) - 1px);
   }
 

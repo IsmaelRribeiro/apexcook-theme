@@ -1,0 +1,70 @@
+{% doc %}
+  Fixed bottom bar on small screens with the basket total (VAT inclusive) and Checkout.
+  Hidden on desktop and when the basket is empty.
+{% enddoc %}
+<div class="apex-mobile-checkout" {{ block.shopify_attributes }}>
+  <div class="apex-mobile-checkout__total">
+    <span>{{ cart.total_price | money }}</span>
+    <small>{{ 'apex.buy_box.vat_inclusive' | t }}</small>
+  </div>
+  <form action="{{ routes.cart_url }}" method="post">
+    <button type="submit" name="checkout" class="apex-mobile-checkout__button">{{ 'apex.basket.checkout' | t }}</button>
+  </form>
+</div>
+
+{% stylesheet %}
+  .apex-mobile-checkout {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    background: var(--color-background);
+    box-shadow: 0 -4px 16px rgb(0 0 0 / 0.08);
+  }
+
+  .apex-mobile-checkout__total {
+    display: grid;
+    font-weight: 600;
+  }
+
+  .apex-mobile-checkout__total small {
+    font-size: 0.6875rem;
+    font-weight: 400;
+    opacity: 0.7;
+  }
+
+  .apex-mobile-checkout__button {
+    padding: 14px 28px;
+    border: 0;
+    background: var(--color-primary-button-background);
+    color: var(--color-primary-button-text);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .cart-page--empty .apex-mobile-checkout {
+    display: none;
+  }
+
+  @media screen and (min-width: 750px) {
+    .apex-mobile-checkout {
+      display: none;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .cart-page {
+      padding-bottom: 88px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{ "name": "Mobile checkout bar", "settings": [] }
+{% endschema %}

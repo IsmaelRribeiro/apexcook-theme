@@ -1,0 +1,78 @@
+{% doc %}
+  Free-delivery progress for the basket. Rendered on the server from cart.total_price and the
+  ApexCook "Free delivery threshold" theme setting; Horizon re-renders the cart section after every
+  basket change, so the bar stays current without its own script.
+{% enddoc %}
+{%- liquid
+  assign threshold = settings.apex_free_delivery_threshold | default: 50 | times: 100
+  assign total = cart.total_price
+  if threshold <= 0 or total >= threshold
+    assign qualified = true
+    assign percent = 100
+  else
+    assign qualified = false
+    assign remaining = threshold | minus: total
+    assign percent = total | times: 100 | divided_by: threshold
+  endif
+-%}
+<div class="apex-free-delivery" {{ block.shopify_attributes }}>
+  <p class="apex-free-delivery__text">
+    {%- if qualified -%}
+      {{ 'apex.free_delivery.qualified' | t }} ✓
+    {%- else -%}
+      {{ 'apex.free_delivery.remaining' | t: amount: remaining | money }}
+    {%- endif -%}
+  </p>
+  <div
+    class="apex-free-delivery__track"
+    role="progressbar"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    aria-valuenow="{{ percent }}"
+    aria-label="{{ 'apex.free_delivery.qualified' | t }}"
+  >
+    <span class="apex-free-delivery__fill" style="width: {{ percent }}%;"></span>
+  </div>
+</div>
+
+{% stylesheet %}
+  .cart-page--empty .apex-free-delivery {
+    display: none;
+  }
+
+  .apex-free-delivery {
+    display: grid;
+    gap: 8px;
+    margin-block: 16px;
+    padding: 16px;
+    background: rgb(var(--color-foreground-rgb) / 0.04);
+  }
+
+  .apex-free-delivery__text {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .apex-free-delivery__track {
+    height: 6px;
+    background: rgb(var(--color-foreground-rgb) / 0.12);
+  }
+
+  .apex-free-delivery__fill {
+    display: block;
+    height: 100%;
+    background: var(--color-primary-button-background);
+    transition: width 300ms ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .apex-free-delivery__fill {
+      transition: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{ "name": "Free delivery bar", "settings": [{ "type": "paragraph", "content": "The threshold is set in Theme settings → ApexCook." }] }
+{% endschema %}

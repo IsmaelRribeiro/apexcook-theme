@@ -8,6 +8,19 @@
  * ------------------------------------------------------------
  */
 {
+  "apex": {
+    "settings": {
+      "group": "ApexCook",
+      "free_delivery_threshold": "Free delivery threshold",
+      "free_delivery_threshold_info": "Must match the free delivery rate in Settings → Shipping. 0 = always free.",
+      "hero_product": "Hero product",
+      "hero_product_info": "Linked from the empty basket and empty collections.",
+      "company_header": "Company details (shown in footer)",
+      "company_name": "Company name",
+      "company_address": "Registered address",
+      "company_email": "Contact email"
+    }
+  },
   "categories": {
     "banners": "Banners",
     // Category for fundamental content blocks (text, images, buttons)

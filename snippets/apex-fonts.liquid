@@ -1,0 +1,27 @@
+{% doc %}
+  Self-hosted Google Sans Flex (variable, latin, wght axis) for ApexCook.
+  Overrides Horizon's font-family tokens so every type preset uses it.
+  Render after `theme-styles-variables` so these tokens win.
+
+  @example
+  {% render 'apex-fonts' %}
+{% enddoc %}
+{%- assign apex_font_url = 'google-sans-flex.woff2' | asset_url -%}
+{{ apex_font_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+<style>
+  @font-face {
+    font-family: 'Google Sans Flex';
+    font-style: normal;
+    font-display: swap;
+    font-weight: 1 1000;
+    src: url('{{ apex_font_url }}') format('woff2-variations'), url('{{ apex_font_url }}') format('woff2');
+  }
+
+  :root {
+    --apex-font: 'Google Sans Flex', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-body--family: var(--apex-font);
+    --font-subheading--family: var(--apex-font);
+    --font-heading--family: var(--apex-font);
+    --font-accent--family: var(--apex-font);
+  }
+</style>

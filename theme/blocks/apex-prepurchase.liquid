@@ -1,0 +1,114 @@
+{% doc %}
+  "Pre-purchase check" cards (Samsung-style): Delivery & Returns with bullet points and a link,
+  and a size card that opens the size guide popover (from the ApexCook size guide block).
+{% enddoc %}
+{%- liquid
+  assign has_guide = false
+  if closest.product.metafields.apex.size_guide != blank
+    assign has_guide = true
+  endif
+  assign bullets = block.settings.delivery_points | newline_to_br | split: '<br />'
+-%}
+<div class="apex-precheck" {{ block.shopify_attributes }}>
+  <h2 class="apex-precheck__title">{{ block.settings.title | escape }}</h2>
+  <div class="apex-precheck__card">
+    <span class="apex-precheck__icon" aria-hidden="true">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9h16v13H3zM19 13h6l4 5v4h-10z"/><circle cx="9" cy="24" r="2.5"/><circle cx="24" cy="24" r="2.5"/></svg>
+    </span>
+    <div>
+      <p class="apex-precheck__heading">{{ block.settings.delivery_title | escape }}</p>
+      <ul class="apex-precheck__list">
+        {%- for b in bullets -%}
+          {%- assign item = b | strip -%}
+          {%- if item != blank -%}<li>{{ item | escape }}</li>{%- endif -%}
+        {%- endfor -%}
+      </ul>
+      {%- if block.settings.delivery_link != blank -%}
+        <a class="apex-precheck__link" href="{{ block.settings.delivery_link }}">{{ block.settings.delivery_link_label | escape }} ↗</a>
+      {%- endif -%}
+    </div>
+  </div>
+  {%- if has_guide -%}
+    <div class="apex-precheck__card">
+      <span class="apex-precheck__icon" aria-hidden="true">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="26" height="10"/><path d="M8 11v4M13 11v6M18 11v4M23 11v6"/></svg>
+      </span>
+      <div>
+        <p class="apex-precheck__heading">{{ block.settings.size_title | escape }}</p>
+        <p class="apex-precheck__text">{{ block.settings.size_text | escape }}</p>
+        <button type="button" class="apex-precheck__link" popovertarget="ApexSizeGuide">{{ block.settings.size_link_label | escape }} ↗</button>
+      </div>
+    </div>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .apex-precheck {
+    display: grid;
+    gap: 12px;
+  }
+
+  .apex-precheck__title {
+    margin: 0;
+    font-size: 1.125rem;
+  }
+
+  .apex-precheck__card {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 16px;
+    padding: 20px;
+    background: rgb(var(--color-foreground-rgb) / 0.05);
+  }
+
+  .apex-precheck__icon {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+  }
+
+  .apex-precheck__heading {
+    margin: 0 0 4px;
+    font-weight: 600;
+  }
+
+  .apex-precheck__list {
+    margin: 0 0 8px;
+    padding-inline-start: 16px;
+    font-size: 0.8125rem;
+  }
+
+  .apex-precheck__text {
+    margin: 0 0 8px;
+    font-size: 0.8125rem;
+  }
+
+  .apex-precheck__link {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "ApexCook pre-purchase",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Title", "default": "Pre-purchase check" },
+    { "type": "text", "id": "delivery_title", "label": "Delivery card title", "default": "Delivery & Returns" },
+    { "type": "textarea", "id": "delivery_points", "label": "Delivery points (one per line)", "default": "Delivery in 3–7 working days\nFree delivery on orders over £50\n30-day returns" },
+    { "type": "text", "id": "delivery_link_label", "label": "Delivery link label", "default": "Learn more" },
+    { "type": "url", "id": "delivery_link", "label": "Delivery link" },
+    { "type": "text", "id": "size_title", "label": "Size card title", "default": "Which size should I choose?" },
+    { "type": "text", "id": "size_text", "label": "Size card text", "default": "Compare pan sizes and find the right one for how you cook." },
+    { "type": "text", "id": "size_link_label", "label": "Size card link label", "default": "Help me choose" }
+  ]
+}
+{% endschema %}

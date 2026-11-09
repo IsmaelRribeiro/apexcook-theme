@@ -3,7 +3,7 @@
 {% enddoc %}
 {%- assign guide = closest.product.metafields.apex.size_guide -%}
 {%- if guide != blank -%}
-  {%- assign popover_id = 'ApexSizeGuide-' | append: block.id -%}
+  {%- assign popover_id = 'ApexSizeGuide' -%}
   <div class="apex-size-guide" {{ block.shopify_attributes }}>
     <button type="button" class="apex-size-guide__link" popovertarget="{{ popover_id }}">
       {{- 'apex.size_guide.link' | t -}}

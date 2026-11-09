@@ -204,13 +204,18 @@
                 "product_swatches_padding_left": 0,
                 "product_swatches_padding_right": 0
               }
+            },
+            "apex_cta": {
+              "type": "apex-card-cta",
+              "settings": {}
             }
           },
           "block_order": [
             "card-gallery",
             "product_title_4nY4eT",
             "price_EzJzMm",
-            "swatches"
+            "swatches",
+            "apex_cta"
           ]
         }
       },

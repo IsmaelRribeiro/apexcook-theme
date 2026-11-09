@@ -1,0 +1,33 @@
+{% doc %}
+  Trader details required for UK online sellers: company name, registered address and contact
+  email from Theme settings → ApexCook. Renders nothing until they are filled in.
+{% enddoc %}
+{%- liquid
+  assign name = settings.apex_company_name
+  assign address = settings.apex_company_address
+  assign email = settings.apex_company_email
+-%}
+{%- if name != blank or address != blank or email != blank -%}
+  <address class="apex-footer-company" {{ block.shopify_attributes }}>
+    {%- if name != blank -%}<strong>{{ name | escape }}</strong>{%- endif -%}
+    {%- if address != blank -%}<span>{{ address | escape | newline_to_br }}</span>{%- endif -%}
+    {%- if email != blank -%}<a href="mailto:{{ email | escape }}">{{ email | escape }}</a>{%- endif -%}
+  </address>
+{%- endif -%}
+
+{% stylesheet %}
+  .apex-footer-company {
+    display: grid;
+    gap: 4px;
+    font-size: 0.8125rem;
+    font-style: normal;
+  }
+
+  .apex-footer-company a {
+    color: inherit;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{ "name": "Company details", "settings": [{ "type": "paragraph", "content": "Edit in Theme settings → ApexCook." }] }
+{% endschema %}

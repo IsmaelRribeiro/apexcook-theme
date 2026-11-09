@@ -6,7 +6,7 @@
 {% endcomment %}
 {%- if section.settings.enable_animation -%}{% render 'apex-motion-styles' %}{%- endif -%}
 <div
-  class="apex-split-hero section section--page-width"
+  class="apex-split-hero section {% if section.settings.full_width %}section--full-width{% else %}section--page-width{% endif %}"
   style="--apex-hero-bg: {{ section.settings.background_color }}; --apex-hero-fg: {{ section.settings.text_color }};"
 >
   <div class="apex-split-hero__grid">
@@ -47,6 +47,10 @@
 
 {% stylesheet %}
   .apex-split-hero {
+    padding-block: 0;
+  }
+
+  .apex-split-hero.section--page-width {
     padding-block: 24px;
   }
 
@@ -141,6 +145,7 @@
     { "type": "image_picker", "id": "image", "label": "Image" },
     { "type": "color", "id": "background_color", "label": "Panel background", "default": "#E00000" },
     { "type": "color", "id": "text_color", "label": "Panel text", "default": "#FFFFFF" },
+    { "type": "checkbox", "id": "full_width", "label": "Full width (edge to edge)", "default": true },
     { "type": "checkbox", "id": "enable_animation", "label": "Enable animation", "default": true }
   ],
   "presets": [{ "name": "ApexCook split hero" }]

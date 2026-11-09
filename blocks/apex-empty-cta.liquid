@@ -1,0 +1,36 @@
+{% doc %}
+  Call to action shown in an empty basket (or empty collection) linking to the hero product
+  chosen in Theme settings → ApexCook.
+{% enddoc %}
+{%- assign hero = settings.apex_hero_product -%}
+<div class="apex-empty-cta" {{ block.shopify_attributes }}>
+  {%- if hero != blank -%}
+    <a class="apex-empty-cta__button" href="{{ hero.url }}">{{ 'apex.basket.empty_cta' | t }}</a>
+  {%- else -%}
+    <a class="apex-empty-cta__button" href="{{ routes.all_products_collection_url }}">{{ 'apex.basket.empty_cta' | t }}</a>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .apex-empty-cta {
+    display: none;
+    margin-block: 16px;
+  }
+
+  .cart-page--empty .apex-empty-cta {
+    display: block;
+  }
+
+  .apex-empty-cta__button {
+    display: inline-block;
+    padding: 14px 24px;
+    background: var(--color-primary-button-background);
+    color: var(--color-primary-button-text);
+    font-weight: 600;
+    text-decoration: none;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{ "name": "Empty basket button", "settings": [] }
+{% endschema %}

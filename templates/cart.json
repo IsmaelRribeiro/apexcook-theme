@@ -53,13 +53,37 @@
             "border_radius": 0
           },
           "blocks": {}
+        },
+        "apex_free_delivery": {
+          "type": "apex-free-delivery-bar",
+          "settings": {}
+        },
+        "apex_empty_cta": {
+          "type": "apex-empty-cta",
+          "settings": {}
+        },
+        "apex_trust": {
+          "type": "apex-trust-badges",
+          "settings": {
+            "show_secure": true
+          }
+        },
+        "apex_mobile_bar": {
+          "type": "apex-mobile-checkout-bar",
+          "settings": {}
         }
       },
       "settings": {
         "section_width": "page-width",
         "padding-block-start": 24,
         "padding-block-end": 0
-      }
+      },
+      "block_order": [
+        "apex_free_delivery",
+        "apex_empty_cta",
+        "apex_trust",
+        "apex_mobile_bar"
+      ]
     },
     "product_list_NNFgcy": {
       "type": "product-list",
@@ -100,7 +124,7 @@
               "type": "_product-list-text",
               "name": "t:names.collection_title",
               "settings": {
-                "text": "<h2>You may also like</h2>",
+                "text": "<h2>Complete your kitchen</h2>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
@@ -120,25 +144,10 @@
                 "padding-inline-end": 0
               },
               "blocks": {}
-            },
-            "product_list_button_eibbma": {
-              "type": "_product-list-button",
-              "name": "t:names.product_list_button",
-              "settings": {
-                "label": "View all",
-                "open_in_new_tab": false,
-                "style_class": "button-unstyled",
-                "width": "fit-content",
-                "custom_width": 100,
-                "width_mobile": "fit-content",
-                "custom_width_mobile": 100
-              },
-              "blocks": {}
             }
           },
           "block_order": [
-            "product_list_text_fifeh4",
-            "product_list_button_eibbma"
+            "product_list_text_fifeh4"
           ]
         },
         "static-product-card": {
@@ -218,20 +227,25 @@
                 "padding-inline-end": 0
               },
               "blocks": {}
+            },
+            "apex_cta": {
+              "type": "apex-card-cta",
+              "settings": {}
             }
           },
           "block_order": [
             "product_card_gallery_PEPpfq",
             "product_title_WNMpHe",
-            "price_yXfkPX"
+            "price_yXfkPX",
+            "apex_cta"
           ]
         }
       },
       "name": "t:names.featured_collection",
       "settings": {
-        "collection": "all",
+        "collection": "accessories",
         "layout_type": "grid",
-        "carousel_on_mobile": false,
+        "carousel_on_mobile": true,
         "max_products": 4,
         "columns": 4,
         "mobile_columns": "2",

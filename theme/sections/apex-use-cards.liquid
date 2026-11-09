@@ -1,0 +1,114 @@
+{% comment %}
+  Section contract.
+  "One pan for everything": image cards with a short label. Four columns on desktop,
+  swipeable row on mobile.
+  @example
+  <!-- Product template; add one Card block per use -->
+{% endcomment %}
+{%- if section.settings.enable_animation -%}{% render 'apex-motion-styles' %}{%- endif -%}
+<div class="apex-uses section section--full-width" style="--apex-bg: {{ section.settings.background_color }}; --apex-fg: {{ section.settings.text_color }};">
+  <div class="section section--page-width">
+    <div>
+      <h2 class="apex-uses__heading">{{ section.settings.heading | escape }}</h2>
+      <ul class="apex-uses__list" role="list">
+        {%- for block in section.blocks -%}
+          <li class="apex-uses__card" {% if section.settings.enable_animation %}data-apex-reveal style="--apex-reveal-index: {{ forloop.index0 }};"{% endif %} {{ block.shopify_attributes }}>
+            {%- if block.settings.image != blank -%}
+              {{ block.settings.image | image_url: width: 700 | image_tag: loading: 'lazy', widths: '350, 700', sizes: '(min-width: 990px) 25vw, 70vw', class: 'apex-uses__image' }}
+            {%- else -%}
+              <span class="apex-uses__image" aria-hidden="true"></span>
+            {%- endif -%}
+            <span class="apex-uses__label">{{ block.settings.label | escape }}</span>
+          </li>
+        {%- endfor -%}
+      </ul>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .apex-uses {
+    padding-block: 64px;
+    background: var(--apex-bg);
+    color: var(--apex-fg);
+  }
+
+  .apex-uses__heading {
+    margin: 0 0 32px;
+    color: inherit;
+    text-align: center;
+  }
+
+  .apex-uses__list {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 70%;
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    overflow-x: auto;
+    list-style: none;
+    scroll-snap-type: x mandatory;
+  }
+
+  .apex-uses__card {
+    display: grid;
+    gap: 8px;
+    scroll-snap-align: start;
+  }
+
+  .apex-uses__image {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    background: rgb(255 255 255 / 0.85);
+  }
+
+  .apex-uses__label {
+    font-size: 1rem;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-uses__list {
+      grid-auto-flow: row;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      overflow: visible;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "ApexCook use cards",
+  "tag": "section",
+  "class": "apex-section",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "One pan for everything" },
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#000000" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#FFFFFF" },
+    { "type": "checkbox", "id": "enable_animation", "label": "Enable animation", "default": true }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Card",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "label", "label": "Label", "default": "Searing" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "ApexCook use cards",
+      "blocks": [
+        { "type": "card", "settings": { "label": "Frying" } },
+        { "type": "card", "settings": { "label": "Searing" } },
+        { "type": "card", "settings": { "label": "Sautéing" } },
+        { "type": "card", "settings": { "label": "Eggs & pancakes" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

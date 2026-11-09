@@ -1,0 +1,99 @@
+{% comment %}
+  Section contract.
+  Specifications accordion grouped by spec row "group", from the product's apex.specs metaobjects,
+  with "Expand all". Renders nothing when the product has no specs.
+  @example
+  <!-- Product template; anchor id "specs" -->
+{% endcomment %}
+{%- assign rows = product.metafields.apex.specs.value -%}
+{%- if rows != blank -%}
+  {% render 'apex-accordion-styles' %}
+  {%- liquid
+    assign groups_str = '|'
+    for row in rows
+      assign g = row.group.value | default: '-'
+      assign needle = '|' | append: g | append: '|'
+      unless groups_str contains needle
+        assign groups_str = groups_str | append: g | append: '|'
+      endunless
+    endfor
+    assign groups = groups_str | remove_first: '|' | split: '|'
+  -%}
+  <div id="specs" class="apex-specs section section--page-width">
+    <apex-expand-all>
+      <div class="apex-accordion__header">
+        <h2 class="apex-specs__heading">{{ section.settings.heading | escape }}</h2>
+        <button
+          type="button"
+          class="apex-accordion__expand"
+          data-expand-all
+          data-label-expand="{{ 'apex.specs.expand_all' | t }}"
+          data-label-collapse="{{ 'apex.specs.collapse_all' | t }}"
+          aria-expanded="false"
+        >
+          {{- 'apex.specs.expand_all' | t -}}
+        </button>
+      </div>
+      {%- for group in groups -%}
+        <details class="apex-accordion__item" {% if forloop.first %}open{% endif %}>
+          <summary class="apex-accordion__summary">{% if group == '-' %}{{ section.settings.default_group | escape }}{% else %}{{ group | escape }}{% endif %}</summary>
+          <dl class="apex-accordion__body apex-specs__list">
+            {%- for row in rows -%}
+              {%- assign rg = row.group.value | default: '-' -%}
+              {%- if rg == group -%}
+                <div class="apex-specs__row">
+                  <dt>{{ row.label.value | escape }}</dt>
+                  <dd>{{ row.value.value | escape }}</dd>
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          </dl>
+        </details>
+      {%- endfor -%}
+    </apex-expand-all>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .apex-specs {
+    padding-block: 48px;
+  }
+
+  .apex-specs__heading {
+    margin: 0;
+  }
+
+  .apex-specs__list {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+  }
+
+  .apex-specs__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    gap: 16px;
+  }
+
+  .apex-specs__row dt {
+    opacity: 0.7;
+  }
+
+  .apex-specs__row dd {
+    margin: 0;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "ApexCook specs",
+  "tag": "section",
+  "class": "apex-section",
+  "enabled_on": { "templates": ["product"] },
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Specifications" },
+    { "type": "text", "id": "default_group", "label": "Label for rows without a group", "default": "General" }
+  ],
+  "presets": [{ "name": "ApexCook specs" }]
+}
+{% endschema %}

@@ -1,0 +1,183 @@
+{% comment %}
+  Section contract.
+  Chef highlights (up to two image cards) and a "Featured in" logo strip.
+  Only use photos and logos you have permission to use.
+  @example
+  <!-- Product template, after testimonials -->
+{% endcomment %}
+{%- if section.settings.enable_animation -%}{% render 'apex-motion-styles' %}{%- endif -%}
+<div class="apex-press section section--full-width" style="--apex-bg: {{ section.settings.background_color }}; --apex-fg: {{ section.settings.text_color }};">
+  <div class="section section--page-width">
+    <div>
+      {%- if section.settings.eyebrow != blank -%}<p class="apex-press__eyebrow">{{ section.settings.eyebrow | escape }}</p>{%- endif -%}
+      {%- if section.settings.heading != blank -%}<h3 class="apex-press__heading">{{ section.settings.heading | escape }}</h3>{%- endif -%}
+      <div class="apex-press__cards">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'card' -%}
+            <a class="apex-press__card" {% if block.settings.link != blank %}href="{{ block.settings.link }}"{% endif %} {% if section.settings.enable_animation %}data-apex-reveal{% endif %} {{ block.shopify_attributes }}>
+              {%- if block.settings.image != blank -%}
+                {{ block.settings.image | image_url: width: 900 | image_tag: loading: 'lazy', class: 'apex-press__image', sizes: '(min-width: 750px) 40vw, 90vw', widths: '450, 900' }}
+              {%- else -%}
+                <span class="apex-press__image" aria-hidden="true"></span>
+              {%- endif -%}
+              {%- if block.settings.eyebrow != blank -%}<span class="apex-press__card-eyebrow">{{ block.settings.eyebrow | escape }}</span>{%- endif -%}
+              <span class="apex-press__card-title">{{ block.settings.title | escape }}</span>
+            </a>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+      {%- assign logo_blocks = section.blocks | where: 'type', 'logo' -%}
+      {%- if logo_blocks.size > 0 -%}
+        <div class="apex-press__logos">
+          <p class="apex-press__logos-title">{{ section.settings.logos_title | escape }}</p>
+          <ul role="list">
+            {%- for block in logo_blocks -%}
+              <li {{ block.shopify_attributes }}>
+                {%- if block.settings.image != blank -%}
+                  {{ block.settings.image | image_url: height: 64 | image_tag: loading: 'lazy', alt: block.settings.name, class: 'apex-press__logo' }}
+                {%- else -%}
+                  <span class="apex-press__logo apex-press__logo--empty">{{ block.settings.name | escape }}</span>
+                {%- endif -%}
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .apex-press {
+    padding-block: 64px;
+    background: var(--apex-bg);
+    color: var(--apex-fg);
+  }
+
+  .apex-press__eyebrow {
+    margin: 0 0 8px;
+    font-size: 0.75rem;
+    text-align: center;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+
+  .apex-press__heading {
+    margin: 0 0 32px;
+    color: inherit;
+    text-align: center;
+  }
+
+  .apex-press__cards {
+    display: grid;
+    gap: 16px;
+  }
+
+  .apex-press__card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    background: #fff;
+    color: #111;
+    text-decoration: none;
+  }
+
+  .apex-press__image {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    background: #eee;
+  }
+
+  .apex-press__card-eyebrow {
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    opacity: 0.6;
+  }
+
+  .apex-press__card-title {
+    font-size: 0.875rem;
+  }
+
+  .apex-press__logos {
+    margin-top: 32px;
+    padding: 16px;
+    background: #fff;
+    color: #111;
+    text-align: center;
+  }
+
+  .apex-press__logos-title {
+    margin: 0 0 12px;
+    font-size: 0.75rem;
+  }
+
+  .apex-press__logos ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px 32px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .apex-press__logo {
+    display: block;
+    height: 28px;
+    width: auto;
+  }
+
+  .apex-press__logo--empty {
+    width: 80px;
+    background: #111;
+  }
+
+  @media screen and (min-width: 750px) {
+    .apex-press__cards {
+      grid-template-columns: 1fr 1fr;
+      max-width: 860px;
+      margin-inline: auto;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "ApexCook press",
+  "tag": "section",
+  "class": "apex-section",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Chef highlights" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Trusted in professional kitchens" },
+    { "type": "text", "id": "logos_title", "label": "Logo strip title", "default": "Featured in" },
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#000000" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#FFFFFF" },
+    { "type": "checkbox", "id": "enable_animation", "label": "Enable animation", "default": true }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Highlight card",
+      "limit": 2,
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image", "info": "Only use photos you have permission to use." },
+        { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Highlight title" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    },
+    {
+      "type": "logo",
+      "name": "Press logo",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Logo", "info": "Only use logos you have permission to use." },
+        { "type": "text", "id": "name", "label": "Publication name" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "ApexCook press", "blocks": [{ "type": "card" }, { "type": "card" }] }]
+}
+{% endschema %}

@@ -16,5 +16,8 @@
 - Theme Check no Horizon puro: 0 erros, 7 avisos (3 arquivos), `shopify` CLI 5.0.1 offline OK.
 
 ## Deploy via GitHub (a partir de 2026-11-09)
-1. `git fetch origin shopify && git subtree pull --prefix=theme origin shopify -m "merge editor changes"` (traz o que o editor da Shopify salvou)
-2. `git subtree split --prefix=theme -b shopify-out && git push origin shopify-out:shopify`
+- Tema de trabalho: `apexcook-theme/shopify` (gid://shopify/OnlineStoreTheme/211291177302), ligado ao branch `shopify`.
+- Preview: https://1674jn-p8.myshopify.com/?preview_theme_id=211291177302
+1. Trazer o que a Shopify gravou: `git fetch origin shopify` e aplicar o diff dos commits "Update from Shopify…" em `theme/` (`git diff A B | sed 's#[ab]/#&theme/#' | git apply`).
+2. Publicar: `scripts/publish-theme.sh "mensagem"` (commita theme/ em cima de origin/shopify; nunca force-push).
+3. Conferir checksums: `scripts/md5.sh <arquivos>` vs `checksumMd5` da Admin API.

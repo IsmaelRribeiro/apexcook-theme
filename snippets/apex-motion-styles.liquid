@@ -1,0 +1,24 @@
+{% doc %}
+  Shared scroll-reveal styles for ApexCook sections. Elements opt in with `data-apex-reveal`;
+  `apex-reveal.js` adds `is-revealed` when they enter the viewport. Children may set
+  `--apex-reveal-index` to stagger. Nothing is hidden for reduced motion or without scripting.
+
+  @example
+  {% render 'apex-motion-styles' %}
+{% enddoc %}
+<script src="{{ 'apex-reveal.js' | asset_url }}" type="module" fetchpriority="low"></script>
+{% stylesheet %}
+  @media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
+    [data-apex-reveal] {
+      transition:
+        opacity 500ms ease-out,
+        transform 500ms ease-out;
+      transition-delay: calc(var(--apex-reveal-index, 0) * 80ms);
+    }
+
+    [data-apex-reveal]:not(.is-revealed) {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+  }
+{% endstylesheet %}

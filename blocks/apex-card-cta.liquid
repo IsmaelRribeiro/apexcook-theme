@@ -1,0 +1,14 @@
+{% doc %}
+  Product card button: "Add" for single-variant products, "Choose size" otherwise.
+  Reads the product from `closest.product`.
+{% enddoc %}
+<div class="apex-card-cta-block" {{ block.shopify_attributes }}>
+  {% render 'apex-card-cta-button', product: closest.product %}
+</div>
+
+{% schema %}
+{
+  "name": "ApexCook add button",
+  "settings": []
+}
+{% endschema %}

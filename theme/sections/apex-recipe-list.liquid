@@ -1,0 +1,136 @@
+{% comment %}
+  Section contract.
+  Recipe blog listing: tag filter links plus a grid of recipe cards (image, title, prep time,
+  difficulty), 12 per page.
+  @example
+  <!-- Blog template -->
+{% endcomment %}
+{%- if section.settings.enable_animation -%}{% render 'apex-motion-styles' %}{%- endif -%}
+<div class="apex-recipes section section--page-width">
+  <div>
+    <h1 class="apex-recipes__heading">{{ blog.title | escape }}</h1>
+    {%- if blog.all_tags.size > 0 -%}
+      <nav class="apex-recipes__tags" aria-label="{{ blog.title | escape }}">
+        <a href="{{ blog.url }}" {% unless current_tags %}aria-current="page"{% endunless %}>{{ 'apex.recipe.all_recipes' | t }}</a>
+        {%- for tag in blog.all_tags -%}
+          <a href="{{ blog.url }}/tagged/{{ tag | handleize }}" {% if current_tags contains tag %}aria-current="page"{% endif %}>{{ tag | escape }}</a>
+        {%- endfor -%}
+      </nav>
+    {%- endif -%}
+    {%- paginate blog.articles by 12 -%}
+      <ul class="apex-recipes__grid" role="list">
+        {%- for a in blog.articles -%}
+          <li {% if section.settings.enable_animation %}data-apex-reveal style="--apex-reveal-index: {{ forloop.index0 | modulo: 4 }};"{% endif %}>
+            <a class="apex-recipes__card" href="{{ a.url }}">
+              {%- if a.image -%}
+                {{ a.image | image_url: width: 800 | image_tag: loading: 'lazy', widths: '400, 800', sizes: '(min-width: 990px) 25vw, (min-width: 750px) 33vw, 50vw', alt: a.image.alt | default: a.title }}
+              {%- else -%}
+                {{ 'image' | placeholder_svg_tag }}
+              {%- endif -%}
+              <span class="apex-recipes__title">{{ a.title | escape }}</span>
+              <span class="apex-recipes__meta">
+                {%- if a.metafields.recipe.prep_minutes.value -%}{{ 'apex.recipe.prep_time' | t: minutes: a.metafields.recipe.prep_minutes.value }}{%- endif -%}
+                {%- if a.metafields.recipe.difficulty.value -%} · {{ a.metafields.recipe.difficulty.value | escape }}{%- endif -%}
+              </span>
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+      {%- if paginate.pages > 1 -%}
+        <div class="apex-recipes__pager">{{ paginate | default_pagination }}</div>
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .apex-recipes {
+    padding-block: 48px;
+  }
+
+  .apex-recipes__heading {
+    margin: 0 0 16px;
+  }
+
+  .apex-recipes__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 32px;
+  }
+
+  .apex-recipes__tags a {
+    padding: 6px 14px;
+    border: 1px solid rgb(var(--color-foreground-rgb) / 0.2);
+    color: inherit;
+    font-size: 0.875rem;
+    text-decoration: none;
+  }
+
+  .apex-recipes__tags a[aria-current='page'] {
+    border-color: var(--color-primary-button-background);
+    background: var(--color-primary-button-background);
+    color: var(--color-primary-button-text);
+  }
+
+  .apex-recipes__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .apex-recipes__card {
+    display: grid;
+    gap: 8px;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .apex-recipes__card img,
+  .apex-recipes__card svg {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  .apex-recipes__title {
+    font-weight: 500;
+  }
+
+  .apex-recipes__meta {
+    font-size: 0.8125rem;
+    opacity: 0.7;
+  }
+
+  .apex-recipes__pager {
+    margin-top: 32px;
+    text-align: center;
+  }
+
+  @media screen and (min-width: 750px) {
+    .apex-recipes__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-recipes__grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "ApexCook recipe list",
+  "tag": "section",
+  "class": "apex-section",
+  "enabled_on": { "templates": ["blog"] },
+  "settings": [{ "type": "checkbox", "id": "enable_animation", "label": "Enable animation", "default": true }],
+  "presets": [{ "name": "ApexCook recipe list" }]
+}
+{% endschema %}

@@ -1,0 +1,31 @@
+{% comment %}
+  Section contract.
+  "Cooked with": the product linked in the article's recipe.product metafield, with Add / Choose size.
+  Renders nothing when no product is linked.
+  @example
+  <!-- Article template "recipe", after the content -->
+{% endcomment %}
+{%- assign cooked = article.metafields.recipe.product.value -%}
+{%- if cooked != blank -%}
+  <div class="apex-cooked-with section section--page-width">
+    <div>
+      <h2 class="apex-cooked-with__heading">{{ 'apex.recipe.cooked_with' | t }}</h2>
+      {% render 'apex-product-card', product: cooked %}
+    </div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .apex-cooked-with {
+    padding-block: 32px 48px;
+  }
+
+  .apex-cooked-with__heading {
+    margin: 0 0 16px;
+    font-size: 1.25rem;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{ "name": "ApexCook cooked with", "tag": "section", "class": "apex-section", "enabled_on": { "templates": ["article"] }, "settings": [], "presets": [{ "name": "ApexCook cooked with" }] }
+{% endschema %}

@@ -16,7 +16,7 @@
   endif
 -%}
 <div class="apex-free-delivery" {{ block.shopify_attributes }}>
-  <p class="apex-free-delivery__text">
+  <p class="apex-free-delivery__text" role="status">
     {%- if qualified -%}
       {{ 'apex.free_delivery.qualified' | t }} ✓
     {%- else -%}
@@ -30,7 +30,7 @@
     aria-valuemin="0"
     aria-valuemax="100"
     aria-valuenow="{{ percent }}"
-    aria-label="{{ 'apex.free_delivery.qualified' | t }}"
+    aria-label="{{ 'apex.free_delivery.progress' | t }}"
   >
     <span class="apex-free-delivery__fill" style="width: {{ percent }}%;"></span>
   </div>

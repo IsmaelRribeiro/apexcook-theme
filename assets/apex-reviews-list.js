@@ -33,7 +33,7 @@ class ApexReviewsList extends HTMLElement {
   /** @param {string} key @param {Record<string, string|number>} values */
   #t(key, values) {
     let text = this.dataset[key] ?? '';
-    for (const [name, value] of Object.entries(values)) text = text.replace(`__${name}__`, String(value));
+    for (const [name, value] of Object.entries(values)) text = text.replace(`__${name}__`, () => String(value));
     return text;
   }
 
@@ -89,7 +89,9 @@ class ApexReviewsList extends HTMLElement {
     }
 
     const status = this.querySelector('[data-apex-status]');
-    if (status && announce) status.textContent = this.#t('tResults', { COUNT: filtered.length });
+    if (status && announce) {
+      status.textContent = filtered.length === 1 ? this.dataset.tResultsOne ?? '' : this.#t('tResults', { COUNT: filtered.length });
+    }
   }
 
   /** @param {import('./apex-reviews.js').Review & {displayDate?: string}} review */

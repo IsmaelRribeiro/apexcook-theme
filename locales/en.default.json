@@ -47,11 +47,15 @@
     },
     "free_delivery": {
       "remaining": "You're {{ amount }} away from free delivery",
-      "qualified": "You've got free delivery"
+      "qualified": "You've got free delivery",
+      "progress": "Progress to free delivery"
     },
     "reviews": {
       "title": "Reviews",
-      "based_on": "Based on {{ count }} reviews",
+      "based_on": {
+        "one": "Based on {{ count }} review",
+        "other": "Based on {{ count }} reviews"
+      },
       "empty": "Be the first to review",
       "source_date": "Review from {{ source }} · {{ date }}",
       "filter_rating": "Rating",
@@ -61,9 +65,15 @@
       "sort_newest": "Most recent",
       "sort_highest": "Highest rated",
       "sort_lowest": "Lowest rated",
-      "results": "Showing {{ count }} reviews",
+      "results": {
+        "one": "Showing {{ count }} review",
+        "other": "Showing {{ count }} reviews"
+      },
       "all": "All",
-      "stars": "{{ count }} stars",
+      "stars": {
+        "one": "{{ count }} star",
+        "other": "{{ count }} stars"
+      },
       "previous": "Previous",
       "next": "Next",
       "page": "Page {{ page }} of {{ total }}",

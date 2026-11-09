@@ -15,6 +15,7 @@
   assign count = parts[0] | plus: 0
   assign sum = parts[1] | plus: 0
 -%}
+<script src="{{ 'apex-nav-price.js' | asset_url }}" type="module" fetchpriority="low"></script>
 <nav class="apex-anchor-nav" aria-label="{{ 'apex.nav.label' | t }}">
   <div class="section section--page-width">
     <div class="apex-anchor-nav__grid">
@@ -31,21 +32,16 @@
         {%- endif -%}
       </div>
       <div class="apex-anchor-nav__buy">
-        <div class="apex-anchor-nav__price">
-          <strong>{{ variant.price | money }}</strong>
-          {%- if variant.compare_at_price > variant.price -%}
-            <span>
-              <s>{{ variant.compare_at_price | money }}</s>
-              {%- assign saving = variant.compare_at_price | minus: variant.price | money -%}
-              {{ 'apex.buy_box.save' | t: amount: saving }}
-            </span>
-          {%- endif -%}
+        <div class="apex-anchor-nav__price" data-apex-nav-price>
+          {% render 'apex-price-was', product: product, variant: variant, compact: true %}
         </div>
         <a class="apex-anchor-nav__cta" href="#buy">{{ 'apex.nav.buy' | t }}</a>
       </div>
       <ul class="apex-anchor-nav__links" role="list">
         <li><a href="#features">{{ 'apex.nav.features' | t }}</a></li>
-        <li><a href="#specs">{{ 'apex.nav.specs' | t }}</a></li>
+        {%- if product.metafields.apex.specs != blank -%}
+          <li><a href="#specs">{{ 'apex.nav.specs' | t }}</a></li>
+        {%- endif -%}
         <li><a href="#reviews">{{ 'apex.nav.reviews' | t }}</a></li>
         <li><a href="#support">{{ 'apex.nav.support' | t }}</a></li>
       </ul>
@@ -54,16 +50,20 @@
 </nav>
 
 {% stylesheet %}
-  .apex-anchor-nav {
+  /* The section wrapper is the sticky element: the nav alone is as tall as its parent. */
+  .shopify-section:has(> .apex-anchor-nav) {
     position: sticky;
     top: 0;
     z-index: 4;
+  }
+
+  .apex-anchor-nav {
     background: var(--color-background);
     border-bottom: 1px solid rgb(var(--color-foreground-rgb) / 0.12);
   }
 
-  body:has(#header-component[sticky='always']) .apex-anchor-nav,
-  body:has(#header-component[data-sticky-state='active']) .apex-anchor-nav {
+  body:has(#header-component[sticky='always']) .shopify-section:has(> .apex-anchor-nav),
+  body:has(#header-component[data-sticky-state='active']) .shopify-section:has(> .apex-anchor-nav) {
     top: calc(var(--header-height, 60px) - 1px);
   }
 
@@ -119,23 +119,18 @@
 
   .apex-anchor-nav__price {
     display: none;
-    text-align: end;
+  }
+
+  .apex-anchor-nav__price .apex-price {
+    justify-content: flex-end;
+    gap: 0 8px;
     line-height: 1.2;
   }
 
-  .apex-anchor-nav__price strong {
-    display: block;
+  .apex-anchor-nav__price .apex-price__now {
+    flex-basis: 100%;
+    text-align: end;
     font-size: 1.125rem;
-  }
-
-  .apex-anchor-nav__price span {
-    font-size: 0.75rem;
-    color: var(--color-primary-button-background);
-  }
-
-  .apex-anchor-nav__price s {
-    margin-inline-end: 4px;
-    color: rgb(var(--color-foreground-rgb) / 0.6);
   }
 
   .apex-anchor-nav__cta {

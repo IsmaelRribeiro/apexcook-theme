@@ -1,4 +1,4 @@
-import { bundleTotal, cartAddItems } from '@theme/apex-bundle';
+import { bundleTotal, cartAddItems, submitState } from '@theme/apex-bundle';
 import { formatMoney } from '@theme/money-formatting';
 
 const PRODUCT_SELECT = 'shopify:product:select';
@@ -17,6 +17,7 @@ class ApexBuyBox extends HTMLElement {
   #controller = new AbortController();
   /** @type {AbortController | null} */
   #request = null;
+  #navigating = false;
 
   connectedCallback() {
     const { signal } = this.#controller;
@@ -24,6 +25,11 @@ class ApexBuyBox extends HTMLElement {
     scope.addEventListener('click', this.#onScopeClick, { signal });
     scope.addEventListener(PRODUCT_SELECT, this.#onProductSelect, { signal });
     this.addEventListener('submit', this.#onSubmit, { signal });
+    // Back/forward cache restores the page mid-navigation: re-enable the button.
+    window.addEventListener('pageshow', () => {
+      this.#navigating = false;
+      this.#render();
+    }, { signal });
     this.#render();
   }
 
@@ -132,27 +138,25 @@ class ApexBuyBox extends HTMLElement {
     );
 
     const submit = /** @type {HTMLButtonElement} */ (this.querySelector('[data-apex-submit]'));
-    if (!this.#request) {
-      submit.disabled = !main.available;
-      submit.textContent = (main.available ? submit.dataset.labelAdd : submit.dataset.labelSoldOut) ?? '';
-    }
+    const state = submitState({ available: main.available, busy: Boolean(this.#request) || this.#navigating });
+    const labels = { add: submit.dataset.labelAdd, soldOut: submit.dataset.labelSoldOut, adding: submit.dataset.labelAdding };
+    submit.disabled = state.disabled;
+    submit.textContent = labels[state.label] ?? '';
   }
 
   /** @param {SubmitEvent} event */
   #onSubmit = async (event) => {
     event.preventDefault();
     const main = this.#main;
-    if (!main.available) return;
+    if (!main.available || this.#request || this.#navigating) return;
 
-    const submit = /** @type {HTMLButtonElement} */ (this.querySelector('[data-apex-submit]'));
     const error = /** @type {HTMLElement} */ (this.querySelector('[data-apex-error]'));
     error.textContent = '';
 
     this.#request?.abort();
     const request = new AbortController();
     this.#request = request;
-    submit.disabled = true;
-    submit.textContent = submit.dataset.labelAdding ?? '';
+    this.#render();
 
     try {
       const response = await fetch(this.dataset.cartAddUrl ?? '/cart/add.js', {
@@ -165,6 +169,7 @@ class ApexBuyBox extends HTMLElement {
         const body = await response.json().catch(() => ({}));
         throw new Error(body.description || body.message || '');
       }
+      this.#navigating = true;
       window.location.assign(this.dataset.cartUrl ?? '/cart');
     } catch (err) {
       if (/** @type {Error} */ (err)?.name === 'AbortError') return;

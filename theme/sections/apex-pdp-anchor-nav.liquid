@@ -61,6 +61,11 @@
     border-bottom: 1px solid rgb(var(--color-foreground-rgb) / 0.12);
   }
 
+  body:has(#header-component[sticky='always']) .apex-anchor-nav,
+  body:has(#header-component[data-sticky-state='active']) .apex-anchor-nav {
+    top: calc(var(--header-height, 60px) - 1px);
+  }
+
   .apex-anchor-nav__grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;

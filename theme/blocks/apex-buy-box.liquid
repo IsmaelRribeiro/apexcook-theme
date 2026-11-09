@@ -78,6 +78,10 @@
       grid-template-columns: minmax(0, 13fr) minmax(0, 10fr);
 
       .product-information__media {
+        position: sticky;
+        top: calc(var(--apex-nav-bottom, 180px) + 24px);
+        align-self: start;
+        padding-block-start: 48px;
         padding-inline-end: 24px;
       }
 

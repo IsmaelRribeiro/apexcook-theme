@@ -65,7 +65,9 @@
         "apex_trust": {
           "type": "apex-trust-badges",
           "settings": {
-            "show_secure": true
+            "show_secure": true,
+            "delivery_link": "/policies/shipping-policy",
+            "returns_link": "/policies/refund-policy"
           }
         },
         "apex_mobile_bar": {

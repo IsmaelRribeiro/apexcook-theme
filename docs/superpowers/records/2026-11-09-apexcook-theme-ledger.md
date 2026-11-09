@@ -82,3 +82,5 @@ Final: minor (deferred): reveal CSS hides content if apex-reveal.js fails to loa
 Final: minor (deferred): fixed popover id ApexSizeGuide (Help me choose dead if size-guide block removed)
 Final: minor (deferred): apex-reviews comment says server-rendered; list is client-side
 Final: minor (deferred): no automated tests for buy box 422/variant swap (verified manually in preview)
+Change (owner 20:18): Ruling: sticky bar compacts on scroll (promo + rating hidden, 141→98px; hysteresis 60px), gallery sticks under the bar (top = bar bottom + 24px) with 48px top spacing; placeholder 4:3 — verified in preview at 1440px (top: full bar; scrolled 400px: compact, gallery top 187px; back to top: full) — cost if wrong: CSS tweak
+Deploy note: GitHub sync stalled once (commit 169a6e2 not applied after 6 min); files pushed via themeFilesUpsert, Shopify wrote them back as 2faa8fc

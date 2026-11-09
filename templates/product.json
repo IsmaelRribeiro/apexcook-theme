@@ -177,9 +177,9 @@
             "apex_trust": {
               "type": "apex-trust-badges",
               "settings": {
-                "show_secure": false,
                 "delivery_link": "/policies/shipping-policy",
-                "returns_link": "/policies/refund-policy"
+                "returns_link": "/policies/refund-policy",
+                "show_secure": false
               }
             }
           },
@@ -195,7 +195,6 @@
           ]
         }
       },
-      "block_order": [],
       "settings": {
         "content_width": "content-center-aligned",
         "desktop_media_position": "left",

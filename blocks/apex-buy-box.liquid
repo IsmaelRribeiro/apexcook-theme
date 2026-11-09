@@ -1,0 +1,176 @@
+{% doc %}
+  Grey purchase box: selected size and add-ons as lines, a live "VAT inclusive" total, Clear all,
+  previous price / saving, Add to basket and the free-delivery note. Without JavaScript it is a
+  plain add-to-cart form for the selected variant. Enhanced by apex-buy-box.js.
+{% enddoc %}
+{%- liquid
+  assign product = closest.product
+  assign variant = product.selected_or_first_available_variant
+  assign threshold = settings.apex_free_delivery_threshold | default: 50 | times: 100
+-%}
+<script src="{{ 'apex-buy-box.js' | asset_url }}" type="module"></script>
+<div id="buy" class="apex-buy-box-anchor"></div>
+<apex-buy-box
+  class="apex-buy-box"
+  id="ApexBuyBox-{{ block.id }}"
+  data-money-format="{{ shop.money_format | escape }}"
+  data-currency="{{ cart.currency.iso_code }}"
+  data-cart-add-url="{{ routes.cart_add_url }}.js"
+  data-cart-url="{{ routes.cart_url }}"
+  data-error-generic="{{ 'apex.buy_box.error_generic' | t | escape }}"
+  {{ block.shopify_attributes }}
+>
+  <form method="post" action="{{ routes.cart_add_url }}" class="apex-buy-box__form" data-apex-form>
+    <div
+      data-apex-main
+      data-variant-id="{{ variant.id }}"
+      data-price="{{ variant.price }}"
+      data-available="{{ variant.available }}"
+    >
+      <input type="hidden" name="id" value="{{ variant.id }}">
+      <p class="apex-buy-box__product">{{ product.title | escape }}</p>
+      {%- unless product.has_only_default_variant -%}
+        <p class="apex-buy-box__variant">{{ variant.title | escape }}</p>
+      {%- endunless -%}
+      {% render 'apex-price-was', product: product, variant: variant %}
+    </div>
+
+    <ul class="apex-buy-box__lines" role="list" data-apex-lines hidden></ul>
+
+    <div class="apex-buy-box__total" data-apex-total-row hidden>
+      <span>{{ 'apex.buy_box.total' | t }}</span>
+      <span>
+        <strong data-apex-total>{{ variant.price | money }}</strong>
+        <small>{{ 'apex.buy_box.vat_inclusive' | t }}</small>
+      </span>
+    </div>
+    <button type="button" class="apex-buy-box__clear" data-apex-clear hidden>{{ 'apex.buy_box.clear_all' | t }}</button>
+
+    <p class="apex-buy-box__vat" data-apex-vat>{{ 'apex.buy_box.incl_vat' | t }}</p>
+
+    <button
+      type="submit"
+      class="apex-buy-box__submit"
+      data-apex-submit
+      data-label-add="{{ 'apex.buy_box.add_to_basket' | t }}"
+      data-label-sold-out="{{ 'apex.buy_box.sold_out' | t }}"
+      data-label-adding="{{ 'apex.buy_box.adding' | t }}"
+      {% unless variant.available %}disabled{% endunless %}
+    >
+      {%- if variant.available -%}{{ 'apex.buy_box.add_to_basket' | t }}{%- else -%}{{ 'apex.buy_box.sold_out' | t }}{%- endif -%}
+    </button>
+    <p class="apex-buy-box__error" role="status" aria-live="polite" data-apex-error></p>
+
+    {%- if threshold > 0 -%}
+      <p class="apex-buy-box__delivery">{{ 'apex.buy_box.free_delivery_over' | t: amount: threshold | money_without_trailing_zeros }}</p>
+    {%- endif -%}
+  </form>
+  <template data-apex-line-template>
+    <li class="apex-buy-box__line"><span data-name></span><span data-price></span></li>
+  </template>
+</apex-buy-box>
+
+{% stylesheet %}
+  .apex-buy-box {
+    display: block;
+    padding: 24px;
+    background: rgb(var(--color-foreground-rgb) / 0.06);
+  }
+
+  .apex-buy-box__form {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+  }
+
+  .apex-buy-box__product,
+  .apex-buy-box__variant {
+    margin: 0;
+  }
+
+  .apex-buy-box__product {
+    font-weight: 600;
+  }
+
+  .apex-buy-box__variant {
+    font-size: 0.875rem;
+    opacity: 0.75;
+  }
+
+  .apex-buy-box__lines {
+    display: grid;
+    gap: 4px;
+    margin: 0;
+    padding: 8px 0 0;
+    border-top: 1px solid rgb(var(--color-foreground-rgb) / 0.12);
+    list-style: none;
+    font-size: 0.875rem;
+  }
+
+  .apex-buy-box__line,
+  .apex-buy-box__total {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .apex-buy-box__total small {
+    margin-inline-start: 4px;
+    font-size: 0.75rem;
+    opacity: 0.75;
+  }
+
+  .apex-buy-box__clear {
+    justify-self: start;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    font-size: 0.8125rem;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .apex-buy-box__vat,
+  .apex-buy-box__delivery {
+    margin: 0;
+    font-size: 0.75rem;
+    opacity: 0.75;
+    text-align: center;
+  }
+
+  .apex-buy-box__submit {
+    width: 100%;
+    padding: 16px;
+    border: 0;
+    background: var(--color-primary-button-background);
+    color: var(--color-primary-button-text);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .apex-buy-box__submit:hover {
+    background: var(--color-primary-button-hover-background);
+  }
+
+  .apex-buy-box__submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .apex-buy-box__error {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--color-primary-button-background);
+  }
+
+  .apex-buy-box__error:empty {
+    display: none;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{ "name": "ApexCook buy box", "settings": [] }
+{% endschema %}

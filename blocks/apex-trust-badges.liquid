@@ -1,0 +1,51 @@
+{% doc %}
+  Delivery, returns and guarantee badges, each optionally linked to a policy page.
+{% enddoc %}
+<ul class="apex-trust" role="list" {{ block.shopify_attributes }}>
+  {%- liquid
+    assign labels = 'apex.trust.delivery,apex.trust.returns,apex.trust.guarantee' | split: ','
+    assign links = block.settings.delivery_link | append: '|' | append: block.settings.returns_link | append: '|' | append: block.settings.guarantee_link | split: '|'
+  -%}
+  {%- for key in labels -%}
+    {%- assign link = links[forloop.index0] -%}
+    <li class="apex-trust__item">
+      {%- if link != blank -%}<a href="{{ link }}">{{ key | t }}</a>{%- else -%}{{ key | t }}{%- endif -%}
+    </li>
+  {%- endfor -%}
+  {%- if block.settings.show_secure -%}
+    <li class="apex-trust__item">{{ 'apex.trust.secure' | t }}</li>
+  {%- endif -%}
+</ul>
+
+{% stylesheet %}
+  .apex-trust {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .apex-trust__item {
+    padding: 6px 10px;
+    border: 1px solid rgb(var(--color-foreground-rgb) / 0.15);
+    font-size: 0.75rem;
+  }
+
+  .apex-trust__item a {
+    color: inherit;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "ApexCook trust badges",
+  "settings": [
+    { "type": "url", "id": "delivery_link", "label": "Delivery link", "default": "/policies/shipping-policy" },
+    { "type": "url", "id": "returns_link", "label": "Returns link", "default": "/policies/refund-policy" },
+    { "type": "url", "id": "guarantee_link", "label": "Guarantee link" },
+    { "type": "checkbox", "id": "show_secure", "label": "Show 'Secure checkout'", "default": false }
+  ]
+}
+{% endschema %}

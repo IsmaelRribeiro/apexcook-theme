@@ -1,0 +1,127 @@
+{% doc %}
+  Add-ons from the product's apex.addons metafield. Each "Add" toggles the item into the buy box
+  (event `apex:addon-toggle`); nothing is added to the basket until "Add to basket".
+  Sold-out add-ons are disabled.
+{% enddoc %}
+{%- assign addons = closest.product.metafields.apex.addons.value -%}
+{%- if addons != blank -%}
+  <div class="apex-addons" data-apex-addons {{ block.shopify_attributes }}>
+    <h2 class="apex-addons__title">{{ 'apex.addons.title' | t }}</h2>
+    <ul class="apex-addons__list" role="list">
+      {%- for addon in addons -%}
+        {%- assign v = addon.selected_or_first_available_variant -%}
+        <li class="apex-addons__item{% if forloop.index > block.settings.visible_count %} apex-addons__item--extra{% endif %}" {% if forloop.index > block.settings.visible_count %}hidden{% endif %}>
+          {%- if addon.featured_image -%}
+            {{ addon.featured_image | image_url: width: 160 | image_tag: loading: 'lazy', class: 'apex-addons__image', alt: '' }}
+          {%- else -%}
+            <span class="apex-addons__image" aria-hidden="true"></span>
+          {%- endif -%}
+          <div class="apex-addons__info">
+            <p class="apex-addons__name">{{ addon.title | escape }}</p>
+            {% render 'apex-price-was', product: addon, variant: v, compact: true %}
+          </div>
+          <button
+            type="button"
+            class="apex-addons__toggle"
+            aria-pressed="false"
+            data-variant-id="{{ v.id }}"
+            data-price="{{ v.price }}"
+            data-title="{{ addon.title | escape }}"
+            data-available="{{ v.available }}"
+            data-label-add="{{ 'apex.addons.add' | t }}"
+            data-label-added="{{ 'apex.addons.added' | t }}"
+            aria-label="{{ 'apex.addons.add' | t }}: {{ addon.title | escape }}"
+            {% unless v.available %}disabled{% endunless %}
+          >
+            {%- if v.available -%}{{ 'apex.addons.add' | t }}{%- else -%}{{ 'apex.addons.sold_out' | t }}{%- endif -%}
+          </button>
+        </li>
+      {%- endfor -%}
+    </ul>
+    {%- if addons.size > block.settings.visible_count -%}
+      <button type="button" class="apex-addons__more" data-apex-addons-more>{{ 'apex.addons.see_more' | t }}</button>
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .apex-addons__title {
+    margin: 0 0 8px;
+    font-size: 1rem;
+  }
+
+  .apex-addons__list {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .apex-addons__item {
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+    border: 1px solid rgb(var(--color-foreground-rgb) / 0.12);
+  }
+
+  .apex-addons__image {
+    display: block;
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    background: rgb(var(--color-foreground-rgb) / 0.06);
+  }
+
+  .apex-addons__name {
+    margin: 0 0 2px;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .apex-addons__toggle {
+    min-width: 88px;
+    padding: 8px 12px;
+    border: 1px solid currentColor;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 0.8125rem;
+    cursor: pointer;
+  }
+
+  .apex-addons__toggle[aria-pressed='true'] {
+    border-color: var(--color-primary-button-background);
+    background: var(--color-primary-button-background);
+    color: var(--color-primary-button-text);
+  }
+
+  .apex-addons__toggle:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .apex-addons__more {
+    margin-top: 8px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    font-size: 0.8125rem;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "ApexCook add-ons",
+  "settings": [
+    { "type": "paragraph", "content": "Pick the add-ons in the product's 'Add-ons' metafield." },
+    { "type": "range", "id": "visible_count", "label": "Visible before 'See more'", "min": 1, "max": 6, "step": 1, "default": 3 }
+  ]
+}
+{% endschema %}

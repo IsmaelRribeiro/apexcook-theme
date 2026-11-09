@@ -1,0 +1,35 @@
+{% doc %}
+  Five-star rating graphic with an accessible label.
+
+  @param {number} rating - Rating from 0 to 5 (decimals allowed)
+
+  @example
+  {% render 'apex-stars', rating: 4.5 %}
+{% enddoc %}
+{%- assign pct = rating | times: 20 | at_most: 100 | at_least: 0 -%}
+<span class="apex-stars" role="img" aria-label="{{ 'apex.reviews.rating_label' | t: rating: rating }}">
+  <span class="apex-stars__fill" style="--apex-stars: {{ pct }}%;" aria-hidden="true">★★★★★</span>
+</span>
+
+{% stylesheet %}
+  .apex-stars {
+    position: relative;
+    display: inline-block;
+    color: rgb(var(--color-foreground-rgb) / 0.2);
+    letter-spacing: 2px;
+    line-height: 1;
+  }
+
+  .apex-stars::before {
+    content: '★★★★★';
+  }
+
+  .apex-stars__fill {
+    position: absolute;
+    inset: 0;
+    width: var(--apex-stars);
+    overflow: hidden;
+    color: #f5a623;
+    white-space: nowrap;
+  }
+{% endstylesheet %}

@@ -1,26 +1,51 @@
 {% comment %}
   Section contract.
-  Sticky product sub-navigation: Features · Specs · Reviews · Support, "See how it compares", and a
-  compact name + price + Buy button that scrolls to the buy box.
+  Samsung-style sticky product bar. Left: product name, star rating and the Features · Specs ·
+  Reviews · Support tabs. Right: price, previous price / saving and "Buy now", which scrolls to
+  the buy box.
   @example
   <!-- Product template, above the main product section -->
 {% endcomment %}
-{%- assign variant = product.selected_or_first_available_variant -%}
+{%- liquid
+  assign variant = product.selected_or_first_available_variant
+  capture summary
+    render 'apex-reviews-collect', product: product, mode: 'summary'
+  endcapture
+  assign parts = summary | strip | split: '|'
+  assign count = parts[0] | plus: 0
+  assign sum = parts[1] | plus: 0
+-%}
 <nav class="apex-anchor-nav" aria-label="{{ 'apex.nav.label' | t }}">
-  <div class="apex-anchor-nav__inner section section--page-width">
-    <div class="apex-anchor-nav__row">
-      <p class="apex-anchor-nav__title">{{ product.title | escape }}</p>
+  <div class="section section--page-width">
+    <div class="apex-anchor-nav__grid">
+      <div class="apex-anchor-nav__info">
+        <p class="apex-anchor-nav__title">{{ product.title | escape }}</p>
+        {%- if count > 0 -%}
+          {%- assign average = sum | times: 10.0 | divided_by: count | round | divided_by: 10.0 -%}
+          <a class="apex-anchor-nav__rating" href="#reviews">
+            {% render 'apex-stars', rating: average %}
+            <span>{{ average }} ({{ count }})</span>
+          </a>
+        {%- endif -%}
+      </div>
+      <div class="apex-anchor-nav__buy">
+        <div class="apex-anchor-nav__price">
+          <strong>{{ variant.price | money }}</strong>
+          {%- if variant.compare_at_price > variant.price -%}
+            <span>
+              <s>{{ variant.compare_at_price | money }}</s>
+              {{ 'apex.buy_box.save' | t: amount: variant.compare_at_price | minus: variant.price | money }}
+            </span>
+          {%- endif -%}
+        </div>
+        <a class="apex-anchor-nav__cta" href="#buy">{{ 'apex.nav.buy' | t }}</a>
+      </div>
       <ul class="apex-anchor-nav__links" role="list">
         <li><a href="#features">{{ 'apex.nav.features' | t }}</a></li>
         <li><a href="#specs">{{ 'apex.nav.specs' | t }}</a></li>
         <li><a href="#reviews">{{ 'apex.nav.reviews' | t }}</a></li>
         <li><a href="#support">{{ 'apex.nav.support' | t }}</a></li>
-        <li><a href="#compare">{{ 'apex.nav.compare' | t }}</a></li>
       </ul>
-      <div class="apex-anchor-nav__buy">
-        <span class="apex-anchor-nav__price">{{ variant.price | money }}</span>
-        <a class="apex-anchor-nav__cta" href="#{{ section.settings.buy_box_anchor | default: 'buy' }}">{{ 'apex.nav.buy' | t }}</a>
-      </div>
     </div>
   </div>
 </nav>
@@ -34,31 +59,90 @@
     border-bottom: 1px solid rgb(var(--color-foreground-rgb) / 0.12);
   }
 
-  .apex-anchor-nav__row {
-    display: flex;
+  .apex-anchor-nav__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: 'info buy' 'links links';
     align-items: center;
-    gap: 16px;
-    min-height: 56px;
+    gap: 4px 24px;
+    padding-block: 10px 0;
+  }
+
+  .apex-anchor-nav__info {
+    grid-area: info;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 16px;
+    min-width: 0;
   }
 
   .apex-anchor-nav__title {
-    display: none;
     margin: 0;
+    overflow: hidden;
+    font-size: 1rem;
     font-weight: 600;
     white-space: nowrap;
-    overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 28ch;
+  }
+
+  .apex-anchor-nav__rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: inherit;
+    font-size: 0.75rem;
+    text-decoration: none;
+  }
+
+  .apex-anchor-nav__buy {
+    grid-area: buy;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .apex-anchor-nav__price {
+    display: none;
+    text-align: end;
+    line-height: 1.2;
+  }
+
+  .apex-anchor-nav__price strong {
+    display: block;
+    font-size: 1.125rem;
+  }
+
+  .apex-anchor-nav__price span {
+    font-size: 0.75rem;
+    color: var(--color-primary-button-background);
+  }
+
+  .apex-anchor-nav__price s {
+    margin-inline-end: 4px;
+    color: rgb(var(--color-foreground-rgb) / 0.6);
+  }
+
+  .apex-anchor-nav__cta {
+    padding: 10px 20px;
+    background: var(--color-primary-button-background);
+    color: var(--color-primary-button-text);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
   }
 
   .apex-anchor-nav__links {
+    grid-area: links;
     display: flex;
-    gap: 20px;
+    gap: 24px;
     margin: 0;
-    padding: 0;
+    padding: 8px 0 10px;
     overflow-x: auto;
     list-style: none;
     font-size: 0.875rem;
+    font-weight: 600;
     scrollbar-width: none;
   }
 
@@ -72,30 +156,18 @@
     text-decoration: underline;
   }
 
-  .apex-anchor-nav__buy {
-    display: none;
-    align-items: center;
-    gap: 12px;
-    margin-inline-start: auto;
-  }
+  @media screen and (min-width: 750px) {
+    .apex-anchor-nav__price {
+      display: block;
+    }
 
-  .apex-anchor-nav__cta {
-    padding: 8px 16px;
-    background: var(--color-primary-button-background);
-    color: var(--color-primary-button-text);
-    font-weight: 600;
-    text-decoration: none;
-  }
-
-  @media screen and (min-width: 990px) {
-    .apex-anchor-nav__title,
-    .apex-anchor-nav__buy {
-      display: flex;
+    .apex-anchor-nav__title {
+      font-size: 1.25rem;
     }
   }
 
   html {
-    scroll-padding-top: 72px;
+    scroll-padding-top: 120px;
   }
 {% endstylesheet %}
 
@@ -105,9 +177,7 @@
   "tag": "section",
   "class": "apex-section",
   "enabled_on": { "templates": ["product"] },
-  "settings": [
-    { "type": "text", "id": "buy_box_anchor", "label": "Buy box anchor id", "default": "buy" }
-  ],
+  "settings": [],
   "presets": [{ "name": "ApexCook product nav" }]
 }
 {% endschema %}

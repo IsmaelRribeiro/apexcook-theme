@@ -11,9 +11,7 @@
   "sections": {
     "apex_nav": {
       "type": "apex-pdp-anchor-nav",
-      "settings": {
-        "buy_box_anchor": "buy"
-      }
+      "settings": {}
     },
     "main": {
       "type": "product-information",
@@ -22,14 +20,14 @@
           "type": "_product-media-gallery",
           "static": true,
           "settings": {
-            "media_presentation": "grid",
+            "media_presentation": "carousel",
             "media_columns": "two",
             "image_gap": 4,
             "large_first_image": false,
             "icons_style": "arrow",
-            "slideshow_controls_style": "counter",
+            "slideshow_controls_style": "thumbnails",
             "slideshow_mobile_controls_style": "dots",
-            "thumbnail_position": "right",
+            "thumbnail_position": "bottom",
             "thumbnail_width": 44,
             "aspect_ratio": "adapt",
             "constrain_to_viewport": true,
@@ -57,7 +55,7 @@
             "height": "fit",
             "details_position": "flex-start",
             "gap": 28,
-            "sticky_details_desktop": true,
+            "sticky_details_desktop": false,
             "background_media": "none",
             "video_position": "cover",
             "background_image_position": "cover",
@@ -174,12 +172,10 @@
               "type": "apex-buy-box",
               "settings": {}
             },
-            "apex_trust": {
-              "type": "apex-trust-badges",
+            "apex_precheck": {
+              "type": "apex-prepurchase",
               "settings": {
-                "delivery_link": "/policies/shipping-policy",
-                "returns_link": "/policies/refund-policy",
-                "show_secure": false
+                "delivery_link": "/policies/shipping-policy"
               }
             }
           },
@@ -190,8 +186,8 @@
             "variant_picker_R3rGDr",
             "apex_size_guide",
             "apex_addons",
-            "apex_buy_box",
-            "apex_trust"
+            "apex_precheck",
+            "apex_buy_box"
           ]
         }
       },

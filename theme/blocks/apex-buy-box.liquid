@@ -62,7 +62,8 @@
     <p class="apex-buy-box__error" role="status" aria-live="polite" data-apex-error></p>
 
     {%- if threshold > 0 -%}
-      <p class="apex-buy-box__delivery">{{ 'apex.buy_box.free_delivery_over' | t: amount: threshold | money_without_trailing_zeros }}</p>
+      {%- assign threshold_money = threshold | money_without_trailing_zeros -%}
+      <p class="apex-buy-box__delivery">{{ 'apex.buy_box.free_delivery_over' | t: amount: threshold_money }}</p>
     {%- endif -%}
   </form>
   <template data-apex-line-template>

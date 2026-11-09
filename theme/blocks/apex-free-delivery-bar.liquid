@@ -20,7 +20,8 @@
     {%- if qualified -%}
       {{ 'apex.free_delivery.qualified' | t }} ✓
     {%- else -%}
-      {{ 'apex.free_delivery.remaining' | t: amount: remaining | money }}
+      {%- assign remaining_money = remaining | money -%}
+      {{ 'apex.free_delivery.remaining' | t: amount: remaining_money }}
     {%- endif -%}
   </p>
   <div

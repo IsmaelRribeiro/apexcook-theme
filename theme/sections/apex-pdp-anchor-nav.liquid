@@ -36,7 +36,8 @@
           {%- if variant.compare_at_price > variant.price -%}
             <span>
               <s>{{ variant.compare_at_price | money }}</s>
-              {{ 'apex.buy_box.save' | t: amount: variant.compare_at_price | minus: variant.price | money }}
+              {%- assign saving = variant.compare_at_price | minus: variant.price | money -%}
+              {{ 'apex.buy_box.save' | t: amount: saving }}
             </span>
           {%- endif -%}
         </div>

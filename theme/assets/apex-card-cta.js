@@ -18,7 +18,8 @@ class ApexCardCta extends HTMLElement {
   /** @param {SubmitEvent} event */
   #onSubmit = async (event) => {
     const updateCart = window.Shopify?.actions?.updateCart;
-    if (window.Theme?.template?.name !== 'cart' || typeof updateCart !== 'function') return;
+    const template = document.querySelector('main[data-template]')?.getAttribute('data-template') ?? '';
+    if (!template.startsWith('cart') || typeof updateCart !== 'function') return;
 
     const form = event.target;
     if (!(form instanceof HTMLFormElement)) return;

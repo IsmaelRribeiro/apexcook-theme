@@ -1,6 +1,8 @@
 /**
- * Keeps the sticky product bar's price in step with the selected size: when Horizon re-renders
- * the product for a new variant, copy the bar's price markup from the fresh page HTML.
+ * Sticky product bar behaviour:
+ * - keeps the bar's price in step with the selected size (copies it from the re-rendered page);
+ * - adds `is-compact` once the content scrolls under the bar (hides promo + rating);
+ * - publishes the bar's bottom edge as --apex-nav-bottom so the gallery can stick beneath it.
  */
 const SELECT = 'shopify:product:select';
 const PRICE = '[data-apex-nav-price]';
@@ -19,7 +21,28 @@ async function onSelect(event) {
   }
 }
 
+let frame = 0;
+function update() {
+  frame = 0;
+  const nav = document.querySelector('.apex-anchor-nav');
+  const next = nav?.closest('.shopify-section')?.nextElementSibling;
+  if (!nav || !next) return;
+  // Hysteresis (60px) so the bar does not flicker when it shrinks.
+  const gap = next.getBoundingClientRect().top - nav.getBoundingClientRect().bottom;
+  if (gap < -60) nav.classList.add('is-compact');
+  else if (gap >= -1) nav.classList.remove('is-compact');
+  document.documentElement.style.setProperty('--apex-nav-bottom', `${Math.round(nav.getBoundingClientRect().bottom)}px`);
+}
+const schedule = () => {
+  if (!frame) frame = requestAnimationFrame(update);
+};
+
 if (!window.__apexNavPriceReady) {
   window.__apexNavPriceReady = true;
   document.addEventListener(SELECT, onSelect);
+  // Horizon may scroll .page-wrapper instead of the window, so listen in the capture phase.
+  document.addEventListener('scroll', schedule, { capture: true, passive: true });
+  window.addEventListener('resize', schedule, { passive: true });
+  document.addEventListener('shopify:section:load', schedule);
+  schedule();
 }

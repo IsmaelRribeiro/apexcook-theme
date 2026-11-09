@@ -1,0 +1,13 @@
+{
+  "name": "apexcook-theme",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/",
+    "check": "shopify theme check --path theme --fail-level error"
+  },
+  "devDependencies": {
+    "@fontsource-variable/google-sans-flex": "5.3.2",
+    "@shopify/cli": "latest"
+  }
+}

@@ -1,0 +1,75 @@
+{% doc %}
+  Card call to action. Single-variant products get a native "Add" form that lands on the basket;
+  products with options link to the product page with "Choose size". In the basket the form is
+  enhanced by apex-card-cta.js to add without leaving the page.
+
+  @param {object} product - The product to add or link to.
+
+  @example
+  {% render 'apex-card-cta-button', product: product %}
+{% enddoc %}
+{%- liquid
+  assign variant = product.selected_or_first_available_variant
+-%}
+<script src="{{ 'apex-card-cta.js' | asset_url }}" type="module" fetchpriority="low"></script>
+<apex-card-cta class="apex-card-cta">
+  {%- if product == blank -%}
+    <span class="apex-card-cta__button" aria-disabled="true">{{ 'apex.card.add' | t }}</span>
+  {%- elsif product.has_only_default_variant -%}
+    <form method="post" action="{{ routes.cart_add_url }}" class="apex-card-cta__form">
+      <input type="hidden" name="id" value="{{ variant.id }}">
+      <input type="hidden" name="quantity" value="1">
+      <input type="hidden" name="return_to" value="{{ routes.cart_url }}">
+      <button
+        type="submit"
+        class="apex-card-cta__button"
+        {% unless product.available %}disabled{% endunless %}
+        aria-label="{{ 'apex.card.add' | t }}: {{ product.title | escape }}"
+      >
+        {%- if product.available -%}
+          {{- 'apex.card.add' | t -}}
+        {%- else -%}
+          {{- 'apex.buy_box.sold_out' | t -}}
+        {%- endif -%}
+      </button>
+    </form>
+  {%- else -%}
+    <a
+      class="apex-card-cta__button"
+      href="{{ product.url }}"
+      aria-label="{{ 'apex.card.choose_size' | t }}: {{ product.title | escape }}"
+    >
+      {{- 'apex.card.choose_size' | t -}}
+    </a>
+  {%- endif -%}
+</apex-card-cta>
+
+{% stylesheet %}
+  .apex-card-cta__form {
+    margin: 0;
+  }
+
+  .apex-card-cta__button {
+    display: inline-block;
+    padding: 8px 16px;
+    border: 0;
+    background: var(--color-primary-button-background);
+    color: var(--color-primary-button-text);
+    font: inherit;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .apex-card-cta__button:hover {
+    background: var(--color-primary-button-hover-background);
+    color: var(--color-primary-button-hover-text);
+  }
+
+  .apex-card-cta__button[disabled],
+  .apex-card-cta__button[aria-disabled='true'] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+{% endstylesheet %}

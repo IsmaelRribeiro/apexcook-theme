@@ -1,0 +1,60 @@
+{% doc %}
+  Shared styles for ApexCook <details> accordions (FAQ, specs) and the expand-all control.
+
+  @example
+  {% render 'apex-accordion-styles' %}
+{% enddoc %}
+<script src="{{ 'apex-expand-all.js' | asset_url }}" type="module" fetchpriority="low"></script>
+{% stylesheet %}
+  .apex-accordion__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .apex-accordion__expand {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    font-size: 0.875rem;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .apex-accordion__item {
+    border-bottom: 1px solid rgb(var(--color-foreground-rgb) / 0.15);
+  }
+
+  .apex-accordion__summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-block: 20px;
+    font-weight: 500;
+    list-style: none;
+    cursor: pointer;
+  }
+
+  .apex-accordion__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .apex-accordion__summary::after {
+    content: '+';
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  .apex-accordion__item[open] > .apex-accordion__summary::after {
+    content: '−';
+  }
+
+  .apex-accordion__body {
+    padding-bottom: 20px;
+  }
+{% endstylesheet %}

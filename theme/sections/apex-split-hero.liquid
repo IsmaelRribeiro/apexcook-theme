@@ -1,0 +1,148 @@
+{% comment %}
+  Section contract.
+  Split hero: coloured text panel on one side, image on the other. Image stacks on top on mobile.
+  @example
+  <!-- Add "ApexCook split hero" to the home page or About page -->
+{% endcomment %}
+{%- if section.settings.enable_animation -%}{% render 'apex-motion-styles' %}{%- endif -%}
+<div
+  class="apex-split-hero section section--page-width"
+  style="--apex-hero-bg: {{ section.settings.background_color }}; --apex-hero-fg: {{ section.settings.text_color }};"
+>
+  <div class="apex-split-hero__grid">
+    <div class="apex-split-hero__panel" {% if section.settings.enable_animation %}data-apex-reveal{% endif %}>
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="apex-split-hero__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h1 class="apex-split-hero__heading">{{ section.settings.heading | escape }}</h1>
+      {%- endif -%}
+      {%- if section.settings.text != blank -%}
+        <div class="apex-split-hero__text">{{ section.settings.text }}</div>
+      {%- endif -%}
+      {%- if section.settings.button_label != blank and section.settings.button_link != blank -%}
+        <a class="apex-split-hero__button" href="{{ section.settings.button_link }}">
+          {{- section.settings.button_label | escape -}}
+        </a>
+      {%- endif -%}
+    </div>
+    <div class="apex-split-hero__media">
+      {%- if section.settings.image != blank -%}
+        {{
+          section.settings.image
+          | image_url: width: 1600
+          | image_tag:
+            loading: 'eager',
+            fetchpriority: 'high',
+            widths: '600, 900, 1200, 1600',
+            sizes: '(min-width: 750px) 50vw, 100vw',
+            class: 'apex-split-hero__image'
+        }}
+      {%- else -%}
+        {{ 'hero-apparel-1' | placeholder_svg_tag: 'apex-split-hero__image' }}
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .apex-split-hero {
+    padding-block: 24px;
+  }
+
+  .apex-split-hero__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .apex-split-hero__panel {
+    order: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+    padding: 32px 24px;
+    background: var(--apex-hero-bg);
+    color: var(--apex-hero-fg);
+  }
+
+  .apex-split-hero__eyebrow {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .apex-split-hero__heading {
+    margin: 0;
+    color: inherit;
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    font-weight: 500;
+    line-height: 1.15;
+  }
+
+  .apex-split-hero__text {
+    max-width: 36ch;
+  }
+
+  .apex-split-hero__button {
+    align-self: flex-start;
+    padding: 12px 20px;
+    background: var(--apex-hero-fg);
+    color: var(--apex-hero-bg);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .apex-split-hero__media {
+    order: 1;
+    min-width: 0;
+  }
+
+  .apex-split-hero__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+
+  @media screen and (min-width: 750px) {
+    .apex-split-hero__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .apex-split-hero__panel {
+      order: 1;
+      padding: 48px;
+    }
+
+    .apex-split-hero__media {
+      order: 2;
+    }
+
+    .apex-split-hero__image {
+      aspect-ratio: auto;
+      min-height: 320px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "ApexCook split hero",
+  "tag": "section",
+  "class": "apex-section",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "ApexCook" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "ApexCook deals, all in one place" },
+    { "type": "richtext", "id": "text", "label": "Text" },
+    { "type": "text", "id": "button_label", "label": "Button label" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "color", "id": "background_color", "label": "Panel background", "default": "#E00000" },
+    { "type": "color", "id": "text_color", "label": "Panel text", "default": "#FFFFFF" },
+    { "type": "checkbox", "id": "enable_animation", "label": "Enable animation", "default": true }
+  ],
+  "presets": [{ "name": "ApexCook split hero" }]
+}
+{% endschema %}

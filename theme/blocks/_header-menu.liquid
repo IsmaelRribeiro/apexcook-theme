@@ -955,23 +955,56 @@
     display: none;
   }
 
-  /* ApexCook: Shop Highlights panel (heading + 2-column image tiles, left aligned) */
+  /* ApexCook: Samsung-style navigation (top-level links + Shop Highlights panel) */
+  @media screen and (min-width: 990px) {
+    .header .menu-list__link {
+      font-weight: 700;
+    }
+
+    .header .menu-list .menu-list__list-item .menu-list__link {
+      color: var(--menu-top-level-font-color);
+    }
+
+    .header .menu-list__list-item:not([slot='overflow']) .menu-list__link-title {
+      position: relative;
+      padding: 12px 10px 16px;
+    }
+
+    .header .menu-list__list-item:not([slot='overflow']) .menu-list__link-title::before {
+      content: '';
+      position: absolute;
+      inset-inline: 10px;
+      bottom: 6px;
+      height: 2px;
+      background: currentColor;
+      transform: scaleX(0);
+      transition: transform 0.2s ease;
+    }
+
+    .header .menu-list__list-item:not([slot='overflow']):is(:hover, :focus-within) .menu-list__link-title::before,
+    .header .menu-list__link--active .menu-list__link-title::before {
+      transform: scaleX(1);
+    }
+  }
+
   .apex-mega__heading {
-    margin: 0 0 20px;
-    font-size: 1rem;
+    margin: 0 0 28px;
+    font-size: 14px;
     font-weight: 700;
+    line-height: 16px;
   }
 
   .mega-menu__grid.apex-mega__grid {
     display: block;
-    max-width: 760px;
+    max-width: 308px;
     margin-inline: 0;
+    padding-block-end: 22px;
   }
 
   .apex-mega__grid .mega-menu__list {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 24px 16px;
+    grid-template-columns: repeat(2, 148px);
+    gap: 10px 12px;
   }
 
   .apex-mega__grid .mega-menu__column {
@@ -982,14 +1015,26 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    font-weight: 600;
+    padding: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    color: var(--color-foreground);
+  }
+
+  .apex-mega__grid .mega-menu__link .wrap-text {
+    min-height: 40px;
+  }
+
+  .apex-mega__grid .mega-menu__link:hover .wrap-text {
+    text-decoration: underline;
   }
 
   .apex-mega__grid .mega-menu__link-image,
   .apex-mega__grid img {
     display: block;
-    width: 100%;
-    aspect-ratio: 4 / 3;
+    width: 148px;
+    height: 104px;
     object-fit: cover;
     border-radius: 0;
     background: var(--apex-tile, #f4f4f4);

@@ -31,7 +31,7 @@
 1. **Tamanho esgotado selecionado:** o botão vira "Sold out" desabilitado, os adicionais continuam marcáveis e o total continua correto. Teste na Task 8, Step 6.
 2. **Adicional esgotado:** o toggle fica desabilitado e o adicional nunca entra no payload de `/cart/add.js`. Teste em `bundle.test.mjs` (`cartAddItems ignores unavailable addons`).
 3. **`/cart/add.js` responde 422** (estoque insuficiente de um item): o cliente continua na PDP, a mensagem de erro aparece na live region do buy box e a seleção é mantida. Teste na Task 8, Step 6.
-4. **Produto sem avaliações, sem compare-at ou sem adicionais:** as seções somem sem deixar espaço vazio, nunca aparece "Save £0.00" e não sai JSON-LD AggregateRating. Testes em `reviews.test.mjs` (`ratingSummary of empty list`) e na Task 10, Step 5.
+4. **Produto sem avaliações, sem compare-at ou sem adicionais:** as seções somem sem deixar espaço vazio, nunca aparece "Save £0.00" e não sai JSON-LD AggregateRating. Testes em `reviews.test.mjs` (`ratingSummary of empty list`) e na Task 10, Step 4.
 5. **Subtotal exatamente igual ao limite de frete** e limite zero ou negativo: conta como "qualified". Testes em `free-delivery.test.mjs`.
 
 ---

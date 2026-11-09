@@ -14,3 +14,11 @@ test('cartAddItems ignores unselected addons', () =>
   assert.deepEqual(cartAddItems({variantId:1,quantity:1},[{variantId:7,selected:false,available:true}]).items, [{id:1,quantity:1}]));
 test('cartAddItems dedupes addon ids', () =>
   assert.equal(cartAddItems({variantId:1,quantity:1},[{variantId:7,selected:true,available:true},{variantId:7,selected:true,available:true}]).items.length, 2));
+
+import { submitState } from '../theme/assets/apex-bundle.js';
+test('submitState: available and idle can add', () =>
+  assert.deepEqual(submitState({ available: true, busy: false }), { disabled: false, label: 'add' }));
+test('submitState: sold out is disabled', () =>
+  assert.deepEqual(submitState({ available: false, busy: false }), { disabled: true, label: 'soldOut' }));
+test('submitState: busy (adding or navigating to basket) stays disabled', () =>
+  assert.deepEqual(submitState({ available: true, busy: true }), { disabled: true, label: 'adding' }));

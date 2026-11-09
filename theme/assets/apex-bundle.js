@@ -32,3 +32,15 @@ export function cartAddItems(main, addons) {
   }
   return { items };
 }
+
+/**
+ * State of the "Add to basket" button. `busy` covers both an in-flight request and the
+ * navigation to /cart after success, so a second tap cannot post the items twice.
+ * @param {{available: boolean, busy: boolean}} state
+ * @returns {{disabled: boolean, label: 'add'|'soldOut'|'adding'}}
+ */
+export function submitState({ available, busy }) {
+  if (busy) return { disabled: true, label: 'adding' };
+  if (!available) return { disabled: true, label: 'soldOut' };
+  return { disabled: false, label: 'add' };
+}

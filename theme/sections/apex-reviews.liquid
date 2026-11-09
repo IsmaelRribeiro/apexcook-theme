@@ -23,7 +23,8 @@
   <apex-reviews-list
     data-per-page="{{ section.settings.per_page }}"
     data-t-source-date="{{ 'apex.reviews.source_date' | t: source: '__SOURCE__', date: '__DATE__' | escape }}"
-    data-t-results="{{ 'apex.reviews.results' | t: count: '__COUNT__' | escape }}"
+    data-t-results="{{ 'apex.reviews.results.other' | t: count: '__COUNT__' | escape }}"
+    data-t-results-one="{{ 'apex.reviews.results.one' | t: count: 1 | escape }}"
     data-t-page="{{ 'apex.reviews.page' | t: page: '__PAGE__', total: '__TOTAL__' | escape }}"
     data-t-rating="{{ 'apex.reviews.rating_label' | t: rating: '__RATING__' | escape }}"
   >

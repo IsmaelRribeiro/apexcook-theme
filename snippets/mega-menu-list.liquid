@@ -129,7 +129,7 @@
             -%}
           {%- endcapture -%}
 
-          {% render 'link-featured-image', link: link, class: 'mega-menu__link-image', sizes: collection_image_sizes %}
+          {% render 'link-featured-image', link: link, class: 'mega-menu__link-image', sizes: collection_image_sizes, placeholder: true %}
         {% endif %}
         <span class="wrap-text">
           {{- link.title -}}

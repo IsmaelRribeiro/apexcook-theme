@@ -963,13 +963,36 @@
   }
 
   .mega-menu__grid.apex-mega__grid {
-    max-width: 600px;
+    display: block;
+    max-width: 760px;
     margin-inline: 0;
+  }
+
+  .apex-mega__grid .mega-menu__list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px 16px;
+  }
+
+  .apex-mega__grid .mega-menu__column {
+    grid-column: auto;
+  }
+
+  .apex-mega__grid .mega-menu__link {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-weight: 600;
   }
 
   .apex-mega__grid .mega-menu__link-image,
   .apex-mega__grid img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
     border-radius: 0;
+    background: var(--apex-tile, #f4f4f4);
   }
 {% endstylesheet %}
 

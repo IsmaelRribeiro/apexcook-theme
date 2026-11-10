@@ -1,0 +1,3 @@
+# Buy PDP + upsell (2026-11-10)
+- templates/product.buy.json: Samsung "buy" page (promo strip, sticky nav without Features, product-information, specs, reviews, "You may also like", support). Assigned (templateSuffix "buy") to the set, spatula, glass lid and handle sleeve. The CJ frying pan keeps the long PDP.
+- Upsell: page "Complete your order" (/pages/complete-your-order, template page.upsell → sections/apex-upsell + assets/apex-upsell.js). Theme setting apex_upsell_page. Buy box, search/PLP cards and quick-add buttons go there with ?added=<variant>. No discounts shown (owner's choice): only real compare-at prices.

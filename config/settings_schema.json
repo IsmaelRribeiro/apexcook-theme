@@ -2145,6 +2145,12 @@
         "info": "Small links above the header (e.g. Recipes, Support) and in the mobile menu."
       },
       {
+        "type": "page",
+        "id": "apex_upsell_page",
+        "label": "Page after 'Add to basket'",
+        "info": "A page using the 'upsell' template. Empty = go straight to the basket."
+      },
+      {
         "type": "link_list",
         "id": "apex_popular_searches",
         "label": "Popular searches menu",

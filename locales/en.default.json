@@ -100,6 +100,22 @@
       "search_placeholder": "Search",
       "search": "Search"
     },
+    "upsell": {
+      "add": "Add",
+      "adding": "Adding…",
+      "added": "Added",
+      "added_title": "{{ title }} added to your basket",
+      "empty_bar": "Your basket",
+      "subtotal": "Subtotal",
+      "items": {
+        "one": "{{ count }} item",
+        "other": "{{ count }} items"
+      },
+      "continue": "Continue to basket",
+      "sections": "Sections",
+      "recommended": "Recommended",
+      "nothing_more": "You've got everything. Head to your basket to check out."
+    },
     "plp": {
       "categories": "Categories",
       "types": "Product types",

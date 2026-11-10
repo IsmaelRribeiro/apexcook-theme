@@ -19,7 +19,11 @@
     <form method="post" action="{{ routes.cart_add_url }}" class="apex-card-cta__form">
       <input type="hidden" name="id" value="{{ variant.id }}">
       <input type="hidden" name="quantity" value="1">
-      <input type="hidden" name="return_to" value="{{ routes.cart_url }}">
+      {%- if settings.apex_upsell_page != blank -%}
+        <input type="hidden" name="return_to" value="{{ settings.apex_upsell_page.url }}?added={{ product.selected_or_first_available_variant.id }}">
+      {%- else -%}
+        <input type="hidden" name="return_to" value="{{ routes.cart_url }}">
+      {%- endif -%}
       <button
         type="submit"
         class="apex-card-cta__button"

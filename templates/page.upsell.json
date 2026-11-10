@@ -1,0 +1,43 @@
+{
+  "sections": {
+    "main": {
+      "type": "apex-upsell",
+      "blocks": {
+        "row_acc": {
+          "type": "row",
+          "settings": {
+            "collection": "accessories",
+            "title": "Accessories"
+          }
+        },
+        "row_sets": {
+          "type": "row",
+          "settings": {
+            "collection": "bundles",
+            "title": "Sets & bundles"
+          }
+        },
+        "row_cook": {
+          "type": "row",
+          "settings": {
+            "collection": "cookware",
+            "title": "Cookware"
+          }
+        }
+      },
+      "block_order": [
+        "row_acc",
+        "row_sets",
+        "row_cook"
+      ],
+      "settings": {
+        "heading": "Complete your kitchen",
+        "subheading": "Add the extras now and they ship together with your order.",
+        "recommended_limit": 10
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

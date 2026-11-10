@@ -17,6 +17,7 @@
   data-currency="{{ cart.currency.iso_code }}"
   data-cart-add-url="{{ routes.cart_add_url }}.js"
   data-cart-url="{{ routes.cart_url }}"
+  {% if settings.apex_upsell_page != blank %}data-upsell-url="{{ settings.apex_upsell_page.url }}"{% endif %}
   data-error-generic="{{ 'apex.buy_box.error_generic' | t | escape }}"
   {{ block.shopify_attributes }}
 >

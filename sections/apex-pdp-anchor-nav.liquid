@@ -38,7 +38,9 @@
         <a class="apex-anchor-nav__cta" href="#buy">{{ 'apex.nav.buy' | t }}</a>
       </div>
       <ul class="apex-anchor-nav__links" role="list">
-        <li><a href="#features">{{ 'apex.nav.features' | t }}</a></li>
+        {%- if section.settings.show_features -%}
+          <li><a href="#features">{{ 'apex.nav.features' | t }}</a></li>
+        {%- endif -%}
         {%- if product.metafields.apex.specs != blank -%}
           <li><a href="#specs">{{ 'apex.nav.specs' | t }}</a></li>
         {%- endif -%}
@@ -197,7 +199,9 @@
   "tag": "section",
   "class": "apex-section",
   "enabled_on": { "templates": ["product"] },
-  "settings": [],
+  "settings": [
+    { "type": "checkbox", "id": "show_features", "label": "Show 'Features' tab", "default": true }
+  ],
   "presets": [{ "name": "ApexCook product nav" }]
 }
 {% endschema %}

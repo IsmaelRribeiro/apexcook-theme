@@ -156,11 +156,17 @@
 
   /* Sticky bar */
   .apex-up__bar {
-    position: sticky;
+    position: relative;
     top: var(--header-height, 0px);
     z-index: 3;
     background: #fff;
     border-bottom: 1px solid #ddd;
+  }
+
+  @media screen and (min-width: 750px) {
+    .apex-up__bar {
+      position: sticky;
+    }
   }
 
   .apex-up__bar-inner {

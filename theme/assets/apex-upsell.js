@@ -58,8 +58,15 @@ class ApexUpsell extends HTMLElement {
         const body = await response.json().catch(() => ({}));
         throw new Error(body.description || body.message || '');
       }
-      button.textContent = `${this.dataset.labelAdded || 'Added'} ✓`;
-      button.setAttribute('data-added', '');
+      // The same product can appear in Recommended and in its collection row: mark every copy.
+      this.querySelectorAll('.apex-sr__actions').forEach((other) => {
+        if (Number(new FormData(/** @type {HTMLFormElement} */ (other)).get('id')) !== id) return;
+        const otherButton = /** @type {HTMLButtonElement | null} */ (other.querySelector('[data-buy]'));
+        if (!otherButton) return;
+        otherButton.disabled = true;
+        otherButton.textContent = `${this.dataset.labelAdded || 'Added'} ✓`;
+        otherButton.setAttribute('data-added', '');
+      });
       this.#announce(`${this.dataset.labelAdded || 'Added'}: ${card?.querySelector('.apex-sr__name')?.textContent?.trim() ?? ''}`);
       await this.#refreshTotals();
     } catch (err) {

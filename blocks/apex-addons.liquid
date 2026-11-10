@@ -149,19 +149,44 @@
 {%- endif -%}
 
 {% javascript %}
-  document.addEventListener('click', (event) => {
-    const button = event.target instanceof Element ? event.target.closest('[data-apex-lid]') : null;
-    if (!button || button.disabled) return;
-    const scope = button.closest('.shopify-section') || document;
-    const inputs = scope.querySelectorAll('variant-picker input[type="radio"]');
-    const target = Array.from(inputs).find(
-      (input) => input.dataset.optionName === button.dataset.optionName && input.value === button.dataset.targetValue
+  // Lid add-on: "Add" picks the with-lid variant in the (hidden) lid option; the block is then
+  // refreshed from the re-rendered page so its state, size and price follow the selected variant.
+  if (!window.__apexLidAddonReady) {
+    window.__apexLidAddonReady = true;
+
+    document.addEventListener('click', (event) => {
+      const button = event.target instanceof Element ? event.target.closest('[data-apex-lid]') : null;
+      if (!button || button.disabled) return;
+      const scope = button.closest('.shopify-section') || document;
+      const inputs = scope.querySelectorAll('variant-picker input[type="radio"]');
+      const target = Array.from(inputs).find(
+        (input) => input.dataset.optionName === button.dataset.optionName && input.value === button.dataset.targetValue
+      );
+      if (target) {
+        button.setAttribute('aria-busy', 'true');
+        target.click();
+      }
+    });
+
+    document.addEventListener(
+      'shopify:product:select',
+      async (event) => {
+        const promise = event.promise;
+        if (!promise) return;
+        try {
+          const { detail } = await promise;
+          // Only the lid row is swapped, so the buy box keeps its own add-on selections.
+          const fresh = detail?.html?.querySelector?.('.apex-addons__item--lid');
+          const current = document.querySelector('.apex-addons__item--lid');
+          if (fresh && current) current.replaceWith(fresh.cloneNode(true));
+        } catch (error) {
+          if (error?.name !== 'AbortError') console.warn('[apex-addons]', error);
+          document.querySelectorAll('[data-apex-lid][aria-busy]').forEach((el) => el.removeAttribute('aria-busy'));
+        }
+      },
+      true
     );
-    if (target) {
-      button.setAttribute('aria-busy', 'true');
-      target.click();
-    }
-  });
+  }
 {% endjavascript %}
 
 {% stylesheet %}
@@ -208,6 +233,7 @@
   }
 
   .apex-addons__bullets {
+    list-style: disc;
     margin: 0 0 10px;
     padding-inline-start: 18px;
     font-size: 14px;

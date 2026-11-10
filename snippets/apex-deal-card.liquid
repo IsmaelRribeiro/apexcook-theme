@@ -1,0 +1,367 @@
+{%- doc -%}
+  Samsung-style home product card: grey tile, image, real "viewed in the last 24 hours" line,
+  title, price with genuine previous price, "Add to cart" and "Learn more", and a
+  "Pairs well with this product" box with "Add both to cart".
+  The pairing is the product's first available add-on (apex.addons) or, failing that, the first
+  available product of `pair_collection` that is not this product.
+
+  @param {object} product - Product to show
+  @param {object} [pair_collection] - Fallback collection for the pairing
+  @param {number} [views_min] - Smallest viewer count worth showing (default 5)
+  @param {boolean} [show_pair] - Show the pairing box (default true)
+
+  @example
+  {% render 'apex-deal-card', product: product, pair_collection: section.settings.pair_collection %}
+{%- enddoc -%}
+
+{%- liquid
+  assign variant = product.selected_or_first_available_variant
+  assign pair = null
+  unless show_pair == false
+    for addon in product.metafields.apex.addons.value
+      if addon.available and addon.id != product.id
+        assign pair = addon
+        break
+      endif
+    endfor
+    if pair == null and pair_collection != blank
+      for candidate in pair_collection.products limit: 12
+        if candidate.available and candidate.id != product.id
+          assign pair = candidate
+          break
+        endif
+      endfor
+    endif
+  endunless
+
+  assign return_to = routes.cart_url
+  if settings.apex_upsell_page != blank
+    assign return_to = settings.apex_upsell_page.url | append: '?added=' | append: variant.id
+  endif
+-%}
+
+<div class="apex-deal">
+  <a class="apex-deal__media" href="{{ product.url }}" tabindex="-1" aria-hidden="true">
+    {%- if product.featured_image -%}
+      {{ product.featured_image | image_url: width: 700 | image_tag: loading: 'lazy', widths: '350, 500, 700', sizes: '(min-width: 990px) 300px, 70vw', alt: '' }}
+    {%- endif -%}
+  </a>
+
+  {% render 'apex-views-line', product: product, min: views_min, class: 'apex-deal__views' %}
+  <a class="apex-deal__title" href="{{ product.url }}">{{ product.title | escape }}</a>
+
+  <div class="apex-deal__price">
+    {% render 'apex-price-was', product: product, variant: variant %}
+  </div>
+
+  <form method="post" action="{{ routes.cart_add_url }}" class="apex-deal__actions">
+    <input type="hidden" name="id" value="{{ variant.id }}">
+    <input type="hidden" name="quantity" value="1">
+    <input type="hidden" name="return_to" value="{{ return_to }}">
+    <button type="submit" class="apex-deal__btn apex-deal__btn--primary"{% unless variant.available %} disabled{% endunless %}>
+      {%- if variant.available -%}{{ 'apex.deal.add' | t }}{%- else -%}{{ 'apex.search.sold_out' | t }}{%- endif -%}
+    </button>
+    <a class="apex-deal__btn apex-deal__btn--outline" href="{{ product.url }}">
+      {{- 'apex.deal.learn_more' | t -}}
+      <span class="visually-hidden">: {{ product.title | escape }}</span>
+    </a>
+  </form>
+
+  {%- if pair and variant.available -%}
+    {%- liquid
+      assign pair_variant = pair.selected_or_first_available_variant
+      assign total = variant.price | plus: pair_variant.price
+      assign was_a = variant.price
+      if variant.compare_at_price > variant.price
+        assign was_a = variant.compare_at_price
+      endif
+      assign was_b = pair_variant.price
+      if pair_variant.compare_at_price > pair_variant.price
+        assign was_b = pair_variant.compare_at_price
+      endif
+      assign was_total = was_a | plus: was_b
+    -%}
+    <details class="apex-deal__pair" open>
+      <summary class="apex-deal__pair-head">
+        <span class="apex-deal__pair-icon" aria-hidden="true"></span>
+        {{ 'apex.deal.pairs_well' | t }}
+      </summary>
+      <div class="apex-deal__pair-body">
+        <div class="apex-deal__pair-item">
+          <a class="apex-deal__pair-media" href="{{ pair.url }}" tabindex="-1" aria-hidden="true">
+            {%- if pair.featured_image -%}
+              {{ pair.featured_image | image_url: width: 240 | image_tag: loading: 'lazy', alt: '', sizes: '96px' }}
+            {%- endif -%}
+          </a>
+          <div class="apex-deal__pair-info">
+            <a class="apex-deal__pair-title" href="{{ pair.url }}">{{ pair.title | escape }}</a>
+            <p class="apex-deal__pair-price">
+              {{ pair_variant.price | money }}
+              {%- if pair_variant.compare_at_price > pair_variant.price -%}
+                <s><span class="visually-hidden">{{ 'apex.deal.was' | t }} </span>{{ pair_variant.compare_at_price | money }}</s>
+              {%- endif -%}
+            </p>
+            <a class="apex-deal__btn apex-deal__btn--outline apex-deal__btn--small" href="{{ pair.url }}">
+              {{- 'apex.deal.learn_more' | t -}}
+              <span class="visually-hidden">: {{ pair.title | escape }}</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="apex-deal__total">
+          <span>{{ 'apex.deal.total_both' | t }}</span>
+          <span class="apex-deal__total-price">
+            <strong>{{ total | money }}</strong>
+            {%- if was_total > total -%}
+              <s><span class="visually-hidden">{{ 'apex.deal.was' | t }} </span>{{ was_total | money }}</s>
+            {%- endif -%}
+          </span>
+        </div>
+
+        <form method="post" action="{{ routes.cart_add_url }}">
+          <input type="hidden" name="items[0][id]" value="{{ variant.id }}">
+          <input type="hidden" name="items[0][quantity]" value="1">
+          <input type="hidden" name="items[1][id]" value="{{ pair_variant.id }}">
+          <input type="hidden" name="items[1][quantity]" value="1">
+          <input type="hidden" name="return_to" value="{{ return_to }}">
+          <button type="submit" class="apex-deal__btn apex-deal__btn--primary apex-deal__btn--block">
+            {{- 'apex.deal.add_both' | t -}}
+          </button>
+        </form>
+      </div>
+    </details>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .apex-deal {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 100%;
+    padding: 20px;
+    background: #f4f4f4;
+    color: #000;
+  }
+
+  .apex-deal__media {
+    display: block;
+    aspect-ratio: 4 / 3;
+    margin-bottom: 8px;
+  }
+
+  .apex-deal__media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+  }
+
+  .apex-deal__title {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.33;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .apex-deal__title:hover {
+    text-decoration: underline;
+  }
+
+  .apex-deal__price {
+    margin-top: 8px;
+  }
+
+  .apex-deal__price .apex-price__now {
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .apex-deal__actions {
+    display: grid;
+    gap: 10px;
+    margin-top: auto;
+  }
+
+  .apex-deal__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 10px 20px;
+    border: 1px solid #000;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .apex-deal__btn--primary {
+    background: #000;
+    color: #fff;
+  }
+
+  .apex-deal__btn--primary:hover {
+    background: #333;
+  }
+
+  .apex-deal__btn--primary:disabled {
+    border-color: #ddd;
+    background: #ddd;
+    color: #757575;
+    cursor: not-allowed;
+  }
+
+  .apex-deal__btn--outline {
+    background: transparent;
+    color: #000;
+  }
+
+  .apex-deal__btn--outline:hover {
+    background: #000;
+    color: #fff;
+  }
+
+  .apex-deal__btn--small {
+    align-self: flex-start;
+    min-height: 36px;
+    padding: 6px 18px;
+    font-size: 14px;
+  }
+
+  .apex-deal__btn--block {
+    width: 100%;
+  }
+
+  .apex-deal__pair {
+    margin-top: 4px;
+    border: 1px solid #e5e5e5;
+    background: #fff;
+  }
+
+  .apex-deal__pair-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: #f1f3f8;
+    font-size: 15px;
+    font-weight: 600;
+    list-style: none;
+    cursor: pointer;
+  }
+
+  .apex-deal__pair-head::-webkit-details-marker {
+    display: none;
+  }
+
+  .apex-deal__pair-icon {
+    position: relative;
+    flex: none;
+    width: 26px;
+    height: 26px;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    background: #fff;
+  }
+
+  .apex-deal__pair-icon::before,
+  .apex-deal__pair-icon::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 1.5px;
+    background: #000;
+    transform: translate(-50%, -50%);
+  }
+
+  .apex-deal__pair-icon::after {
+    transform: translate(-50%, -50%) rotate(90deg);
+    transition: transform 0.2s ease;
+  }
+
+  .apex-deal__pair[open] .apex-deal__pair-icon::after {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  .apex-deal__pair-body {
+    display: grid;
+    gap: 14px;
+    padding: 16px;
+  }
+
+  .apex-deal__pair-item {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 14px;
+  }
+
+  .apex-deal__pair-media {
+    display: block;
+    aspect-ratio: 1;
+    background: #f4f4f4;
+  }
+
+  .apex-deal__pair-media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+  }
+
+  .apex-deal__pair-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .apex-deal__pair-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .apex-deal__pair-price {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+  }
+
+  .apex-deal__total {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    background: #f4f4f4;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .apex-deal__total-price {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .apex-deal__total-price strong {
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .apex-deal__total-price s {
+    font-size: 14px;
+    font-weight: 400;
+    color: #555;
+  }
+{% endstylesheet %}

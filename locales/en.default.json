@@ -104,6 +104,14 @@
       "search_placeholder": "Search",
       "search": "Search"
     },
+    "deal": {
+      "add": "Add to basket",
+      "learn_more": "Learn more",
+      "pairs_well": "Pairs well with this product",
+      "total_both": "Total for both products",
+      "add_both": "Add both to basket",
+      "was": "Was"
+    },
     "upsell": {
       "add": "Add",
       "adding": "Adding…",

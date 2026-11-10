@@ -19,7 +19,15 @@
     <ul class="apex-pcarousel__track" role="list" data-track tabindex="0" aria-label="{{ section.settings.heading | escape }}">
       {%- for product in products limit: section.settings.limit -%}
         {%- assign variant = product.selected_or_first_available_variant -%}
-        <li class="apex-pcarousel__item">
+        <li class="apex-pcarousel__item{% if section.settings.card_style == 'deal' %} apex-pcarousel__item--deal{% endif %}">
+          {%- if section.settings.card_style == 'deal' -%}
+            {% render 'apex-deal-card',
+              product: product,
+              pair_collection: section.settings.pair_collection,
+              views_min: section.settings.views_min,
+              show_pair: section.settings.show_pair
+            %}
+          {%- else -%}
           <a class="apex-pcarousel__card" href="{{ product.url }}">
             <span class="apex-pcarousel__media">
               {%- if product.featured_image -%}
@@ -33,6 +41,7 @@
           </div>
           {%- if section.settings.show_button -%}
             {% render 'apex-card-cta-button', product: product %}
+          {%- endif -%}
           {%- endif -%}
         </li>
       {%- else -%}
@@ -219,6 +228,10 @@
   .apex-pcarousel--center apex-carousel[data-fits] .apex-pcarousel__track {
     justify-content: center;
   }
+  .apex-pcarousel__item--deal {
+    display: flex;
+    flex-direction: column;
+  }
 {% endstylesheet %}
 
 {% schema %}
@@ -231,7 +244,11 @@
     { "type": "text", "id": "heading", "label": "Heading", "default": "Recommended for you" },
     { "type": "collection", "id": "collection", "label": "Collection" },
     { "type": "range", "id": "limit", "label": "Products shown", "min": 4, "max": 16, "step": 1, "default": 8 },
-    { "type": "checkbox", "id": "show_button", "label": "Show Add / Choose size button", "default": false }
+    { "type": "checkbox", "id": "show_button", "label": "Show Add / Choose size button", "default": false },
+    { "type": "select", "id": "card_style", "label": "Card style", "options": [ { "value": "simple", "label": "Simple" }, { "value": "deal", "label": "Deal (buttons + pairs well)" } ], "default": "simple" },
+    { "type": "checkbox", "id": "show_pair", "label": "Show 'Pairs well with this product'", "default": true },
+    { "type": "collection", "id": "pair_collection", "label": "Pairing collection", "info": "Used when a product has no add-ons set." },
+    { "type": "range", "id": "views_min", "label": "Show 'viewed in 24h' from", "min": 1, "max": 50, "step": 1, "default": 5, "unit": "ppl" }
   ],
   "presets": [{ "name": "ApexCook product carousel" }]
 }

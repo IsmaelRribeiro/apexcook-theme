@@ -1,0 +1,35 @@
+{%- doc -%}
+  "N people viewed this in the last 24 hours" — real figures only. Reads apex.views_24h and
+  apex.views_updated (written from Shopify Analytics). Outputs nothing when the number is below
+  `min` or the figure is older than 36 hours.
+
+  @param {object} product - Product
+  @param {number} [min] - Smallest number worth showing (default 5)
+  @param {string} [class] - Extra class for the line
+
+  @example
+  {% render 'apex-views-line', product: product, min: 5 %}
+{%- enddoc -%}
+{%- liquid
+  assign views_min = min | default: 5
+  assign views = product.metafields.apex.views_24h.value | default: 0
+  assign views_age = 999999
+  if product.metafields.apex.views_updated.value != blank
+    assign views_at = product.metafields.apex.views_updated.value | date: '%s' | plus: 0
+    assign now = 'now' | date: '%s' | plus: 0
+    assign views_age = now | minus: views_at
+  endif
+-%}
+{%- if views >= views_min and views_age < 129600 -%}
+  <p class="apex-views {{ class }}">{{ 'apex.nav.views_24h' | t: count: views }}</p>
+{%- endif -%}
+
+{% stylesheet %}
+  .apex-views {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.33;
+    color: #c4501b;
+  }
+{% endstylesheet %}

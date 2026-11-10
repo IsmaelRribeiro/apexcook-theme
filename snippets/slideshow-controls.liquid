@@ -105,10 +105,13 @@
           ref="thumbnailsContainer"
           class="slideshow-controls__thumbnails-container"
         >
-          <div class="slideshow-controls__thumbnails">
+          {%- comment -%} ApexCook: Samsung-style thumbnail cards; after 5, a "+N more" card reveals the rest. {%- endcomment -%}
+          {%- assign apex_thumb_limit = 5 -%}
+          {%- assign apex_thumb_extra = thumbnails.size | minus: apex_thumb_limit -%}
+          <div class="slideshow-controls__thumbnails apex-thumbs{% if apex_thumb_extra > 1 %} apex-thumbs--more{% endif %}">
             {% for media in thumbnails %}
               <button
-                class="slideshow-control button button-unstyled slideshow-controls__thumbnail"
+                class="slideshow-control button button-unstyled slideshow-controls__thumbnail{% if apex_thumb_extra > 1 and forloop.index > apex_thumb_limit %} apex-thumbs__extra{% endif %}"
                 aria-label="{{ 'accessibility.slide_status' | t: index: forloop.index, length: forloop.length }}"
                 on:click="/select/{{ forloop.index0 }}"
                 style="--aspect-ratio: {% if aspect_ratio == 'adapt' %}{{ media.preview_image.aspect_ratio | default: 1.0 }}{% else %}{{ aspect_ratio }}{% endif %};"
@@ -150,6 +153,18 @@
                 {% endif %}
               </button>
             {% endfor %}
+            {%- if apex_thumb_extra > 1 -%}
+              <button
+                type="button"
+                class="button button-unstyled apex-thumbs__more"
+                aria-expanded="false"
+                onclick="const t=this.closest('.apex-thumbs');const o=t.classList.toggle('is-expanded');this.setAttribute('aria-expanded',o);this.querySelector('span').textContent=o?this.dataset.less:this.dataset.more;"
+                data-more="+{{ apex_thumb_extra }} more"
+                data-less="{{ 'apex.search.view_less' | t | escape }}"
+              >
+                <span>+{{ apex_thumb_extra }} more</span>
+              </button>
+            {%- endif -%}
           </div>
         </scroll-hint>
       {% when 'counter' %}
@@ -475,6 +490,76 @@
 
   .slideshow-controls__thumbnail {
     position: relative;
+  }
+
+  /* ApexCook – Samsung buy-page gallery thumbnails: square white cards with a hairline border,
+     black border on the selected one, five in a row plus a "+N more" card (square corners). */
+  @media screen and (min-width: 750px) {
+    .slideshow-controls__thumbnails-container:has(.apex-thumbs) {
+      overflow: visible;
+    }
+
+    .slideshow-controls__thumbnails.apex-thumbs {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 12px;
+      width: 100%;
+      padding: 16px 0 0;
+      margin: 0;
+    }
+
+    .apex-thumbs .slideshow-control.slideshow-controls__thumbnail,
+    .apex-thumbs .apex-thumbs__more {
+      width: 100%;
+      aspect-ratio: 1;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 0;
+      background: #fff;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .apex-thumbs .slideshow-control.slideshow-controls__thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 0;
+    }
+
+    .apex-thumbs .slideshow-control.slideshow-controls__thumbnail:hover {
+      border-color: #000;
+    }
+
+    .apex-thumbs .slideshow-control.slideshow-controls__thumbnail[aria-selected='true'] {
+      border: 2px solid #000;
+      outline: none;
+    }
+
+    .apex-thumbs--more:not(.is-expanded) .apex-thumbs__extra:not([aria-selected='true']) {
+      display: none;
+    }
+
+    .apex-thumbs .apex-thumbs__more {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #000;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .apex-thumbs .apex-thumbs__more:hover {
+      border-color: #000;
+    }
+
+    .apex-thumbs.is-expanded .apex-thumbs__more {
+      grid-column: 1 / -1;
+      aspect-ratio: auto;
+      min-height: 44px;
+      font-size: 14px;
+    }
   }
 
   .slideshow-controls__thumbnail-badge {

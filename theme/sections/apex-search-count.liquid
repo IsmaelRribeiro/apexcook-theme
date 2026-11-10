@@ -1,0 +1,12 @@
+{%- comment -%}
+  Returns only the result count for the current search. Fetched by assets/apex-search.js
+  (?section_id=apex-search-count) to fill the counts on the search tabs.
+{%- endcomment -%}
+<span data-search-count>{{ search.results_count }}</span>
+
+{% schema %}
+{
+  "name": "Search count",
+  "settings": []
+}
+{% endschema %}

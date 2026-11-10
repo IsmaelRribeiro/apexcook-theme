@@ -1,0 +1,952 @@
+{%- comment -%}
+  Samsung-style search results: "Results for …" with type tabs and counts, a sticky
+  "Filters | N Results … Sort" bar, a filter column (drawer on mobile) and product cards.
+  Tabs use the `type` URL parameter (product, article, page); counts for the other
+  tabs load from the apex-search-count section (assets/apex-search.js).
+{%- endcomment -%}
+
+{%- liquid
+  assign terms = search.terms | escape
+  assign active_type = 'product'
+  if search.types.size == 1
+    assign active_type = search.types.first
+  endif
+  assign per_page = section.settings.products_per_page
+  if active_type != 'product'
+    assign per_page = 12
+  endif
+  assign filter_count = 0
+  for filter in search.filters
+    assign filter_count = filter_count | plus: filter.active_values.size
+    if filter.type == 'price_range'
+      if filter.min_value.value != blank or filter.max_value.value != blank
+        assign filter_count = filter_count | plus: 1
+      endif
+    endif
+  endfor
+-%}
+
+<script src="{{ 'apex-search.js' | asset_url }}" type="module" fetchpriority="low"></script>
+
+<apex-search-results class="apex-sr" data-terms="{{ terms }}" data-active-type="{{ active_type }}">
+  {%- if search.performed -%}
+    <div class="apex-sr__head">
+      <p class="apex-sr__for">{{ 'apex.search.results_for' | t: terms: terms }}</p>
+      <nav class="apex-sr__tabs" aria-label="{{ 'apex.search.results_title' | t }}">
+        {%- assign tab_types = 'product,article,page' | split: ',' -%}
+        {%- for tab_type in tab_types -%}
+          {%- liquid
+            case tab_type
+              when 'product'
+                assign tab_label = 'apex.search.tab_products' | t
+              when 'article'
+                assign tab_label = 'apex.search.tab_articles' | t
+              else
+                assign tab_label = 'apex.search.tab_pages' | t
+            endcase
+          -%}
+          <a
+            class="apex-sr__tab"
+            href="{{ routes.search_url }}?q={{ search.terms | url_encode }}&type={{ tab_type }}&options%5Bprefix%5D=last"
+            {% if tab_type == active_type %}
+              aria-current="page"
+            {% endif %}
+          >
+            {{- tab_label }}
+            <span data-count="{{ tab_type }}">
+              {%- if tab_type == active_type -%}({{ search.results_count }}){%- endif -%}
+            </span>
+          </a>
+        {%- endfor -%}
+      </nav>
+    </div>
+  {%- else -%}
+    <div class="apex-sr__head apex-sr__head--empty">
+      <form action="{{ routes.search_url }}" method="get" role="search" class="apex-sr__search">
+        <input type="hidden" name="type" value="product">
+        <input type="hidden" name="options[prefix]" value="last">
+        <label class="visually-hidden" for="ApexSearchPageInput">{{ 'apex.nav.search' | t }}</label>
+        <input id="ApexSearchPageInput" type="search" name="q" placeholder="{{ 'apex.search.prompt' | t }}" autocomplete="off">
+        <button type="submit" class="apex-sr__cta apex-sr__cta--buy">{{ 'apex.nav.search' | t }}</button>
+      </form>
+    </div>
+  {%- endif -%}
+
+  {%- if search.performed -%}
+    {%- paginate search.results by per_page -%}
+      {%- if active_type == 'product' -%}
+        <form class="apex-sr__form" action="{{ routes.search_url }}" method="get" data-filters-form>
+          <input type="hidden" name="q" value="{{ terms }}">
+          <input type="hidden" name="type" value="product">
+          <input type="hidden" name="options[prefix]" value="last">
+
+          <div class="apex-sr__bar">
+            <button type="button" class="apex-sr__filters-btn" data-open-filters aria-controls="ApexSearchFilters">
+              {{- 'apex.search.filters' | t -}}
+              {%- if filter_count > 0 %} ({{ filter_count }}){% endif -%}
+            </button>
+            <span class="apex-sr__count">{{ 'apex.search.results' | t: count: search.results_count }}</span>
+            <label class="apex-sr__sort">
+              <span class="apex-sr__sort-label">{{ 'apex.search.sort' | t }}</span>
+              <select name="sort_by" data-autosubmit>
+                {%- for option in search.sort_options -%}
+                  <option value="{{ option.value }}"{% if option.value == search.sort_by %} selected{% endif %}>
+                    {{- option.name -}}
+                  </option>
+                {%- endfor -%}
+              </select>
+            </label>
+          </div>
+
+          <div class="apex-sr__body">
+            <dialog class="apex-sr__aside" id="ApexSearchFilters" aria-label="{{ 'apex.search.filters' | t }}">
+              <div class="apex-sr__aside-head">
+                <p>{{ 'apex.search.filters' | t }}</p>
+                <button type="button" class="apex-sr__aside-close" data-close-filters>
+                  <span class="visually-hidden">{{ 'apex.search.close_filters' | t }}</span>
+                  {%- render 'apex-mnav-icon', icon: 'close' -%}
+                </button>
+              </div>
+
+              <div class="apex-sr__aside-scroll">
+                {%- for filter in search.filters -%}
+                  <details class="apex-sr__filter" open>
+                    <summary class="apex-sr__filter-title">
+                      {%- if filter.type == 'price_range' -%}
+                        {{- 'apex.search.price_range' | t -}}
+                      {%- else -%}
+                        {{- filter.label | escape -}}
+                      {%- endif -%}
+                      {%- render 'apex-mnav-icon', icon: 'down' -%}
+                    </summary>
+
+                    {%- if filter.type == 'price_range' -%}
+                      {%- liquid
+                        assign max_price = filter.range_max | money_without_currency | remove: ','
+                        assign min_value = filter.min_value.value | money_without_currency | remove: ','
+                        assign max_value = filter.max_value.value | money_without_currency | remove: ','
+                      -%}
+                      <div class="apex-sr__price-range">
+                        <label class="visually-hidden" for="ApexPriceMin">{{ 'apex.search.price_min' | t }}</label>
+                        <input
+                          class="apex-sr__price-input"
+                          id="ApexPriceMin"
+                          type="number"
+                          inputmode="decimal"
+                          min="0"
+                          max="{{ max_price }}"
+                          step="0.01"
+                          name="{{ filter.min_value.param_name }}"
+                          value="{% if filter.min_value.value != blank %}{{ min_value }}{% endif %}"
+                          placeholder="{{ cart.currency.symbol }}0"
+                        >
+                        <span aria-hidden="true">–</span>
+                        <label class="visually-hidden" for="ApexPriceMax">{{ 'apex.search.price_max' | t }}</label>
+                        <input
+                          class="apex-sr__price-input"
+                          id="ApexPriceMax"
+                          type="number"
+                          inputmode="decimal"
+                          min="0"
+                          max="{{ max_price }}"
+                          step="0.01"
+                          name="{{ filter.max_value.param_name }}"
+                          value="{% if filter.max_value.value != blank %}{{ max_value }}{% endif %}"
+                          placeholder="{{ cart.currency.symbol }}{{ max_price }}"
+                        >
+                      </div>
+                      <button type="submit" class="apex-sr__confirm">{{ 'apex.search.confirm' | t }}</button>
+                    {%- else -%}
+                      <ul class="apex-sr__checks list-unstyled" role="list" data-collapsible>
+                        {%- for value in filter.values -%}
+                          <li{% if forloop.index > 5 %} data-extra hidden{% endif %}>
+                            <label class="apex-sr__check{% if value.count == 0 and value.active == false %} is-disabled{% endif %}">
+                              <input
+                                type="checkbox"
+                                name="{{ value.param_name }}"
+                                value="{{ value.value }}"
+                                data-autosubmit
+                                {% if value.active %}checked{% endif %}
+                                {% if value.count == 0 and value.active == false %}disabled{% endif %}
+                              >
+                              <span>{{ value.label | escape }}</span>
+                            </label>
+                          </li>
+                        {%- endfor -%}
+                      </ul>
+                      {%- if filter.values.size > 5 -%}
+                        <button type="button" class="apex-sr__more" data-view-more aria-expanded="false">
+                          <span data-more-label>{{ 'apex.search.view_more' | t }}</span>
+                          <span data-less-label hidden>{{ 'apex.search.view_less' | t }}</span>
+                          {%- render 'apex-mnav-icon', icon: 'down' -%}
+                        </button>
+                      {%- endif -%}
+                    {%- endif -%}
+                  </details>
+                {%- endfor -%}
+              </div>
+
+              <div class="apex-sr__aside-foot">
+                <a class="apex-sr__cta apex-sr__cta--learn" href="{{ routes.search_url }}?q={{ search.terms | url_encode }}&type=product&options%5Bprefix%5D=last">
+                  {{- 'apex.search.clear_all' | t -}}
+                </a>
+                <button type="button" class="apex-sr__cta apex-sr__cta--buy" data-close-filters>
+                  {{- 'apex.search.apply' | t -}}
+                </button>
+              </div>
+            </dialog>
+
+            <div class="apex-sr__main">
+              {%- if search.results_count > 0 -%}
+                <ul class="apex-sr__grid list-unstyled" role="list">
+                  {%- for product in search.results -%}
+                    {%- if product.object_type == 'product' -%}
+                      <li class="apex-sr__item">{% render 'apex-search-card', product: product %}</li>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </ul>
+              {%- else -%}
+                <p class="apex-sr__empty">{{ 'apex.search.no_results' | t: terms: terms }}</p>
+              {%- endif -%}
+
+              {%- if paginate.pages > 1 -%}
+                {% render 'pagination-controls', paginate: paginate %}
+              {%- endif -%}
+            </div>
+          </div>
+        </form>
+      {%- else -%}
+        <div class="apex-sr__bar apex-sr__bar--plain">
+          <span class="apex-sr__count apex-sr__count--plain">{{ 'apex.search.results' | t: count: search.results_count }}</span>
+        </div>
+        <div class="apex-sr__main apex-sr__main--content">
+          {%- if search.results_count > 0 -%}
+            <ul class="apex-sr__content list-unstyled" role="list">
+              {%- for item in search.results -%}
+                <li class="apex-sr__content-item">
+                  {%- if item.object_type == 'article' and item.image -%}
+                    <a class="apex-sr__content-image" href="{{ item.url }}" tabindex="-1" aria-hidden="true">
+                      {{ item.image | image_url: width: 600 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 300px, 90vw', alt: '' }}
+                    </a>
+                  {%- endif -%}
+                  <div>
+                    <a class="apex-sr__name" href="{{ item.url }}">{{ item.title | escape }}</a>
+                    {%- assign excerpt = item.excerpt | default: item.content | strip_html | truncatewords: 30 -%}
+                    {%- if excerpt != blank -%}
+                      <p class="apex-sr__excerpt">{{ excerpt }}</p>
+                    {%- endif -%}
+                    <a class="apex-sr__underline" href="{{ item.url }}">
+                      {{- 'apex.search.read_more' | t -}}
+                      <span class="visually-hidden">: {{ item.title | escape }}</span>
+                    </a>
+                  </div>
+                </li>
+              {%- endfor -%}
+            </ul>
+          {%- else -%}
+            <p class="apex-sr__empty">{{ 'apex.search.no_results' | t: terms: terms }}</p>
+          {%- endif -%}
+
+          {%- if paginate.pages > 1 -%}
+            {% render 'pagination-controls', paginate: paginate %}
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    {%- endpaginate -%}
+  {%- endif -%}
+</apex-search-results>
+
+{% stylesheet %}
+  .apex-sr {
+    display: block;
+    color: #000;
+  }
+
+  /* Head: Results for + tabs */
+  .apex-sr__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 24px;
+    padding-inline: 16px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-sr__head {
+      display: grid;
+      grid-template-columns: 380px minmax(0, 1fr);
+      column-gap: 0;
+      padding-inline: 24px;
+    }
+  }
+
+  .apex-sr__for {
+    margin: 0;
+    padding-block: 20px 4px;
+    font-size: 16px;
+    line-height: 1.33;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-sr__for {
+      padding-block: 0;
+    }
+  }
+
+  .apex-sr__tabs {
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .apex-sr__tab {
+    position: relative;
+    flex: none;
+    padding-block: 20px;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.33;
+    color: #000;
+    text-decoration: none;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-sr__tab {
+      padding-block: 27px;
+    }
+  }
+
+  .apex-sr__tab::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 2px;
+    background: #000;
+    transform: scaleX(0);
+    transition: transform 0.2s ease;
+  }
+
+  .apex-sr__tab[aria-current='page']::after,
+  .apex-sr__tab:hover::after {
+    transform: scaleX(1);
+  }
+
+  .apex-sr__head--empty {
+    display: block;
+    padding-block: 40px;
+  }
+
+  .apex-sr__search {
+    display: flex;
+    gap: 12px;
+    max-width: 720px;
+  }
+
+  .apex-sr__search input[type='search'] {
+    flex: 1;
+    min-width: 0;
+    padding: 10px 0;
+    border: 0;
+    border-bottom: 1px solid #000;
+    font-size: 24px;
+    font-weight: 700;
+    outline: 0;
+  }
+
+  /* Filters | N Results ... Sort */
+  .apex-sr__bar {
+    position: sticky;
+    top: var(--header-height, 0px);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    min-height: 60px;
+    padding-inline: 16px;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-sr__bar {
+      min-height: 73px;
+      padding-inline: 24px;
+    }
+  }
+
+  .apex-sr__bar--plain {
+    position: static;
+  }
+
+  .apex-sr__filters-btn {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #000;
+    font: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-sr__filters-btn {
+      cursor: default;
+    }
+  }
+
+  .apex-sr__count {
+    position: relative;
+    margin-inline-start: 16px;
+    padding-inline-start: 17px;
+    font-size: 16px;
+  }
+
+  .apex-sr__count::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    top: 50%;
+    width: 1px;
+    height: 18px;
+    background: #ddd;
+    transform: translateY(-50%);
+  }
+
+  .apex-sr__count--plain {
+    margin: 0;
+    padding: 0;
+  }
+
+  .apex-sr__count--plain::before {
+    content: none;
+  }
+
+  .apex-sr__sort {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-inline-start: auto;
+    font-size: 16px;
+  }
+
+  .apex-sr__sort-label {
+    font-weight: 700;
+  }
+
+  .apex-sr__sort select {
+    max-width: 180px;
+    padding: 6px 28px 6px 0;
+    border: 0;
+    background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23000' stroke-width='1.5'%3E%3Cpath d='M3 6l5 5 5-5'/%3E%3C/svg%3E") no-repeat right center;
+    color: #757575;
+    font: inherit;
+    appearance: none;
+    cursor: pointer;
+  }
+
+  /* Body: filters column + grid */
+  @media screen and (min-width: 990px) {
+    .apex-sr__body {
+      display: grid;
+      grid-template-columns: 340px minmax(0, 1fr);
+      column-gap: 40px;
+      padding-inline: 24px 6px;
+    }
+  }
+
+  .apex-sr__aside {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: #fff;
+    color: #000;
+  }
+
+  .apex-sr__aside[open] {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .apex-sr__aside::backdrop {
+    background: rgb(0 0 0 / 0.6);
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-sr__aside,
+    .apex-sr__aside[open] {
+      position: sticky;
+      top: calc(var(--header-height, 0px) + 73px);
+      display: block;
+      width: auto;
+      height: auto;
+      max-height: calc(100dvh - var(--header-height, 0px) - 73px);
+      overflow-y: auto;
+      padding-inline-end: 16px;
+      border-inline-end: 1px solid transparent;
+      scrollbar-width: thin;
+    }
+
+    .apex-sr__aside-head,
+    .apex-sr__aside-foot {
+      display: none;
+    }
+  }
+
+  .apex-sr__aside-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 60px;
+    padding-inline: 24px 12px;
+    border-bottom: 1px solid #ddd;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .apex-sr__aside-head p {
+    margin: 0;
+  }
+
+  .apex-sr__aside-close {
+    display: inline-flex;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    background: none;
+    color: #000;
+    cursor: pointer;
+  }
+
+  .apex-sr__aside-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding-inline: 24px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-sr__aside-scroll {
+      padding-inline: 0;
+    }
+  }
+
+  .apex-sr__aside-foot {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 16px 24px;
+    border-top: 1px solid #ddd;
+  }
+
+  .apex-sr__filter {
+    padding-block: 24px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .apex-sr__filter-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.33;
+    text-transform: uppercase;
+    list-style: none;
+    cursor: pointer;
+  }
+
+  .apex-sr__filter-title::-webkit-details-marker {
+    display: none;
+  }
+
+  .apex-sr__filter-title .apex-mnav__svg {
+    width: 20px;
+    height: 20px;
+    transform: rotate(180deg);
+    transition: transform 0.2s ease;
+  }
+
+  .apex-sr__filter:not([open]) .apex-sr__filter-title .apex-mnav__svg {
+    transform: none;
+  }
+
+  .apex-sr__price-range {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 12px;
+    margin-top: 24px;
+  }
+
+  .apex-sr__price-input {
+    width: 100%;
+    min-width: 0;
+    height: 40px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 0;
+    background: #f4f4f4;
+    color: #000;
+    font: inherit;
+    font-size: 14px;
+    text-align: center;
+    appearance: textfield;
+  }
+
+  .apex-sr__confirm,
+  .apex-sr__more,
+  .apex-sr__underline {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 16px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #000;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    cursor: pointer;
+  }
+
+  .apex-sr__more {
+    text-decoration: none;
+  }
+
+  .apex-sr__more .apex-mnav__svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .apex-sr__more[aria-expanded='true'] .apex-mnav__svg {
+    transform: rotate(180deg);
+  }
+
+  .apex-sr__checks {
+    display: grid;
+    gap: 10px;
+    margin: 20px 0 0;
+  }
+
+  .apex-sr__check {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    line-height: 1.25;
+    cursor: pointer;
+  }
+
+  .apex-sr__check input {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    accent-color: #000;
+  }
+
+  .apex-sr__check.is-disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+
+  /* Grid */
+  .apex-sr__main {
+    padding: 24px 16px 60px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-sr__main {
+      padding: 24px 0 80px;
+    }
+  }
+
+  .apex-sr__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px 0;
+    margin: 0;
+  }
+
+  @media screen and (min-width: 750px) {
+    .apex-sr__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 24px;
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-sr__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: 0;
+    }
+
+    .apex-sr__item {
+      padding-inline: 18px;
+    }
+  }
+
+  .apex-sr__card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .apex-sr__image {
+    display: block;
+    width: 100%;
+    aspect-ratio: 309 / 312;
+    margin-bottom: 16px;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #f4f4f4;
+  }
+
+  .apex-sr__image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+  }
+
+  .apex-sr__card:hover .apex-sr__image img {
+    transform: scale(1.04);
+  }
+
+  .apex-sr__name {
+    display: block;
+    min-height: calc(2 * 1.33em);
+    margin-bottom: 12px;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.33;
+    color: #000;
+    text-decoration: none;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-sr__name {
+      font-size: 22px;
+    }
+  }
+
+  .apex-sr__name:hover {
+    text-decoration: underline;
+  }
+
+  .apex-sr__rating {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 16px;
+    font-size: 16px;
+  }
+
+  .apex-sr__option {
+    margin: 0 0 16px;
+    padding: 0;
+    border: 0;
+  }
+
+  .apex-sr__option-label {
+    margin-bottom: 10px;
+    padding: 0;
+    font-size: 12px;
+  }
+
+  .apex-sr__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .apex-sr__chip {
+    min-width: 52px;
+    height: 32px;
+    padding: 0 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+    color: #000;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .apex-sr__chip[aria-pressed='true'] {
+    border: 2px solid #000;
+  }
+
+  .apex-sr__chip--swatch {
+    position: relative;
+    width: 32px;
+    min-width: 32px;
+    padding: 0;
+    border-radius: 50%;
+    background: var(--swatch);
+    box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.1);
+  }
+
+  .apex-sr__chip--swatch[aria-pressed='true'] {
+    border: 0;
+    outline: 2px solid #000;
+    outline-offset: 2px;
+  }
+
+  .apex-sr__price {
+    margin-bottom: 12px;
+  }
+
+  .apex-sr__price .apex-price__now {
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-sr__price .apex-price__now {
+      font-size: 24px;
+    }
+  }
+
+  .apex-sr__sku {
+    margin: 0 0 16px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #757575;
+  }
+
+  .apex-sr__actions {
+    display: grid;
+    width: 100%;
+    gap: 8px;
+  }
+
+  .apex-sr__cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 9px 23px 10px;
+    border: 1px solid #000;
+    border-radius: 20px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.33;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .apex-sr__cta--buy {
+    background: #000;
+    color: #fff;
+  }
+
+  .apex-sr__cta--buy:hover {
+    background: #555;
+    border-color: #555;
+  }
+
+  .apex-sr__cta--buy:disabled {
+    background: #ddd;
+    border-color: #ddd;
+    color: #757575;
+    cursor: not-allowed;
+  }
+
+  .apex-sr__cta--learn {
+    background: #fff;
+    color: #000;
+  }
+
+  .apex-sr__cta--learn:hover {
+    background: #000;
+    color: #fff;
+  }
+
+  .apex-sr__empty {
+    padding-block: 40px;
+    font-size: 18px;
+  }
+
+  /* Recipes / pages */
+  .apex-sr__main--content {
+    max-width: 1100px;
+    padding-inline: 16px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-sr__main--content {
+      padding-inline: 24px;
+    }
+  }
+
+  .apex-sr__content {
+    display: grid;
+    gap: 32px;
+    margin: 0;
+  }
+
+  .apex-sr__content-item {
+    display: grid;
+    gap: 16px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  @media screen and (min-width: 750px) {
+    .apex-sr__content-item:has(.apex-sr__content-image) {
+      grid-template-columns: 300px minmax(0, 1fr);
+      gap: 32px;
+    }
+  }
+
+  .apex-sr__content-image img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .apex-sr__excerpt {
+    margin: 0;
+    color: #444;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Search results",
+  "tag": "section",
+  "class": "apex-section apex-search-section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "Products per page",
+      "min": 6,
+      "max": 36,
+      "step": 3,
+      "default": 24
+    }
+  ]
+}
+{% endschema %}

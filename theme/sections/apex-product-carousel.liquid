@@ -232,6 +232,18 @@
     display: flex;
     flex-direction: column;
   }
+
+  /* Deal cards: 395px columns with 16px gaps, as on Samsung's offer pages */
+  .apex-pcarousel__track:has(.apex-pcarousel__item--deal) {
+    grid-auto-columns: min(85%, 395px);
+    gap: 16px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-pcarousel__track:has(.apex-pcarousel__item--deal) {
+      grid-auto-columns: 395px;
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}

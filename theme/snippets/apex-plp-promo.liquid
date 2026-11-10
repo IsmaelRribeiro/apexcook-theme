@@ -1,0 +1,79 @@
+{%- doc -%}
+  Promo tile inside the Samsung-style collection grid.
+
+  @param {object} block - "promo" block from sections/apex-collection
+
+  @example
+  {% render 'apex-plp-promo', block: block %}
+{%- enddoc -%}
+<li class="apex-plp__item apex-plp__promo apex-plp__promo--{{ block.settings.style }}" {{ block.shopify_attributes }}>
+  <div class="apex-plp__promo-text">
+    {%- if block.settings.heading != blank -%}
+      <p class="apex-plp__promo-heading">{{ block.settings.heading | escape }}</p>
+    {%- endif -%}
+    {%- if block.settings.text != blank -%}
+      <p class="apex-plp__promo-body">{{ block.settings.text | escape | newline_to_br }}</p>
+    {%- endif -%}
+    {%- if block.settings.link != blank and block.settings.link_label != blank -%}
+      <a class="apex-plp__promo-link" href="{{ block.settings.link }}">{{ block.settings.link_label | escape }}</a>
+    {%- endif -%}
+  </div>
+  {%- if block.settings.image -%}
+    {{ block.settings.image | image_url: width: 700 | image_tag: loading: 'lazy', class: 'apex-plp__promo-image', sizes: '(min-width: 1200px) 25vw, 50vw', alt: '' }}
+  {%- endif -%}
+</li>
+
+{% stylesheet %}
+  .apex-plp__promo {
+    position: relative;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 360px;
+    overflow: hidden;
+    border-radius: 20px;
+  }
+
+  .apex-plp__promo--dark {
+    background: #0b1a3a;
+    color: #fff;
+  }
+
+  .apex-plp__promo--light {
+    background: #f7f7f7;
+    color: #000;
+  }
+
+  .apex-plp__promo-text {
+    position: relative;
+    z-index: 1;
+    padding: 24px;
+  }
+
+  .apex-plp__promo-heading {
+    margin: 0 0 12px;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .apex-plp__promo-body {
+    margin: 0 0 12px;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  .apex-plp__promo-link {
+    font-size: 14px;
+    font-weight: 700;
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .apex-plp__promo-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-top: auto;
+  }
+{% endstylesheet %}

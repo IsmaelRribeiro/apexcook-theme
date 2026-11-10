@@ -132,7 +132,7 @@
      column titles, 300px product images, 13px grey labels, 40px outline icons, 16px bold values,
      #ddd row rules, pill "View more". Square corners, weights ≤ 600. */
   .apex-cc {
-    padding-block: 80px;
+    padding-block: var(--apex-space);
     color: #000;
   }
 
@@ -179,7 +179,7 @@
   }
 
   .apex-cc__products {
-    margin-top: 56px;
+    margin-top: 40px;
   }
 
   .apex-cc__product {
@@ -240,7 +240,7 @@
   }
 
   .apex-cc__specs-heading {
-    margin: 96px 0 40px;
+    margin: 64px 0 24px;
     font-size: 28px;
     font-weight: 600;
     text-align: center;
@@ -396,7 +396,7 @@
     { "type": "text", "id": "link_label", "label": "Link label" },
     { "type": "url", "id": "link", "label": "Link" },
     { "type": "text", "id": "specs_heading", "label": "Specs heading", "default": "Key specs" },
-    { "type": "range", "id": "visible_rows", "label": "Rows before 'View more'", "min": 2, "max": 12, "step": 1, "default": 5 },
+    { "type": "range", "id": "visible_rows", "label": "Rows before 'View more'", "min": 2, "max": 20, "step": 1, "default": 20 },
     { "type": "header", "content": "Our product (left)" },
     { "type": "text", "id": "ours_title", "label": "Column title", "info": "Empty = product title." },
     { "type": "image_picker", "id": "ours_image", "label": "Image", "info": "Empty = product image." },

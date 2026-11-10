@@ -1,0 +1,433 @@
+{%- comment -%}
+  ProCook "The Pantry"-style blog page:
+  - full-width hero with text on the left
+  - pill tabs (hub + one per tag, plus extra links) and an article search on the right
+  - hub view: one row per block → a large featured article, then a carousel of horizontal cards
+    and a "View all" button
+  - tag view (/tagged/…) or later pages: the same horizontal cards in a 2-column grid with paging
+{%- endcomment -%}
+
+{%- liquid
+  assign is_hub = true
+  if current_tags or current_page > 1
+    assign is_hub = false
+  endif
+  assign hero_title = section.settings.hero_title | default: blog.title
+-%}
+
+<script src="{{ 'apex-carousel.js' | asset_url }}" type="module" fetchpriority="low"></script>
+
+<div class="apex-pantry">
+  <div class="apex-pantry__hero">
+    {%- if section.settings.hero_image -%}
+      {{ section.settings.hero_image | image_url: width: 2400 | image_tag: class: 'apex-pantry__hero-image', widths: '750, 1200, 1800, 2400', sizes: '100vw', alt: '', fetchpriority: 'high' }}
+    {%- elsif blog.articles.first.image -%}
+      {{ blog.articles.first.image | image_url: width: 2400 | image_tag: class: 'apex-pantry__hero-image', widths: '750, 1200, 1800, 2400', sizes: '100vw', alt: '', fetchpriority: 'high' }}
+    {%- endif -%}
+    <div class="apex-pantry__hero-inner">
+      <h1 class="apex-pantry__hero-title">
+        {%- if current_tags -%}{{ current_tags.first | escape }}{%- else -%}{{ hero_title | escape }}{%- endif -%}
+      </h1>
+      {%- if section.settings.hero_text != blank and current_tags == blank -%}
+        <p class="apex-pantry__hero-text">{{ section.settings.hero_text | escape }}</p>
+      {%- endif -%}
+    </div>
+  </div>
+
+  {% render 'apex-pantry-bar', blog: blog, hub_label: section.settings.hub_label, extra_links: section.settings.extra_links %}
+
+  {%- if is_hub -%}
+    {%- assign shown_rows = 0 -%}
+    {%- for block in section.blocks -%}
+      {%- liquid
+        assign row_tag = block.settings.tag | strip
+        assign row_count = block.settings.count
+        assign found = 0
+        assign row_url = blog.url
+        if row_tag != blank
+          assign tag_handle = row_tag | handleize
+          assign row_url = blog.url | append: '/tagged/' | append: tag_handle
+        endif
+      -%}
+      {%- capture featured -%}
+        {%- for a in blog.articles -%}
+          {%- if row_tag != blank -%}{%- unless a.tags contains row_tag -%}{%- continue -%}{%- endunless -%}{%- endif -%}
+          {%- if a.tags contains 'Test' and section.settings.hide_test == true and row_tag != 'Test' -%}{%- continue -%}{%- endif -%}
+          {%- assign found = found | plus: 1 -%}
+          {%- if found == 1 -%}{% render 'apex-pantry-card', article: a, featured: true %}{%- endif -%}
+        {%- endfor -%}
+      {%- endcapture -%}
+      {%- assign found = 0 -%}
+      {%- capture cards -%}
+        {%- for a in blog.articles -%}
+          {%- if row_tag != blank -%}{%- unless a.tags contains row_tag -%}{%- continue -%}{%- endunless -%}{%- endif -%}
+          {%- if a.tags contains 'Test' and section.settings.hide_test == true and row_tag != 'Test' -%}{%- continue -%}{%- endif -%}
+          {%- assign found = found | plus: 1 -%}
+          {%- if found > 1 and found <= row_count -%}
+            <li class="apex-pantry__slide">{% render 'apex-pantry-card', article: a %}</li>
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endcapture -%}
+
+      {%- if featured != blank -%}
+        {%- assign shown_rows = shown_rows | plus: 1 -%}
+        <section class="apex-pantry__row{% if block.settings.tinted %} apex-pantry__row--tinted{% endif %}" {{ block.shopify_attributes }}>
+          <div class="apex-pantry__inner">
+            <h2 class="apex-pantry__row-title">{{ block.settings.title | default: row_tag | default: blog.title | escape }}</h2>
+            {{ featured }}
+            {%- if cards != blank -%}
+              <apex-carousel class="apex-pantry__carousel">
+                <ul class="apex-pantry__track list-unstyled" role="list" data-track tabindex="0" aria-label="{{ block.settings.title | escape }}">
+                  {{ cards }}
+                </ul>
+                <div class="apex-pcarousel__controls apex-pantry__controls">
+                  <button type="button" class="apex-pantry__arrow" data-prev aria-label="{{ 'apex.reviews.previous' | t }}">{%- render 'apex-mnav-icon', icon: 'left' -%}</button>
+                  <div class="apex-pcarousel__progress" aria-hidden="true"><span data-progress></span></div>
+                  <button type="button" class="apex-pantry__arrow" data-next aria-label="{{ 'apex.reviews.next' | t }}">{%- render 'apex-mnav-icon', icon: 'right' -%}</button>
+                </div>
+              </apex-carousel>
+            {%- endif -%}
+            {%- if block.settings.view_all_label != blank -%}
+              <div class="apex-pantry__more">
+                <a class="apex-pantry__button" href="{{ row_url }}">{{ block.settings.view_all_label | escape }}</a>
+              </div>
+            {%- endif -%}
+          </div>
+        </section>
+      {%- endif -%}
+    {%- endfor -%}
+
+    {%- if shown_rows == 0 -%}
+      <p class="apex-pantry__empty">{{ 'apex.pantry.empty' | t }}</p>
+    {%- endif -%}
+  {%- else -%}
+    <section class="apex-pantry__row">
+      <div class="apex-pantry__inner">
+        {%- paginate blog.articles by 12 -%}
+          {%- if blog.articles.size > 0 -%}
+            <ul class="apex-pantry__grid list-unstyled" role="list">
+              {%- for a in blog.articles -%}
+                <li>{% render 'apex-pantry-card', article: a %}</li>
+              {%- endfor -%}
+            </ul>
+          {%- else -%}
+            <p class="apex-pantry__empty">{{ 'apex.pantry.empty' | t }}</p>
+          {%- endif -%}
+          {%- if paginate.pages > 1 -%}
+            {% render 'pagination-controls', paginate: paginate %}
+          {%- endif -%}
+        {%- endpaginate -%}
+      </div>
+    </section>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  /* Measured from procook.co.uk/the-pantry at 1440px; corners square and weights ≤ 600 to match ApexCook. */
+  .apex-pantry {
+    display: block;
+    color: #282829;
+  }
+
+  .apex-pantry__inner,
+  .apex-pantry__hero-inner,
+  .apex-pantry__bar {
+    max-width: 1300px;
+    margin-inline: auto;
+  }
+
+  /* Hero */
+  .apex-pantry__hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 300px;
+    overflow: hidden;
+    background: #282829;
+    color: #fff;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-pantry__hero {
+      min-height: 450px;
+    }
+  }
+
+  .apex-pantry__hero-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .apex-pantry__hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgb(0 0 0 / 0.55) 0%, rgb(0 0 0 / 0.25) 45%, rgb(0 0 0 / 0) 70%);
+  }
+
+  .apex-pantry__hero-inner {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    padding: 40px 16px;
+  }
+
+  .apex-pantry__hero-title {
+    max-width: 520px;
+    margin: 0 0 20px;
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: #fff;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-pantry__hero-title {
+      font-size: 34px;
+    }
+  }
+
+  .apex-pantry__hero-text {
+    max-width: 520px;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.6;
+  }
+
+  /* Tabs + search */
+  .apex-pantry__bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 16px;
+  }
+
+  .apex-pantry__tabs {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .apex-pantry__tab {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 24px;
+    border: 1px solid #e5e5e5;
+    background: #fff;
+    color: #282829;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .apex-pantry__tab:hover {
+    border-color: #282829;
+  }
+
+  .apex-pantry__tab[aria-current='page'] {
+    border-color: #282829;
+    background: #282829;
+    color: #fff;
+  }
+
+  .apex-pantry__search {
+    position: relative;
+    flex: 0 1 250px;
+  }
+
+  .apex-pantry__search input[type='search'] {
+    width: 100%;
+    height: 44px;
+    padding: 8px 44px 8px 16px;
+    border: 1px solid #ddd;
+    background: #fff;
+    font: inherit;
+    font-size: 14px;
+  }
+
+  .apex-pantry__search button {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    width: 44px;
+    border: 0;
+    background: none;
+    color: #282829;
+    cursor: pointer;
+  }
+
+  .apex-pantry__search .apex-mnav__svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Rows */
+  .apex-pantry__row {
+    padding: 32px 16px 48px;
+  }
+
+  .apex-pantry__row--tinted {
+    background: #f5f5f5;
+  }
+
+  .apex-pantry__row-title {
+    margin: 0 0 24px;
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1.3;
+    text-align: center;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-pantry__row-title {
+      font-size: 34px;
+    }
+  }
+
+  .apex-pantry__carousel {
+    display: block;
+    margin-top: 24px;
+  }
+
+  .apex-pantry__track {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 100%;
+    gap: 20px;
+    margin: 0;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+  }
+
+  .apex-pantry__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-pantry__track {
+      grid-auto-columns: calc((100% - 20px) / 2);
+    }
+  }
+
+  .apex-pantry__slide {
+    scroll-snap-align: start;
+  }
+
+  .apex-pantry__controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-top: 16px;
+  }
+
+  .apex-pantry__controls .apex-pcarousel__progress {
+    flex: 0 1 300px;
+  }
+
+  .apex-pantry__arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 0;
+    background: none;
+    color: #282829;
+    cursor: pointer;
+  }
+
+  .apex-pantry__arrow:disabled {
+    opacity: 0.3;
+  }
+
+  .apex-pantry__arrow .apex-mnav__svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .apex-pantry__more {
+    display: flex;
+    justify-content: center;
+    margin-top: 24px;
+  }
+
+  .apex-pantry__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 32px;
+    background: #282829;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.6;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: background-color 0.2s ease;
+  }
+
+  .apex-pantry__button:hover {
+    background: #000;
+  }
+
+  .apex-pantry__grid {
+    display: grid;
+    gap: 20px;
+    margin: 0;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-pantry__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .apex-pantry__empty {
+    padding: 48px 16px;
+    text-align: center;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Pantry (blog hub)",
+  "tag": "section",
+  "class": "apex-section apex-pantry-section",
+  "settings": [
+    { "type": "image_picker", "id": "hero_image", "label": "Hero image", "info": "Empty = first article's image." },
+    { "type": "text", "id": "hero_title", "label": "Hero heading", "default": "Step into the ApexCook kitchen" },
+    { "type": "textarea", "id": "hero_text", "label": "Hero text", "default": "Recipes, cooking tips and care guides for uncoated pans — everything you need to get the best from your ApexCook kit, in one place." },
+    { "type": "text", "id": "hub_label", "label": "First tab label", "default": "The Kitchen" },
+    { "type": "link_list", "id": "extra_links", "label": "Extra tabs", "info": "Shown after the tag tabs (e.g. a News blog)." },
+    { "type": "checkbox", "id": "hide_test", "label": "Hide articles tagged 'Test' on the hub", "default": false }
+  ],
+  "blocks": [
+    {
+      "type": "row",
+      "name": "Article row",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Heading", "default": "Recipes" },
+        { "type": "text", "id": "tag", "label": "Tag", "info": "Only articles with this tag. Empty = latest articles." },
+        { "type": "range", "id": "count", "label": "Articles", "min": 3, "max": 12, "step": 1, "default": 7 },
+        { "type": "text", "id": "view_all_label", "label": "Button", "default": "View all recipes" },
+        { "type": "checkbox", "id": "tinted", "label": "Grey background", "default": false }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Pantry (blog hub)" }]
+}
+{% endschema %}

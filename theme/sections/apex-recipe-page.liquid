@@ -1,0 +1,539 @@
+{%- comment -%}
+  ProCook-style recipe page (article template "recipe"):
+  breadcrumb → wide banner → Pantry tabs → white sheet with
+  [share · published date · time/servings/difficulty boxes · title · intro | photo]
+  [second photo | "What you'll need…" ingredients] [Method in two columns]
+  → "Shop the tools you will need" → "Other recipes".
+  Data: article image, excerpt and body (method), plus recipe.* metafields
+  (prep_minutes, cook_minutes, servings, difficulty, ingredients, image_2, tools, product).
+{%- endcomment -%}
+
+{%- liquid
+  assign prep = article.metafields.recipe.prep_minutes.value | default: 0
+  assign cook = article.metafields.recipe.cook_minutes.value | default: 0
+  assign total = prep | plus: cook
+  assign servings = article.metafields.recipe.servings.value
+  assign difficulty = article.metafields.recipe.difficulty.value
+  assign ingredients = article.metafields.recipe.ingredients.value | newline_to_br | split: '<br />'
+  assign image_2 = article.metafields.recipe.image_2.value
+  assign first_tag = nil
+  for tag in article.tags
+    if tag != 'Test'
+      assign first_tag = tag
+      break
+    endif
+  endfor
+  assign hours = total | divided_by: 60
+  assign minutes = total | modulo: 60
+  assign share_url = shop.url | append: article.url
+-%}
+
+<script src="{{ 'apex-carousel.js' | asset_url }}" type="module" fetchpriority="low"></script>
+
+<div class="apex-rpage">
+  <nav class="apex-rpage__crumbs" aria-label="{{ 'apex.recipe_page.breadcrumb' | t }}">
+    <ol class="list-unstyled">
+      <li><a href="{{ routes.root_url }}">{{ 'apex.recipe_page.home' | t }}</a></li>
+      <li><a href="{{ blog.url }}">{{ section.settings.hub_label | default: blog.title | escape }}</a></li>
+      {%- if first_tag -%}
+        <li><a href="{{ blog.url }}/tagged/{{ first_tag | handleize }}">{{ first_tag | escape }}</a></li>
+      {%- endif -%}
+      <li aria-current="page">{{ article.title | escape }}</li>
+    </ol>
+  </nav>
+
+  {%- assign banner = section.settings.banner_image | default: article.image -%}
+  {%- if banner -%}
+    <div class="apex-rpage__banner">
+      {{ banner | image_url: width: 2400 | image_tag: widths: '750, 1200, 1800, 2400', sizes: '100vw', alt: '', fetchpriority: 'high' }}
+    </div>
+  {%- endif -%}
+
+  <div class="apex-rpage__page">
+    {% render 'apex-pantry-bar', blog: blog, hub_label: section.settings.hub_label, extra_links: section.settings.extra_links, active_tag: first_tag %}
+
+    <article class="apex-rpage__sheet">
+      <div class="apex-rpage__split">
+        <div class="apex-rpage__intro">
+          <div class="apex-rpage__share-row">
+            <div class="apex-rpage__share">
+              <a class="apex-rpage__share-btn apex-rpage__share-btn--fb" href="https://www.facebook.com/sharer/sharer.php?u={{ share_url | url_encode }}" target="_blank" rel="noopener">
+                {{- 'apex.recipe_page.share' | t }}<span class="visually-hidden"> on Facebook</span> <span aria-hidden="true">f</span>
+              </a>
+              <a class="apex-rpage__share-btn apex-rpage__share-btn--pin" href="https://pinterest.com/pin/create/button/?url={{ share_url | url_encode }}&description={{ article.title | url_encode }}" target="_blank" rel="noopener">
+                {{- 'apex.recipe_page.share' | t }}<span class="visually-hidden"> on Pinterest</span> <span aria-hidden="true">P</span>
+              </a>
+              <a class="apex-rpage__share-btn apex-rpage__share-btn--mail" href="mailto:?subject={{ article.title | url_encode }}&body={{ share_url | url_encode }}">
+                {{- 'apex.recipe_page.email' | t -}}
+              </a>
+            </div>
+            <p class="apex-rpage__date">
+              {{ 'apex.recipe_page.published' | t }} {{ article.published_at | date: '%d/%m/%Y' }}
+            </p>
+          </div>
+
+          {%- if total > 0 or servings or difficulty -%}
+            <ul class="apex-rpage__facts list-unstyled" role="list">
+              {%- if total > 0 -%}
+                <li class="apex-rpage__fact">
+                  <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M7 3h10M7 21h10M8 3c0 5 8 5 8 9s-8 4-8 9M16 3c0 5-8 5-8 9s8 4 8 9"/></svg>
+                  <span class="visually-hidden">{{ 'apex.recipe_page.time' | t }}:</span>
+                  <span>{{ hours }}:{% if minutes < 10 %}0{% endif %}{{ minutes }}</span>
+                </li>
+              {%- endif -%}
+              {%- if servings -%}
+                <li class="apex-rpage__fact">
+                  <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="12" cy="12" r="5.5"/><path d="M4 3v6a2 2 0 0 0 2 2v10M4 3v4M6 3v4M8 3v6a2 2 0 0 1-2 2M20 3c-1.7 1-2 4-2 7h2v11"/></svg>
+                  <span>{{ 'apex.recipe_page.makes' | t: count: servings }}</span>
+                </li>
+              {%- endif -%}
+              {%- if difficulty -%}
+                <li class="apex-rpage__fact">
+                  <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M7 14h10v6H7zM7 14a4 4 0 1 1 1.5-7.7 4 4 0 0 1 7 0A4 4 0 1 1 17 14"/></svg>
+                  <span class="visually-hidden">{{ 'apex.recipe_page.difficulty' | t }}:</span>
+                  <span>{{ difficulty | escape }}</span>
+                </li>
+              {%- endif -%}
+            </ul>
+          {%- endif -%}
+
+          <h1 class="apex-rpage__title">{{ article.title | escape }}</h1>
+          {%- if article.excerpt != blank -%}
+            <div class="apex-rpage__lede">{{ article.excerpt }}</div>
+          {%- endif -%}
+        </div>
+        <div class="apex-rpage__photo">
+          {%- if article.image -%}
+            {{ article.image | image_url: width: 1300 | image_tag: loading: 'lazy', widths: '650, 1000, 1300', sizes: '(min-width: 990px) 650px, 100vw', alt: article.image.alt | default: article.title }}
+          {%- endif -%}
+        </div>
+      </div>
+
+      {%- if ingredients.size > 0 and ingredients.first != blank -%}
+        <div class="apex-rpage__split apex-rpage__split--ingredients">
+          <div class="apex-rpage__photo">
+            {%- assign side_image = image_2 | default: article.image -%}
+            {%- if side_image -%}
+              {{ side_image | image_url: width: 1300 | image_tag: loading: 'lazy', widths: '650, 1000, 1300', sizes: '(min-width: 990px) 650px, 100vw', alt: '' }}
+            {%- endif -%}
+          </div>
+          <div class="apex-rpage__ingredients">
+            <h2 class="apex-rpage__h2">{{ 'apex.recipe_page.what_you_need' | t }}</h2>
+            <ul>
+              {%- for line in ingredients -%}
+                {%- assign clean = line | strip -%}
+                {%- if clean != blank -%}<li>{{ clean }}</li>{%- endif -%}
+              {%- endfor -%}
+            </ul>
+          </div>
+        </div>
+      {%- endif -%}
+
+      {%- if article.content != blank -%}
+        <div class="apex-rpage__method">
+          <h2 class="apex-rpage__h2">{{ 'apex.recipe_page.method' | t }}</h2>
+          <div class="apex-rpage__method-body">{{ article.content }}</div>
+        </div>
+      {%- endif -%}
+    </article>
+
+    {%- comment -%} Tools: recipe.tools, else the "cooked with" product, topped up from the chosen collection. {%- endcomment -%}
+    {%- liquid
+      assign tool_ids = ','
+      assign tool_count = 0
+    -%}
+    {%- capture tool_cards -%}
+      {%- for p in article.metafields.recipe.tools.value -%}
+        {%- assign key = ',' | append: p.id | append: ',' -%}
+        {%- unless tool_ids contains key -%}
+          {%- assign tool_ids = tool_ids | append: p.id | append: ',' -%}
+          {%- assign tool_count = tool_count | plus: 1 -%}
+          <li class="apex-rpage__tool">{% render 'apex-tool-card', product: p %}</li>
+        {%- endunless -%}
+      {%- endfor -%}
+      {%- assign cooked = article.metafields.recipe.product.value -%}
+      {%- if cooked -%}
+        {%- assign key = ',' | append: cooked.id | append: ',' -%}
+        {%- unless tool_ids contains key -%}
+          {%- assign tool_ids = tool_ids | append: cooked.id | append: ',' -%}
+          {%- assign tool_count = tool_count | plus: 1 -%}
+          <li class="apex-rpage__tool">{% render 'apex-tool-card', product: cooked %}</li>
+        {%- endunless -%}
+      {%- endif -%}
+      {%- for p in section.settings.tools_collection.products limit: 12 -%}
+        {%- if tool_count >= 8 -%}{%- break -%}{%- endif -%}
+        {%- assign key = ',' | append: p.id | append: ',' -%}
+        {%- unless tool_ids contains key -%}
+          {%- assign tool_ids = tool_ids | append: p.id | append: ',' -%}
+          {%- assign tool_count = tool_count | plus: 1 -%}
+          <li class="apex-rpage__tool">{% render 'apex-tool-card', product: p %}</li>
+        {%- endunless -%}
+      {%- endfor -%}
+    {%- endcapture -%}
+
+    {%- if tool_count > 0 -%}
+      <section class="apex-rpage__section">
+        <h2 class="apex-pantry__row-title">{{ 'apex.recipe_page.shop_tools' | t }}</h2>
+        <apex-carousel class="apex-pantry__carousel">
+          <ul class="apex-rpage__tools list-unstyled" role="list" data-track tabindex="0" aria-label="{{ 'apex.recipe_page.shop_tools' | t }}">
+            {{ tool_cards }}
+          </ul>
+          <div class="apex-pcarousel__controls apex-pantry__controls">
+            <button type="button" class="apex-pantry__arrow" data-prev aria-label="{{ 'apex.reviews.previous' | t }}">{%- render 'apex-mnav-icon', icon: 'left' -%}</button>
+            <div class="apex-pcarousel__progress" aria-hidden="true"><span data-progress></span></div>
+            <button type="button" class="apex-pantry__arrow" data-next aria-label="{{ 'apex.reviews.next' | t }}">{%- render 'apex-mnav-icon', icon: 'right' -%}</button>
+          </div>
+        </apex-carousel>
+      </section>
+    {%- endif -%}
+
+    {%- assign others = 0 -%}
+    {%- capture other_cards -%}
+      {%- for a in blog.articles -%}
+        {%- if a.id == article.id -%}{%- continue -%}{%- endif -%}
+        {%- assign others = others | plus: 1 -%}
+        <li>
+          <article class="apex-rpage__other">
+            <a class="apex-rpage__other-media" href="{{ a.url }}" tabindex="-1" aria-hidden="true">
+              {%- if a.image -%}
+                {{ a.image | image_url: width: 1000 | image_tag: loading: 'lazy', widths: '500, 1000', sizes: '(min-width: 990px) 640px, 100vw', alt: '' }}
+              {%- endif -%}
+            </a>
+            <div class="apex-rpage__other-body">
+              <h3 class="apex-pcard__title"><a href="{{ a.url }}">{{ a.title | escape }}</a></h3>
+              {%- assign other_excerpt = a.excerpt | default: a.content | strip_html | truncatewords: 30 -%}
+              {%- if other_excerpt != blank -%}<p class="apex-pcard__text">{{ other_excerpt }}</p>{%- endif -%}
+            </div>
+          </article>
+        </li>
+        {%- if others >= 2 -%}{%- break -%}{%- endif -%}
+      {%- endfor -%}
+    {%- endcapture -%}
+    {%- if others > 0 -%}
+      <section class="apex-rpage__section">
+        <h2 class="apex-pantry__row-title">{{ 'apex.recipe_page.other' | t }}</h2>
+        <ul class="apex-rpage__others list-unstyled" role="list">{{ other_cards }}</ul>
+      </section>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  /* Measured from procook.co.uk recipe pages at 1440px; square corners and weights ≤ 600 for ApexCook. */
+  .apex-rpage {
+    display: block;
+    color: #282829;
+  }
+
+  .apex-rpage__crumbs {
+    max-width: 1300px;
+    margin-inline: auto;
+    padding: 16px;
+    font-size: 12px;
+  }
+
+  .apex-rpage__crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+  }
+
+  .apex-rpage__crumbs li:not(:last-child)::after {
+    content: '›';
+    margin-inline-start: 8px;
+    color: #757575;
+  }
+
+  .apex-rpage__crumbs a {
+    color: #282829;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .apex-rpage__crumbs a:hover {
+    text-decoration: underline;
+  }
+
+  .apex-rpage__banner {
+    height: 160px;
+    overflow: hidden;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-rpage__banner {
+      height: 250px;
+    }
+  }
+
+  .apex-rpage__banner img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .apex-rpage__page {
+    padding-bottom: 48px;
+    background: #f7f7f7;
+  }
+
+  .apex-rpage__sheet {
+    max-width: 1300px;
+    margin-inline: auto;
+    background: #fff;
+  }
+
+  .apex-rpage__split {
+    display: grid;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-rpage__split {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .apex-rpage__intro,
+  .apex-rpage__ingredients {
+    padding: 24px 16px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-rpage__intro,
+    .apex-rpage__ingredients {
+      padding: 32px;
+    }
+  }
+
+  .apex-rpage__photo img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 280px;
+    object-fit: cover;
+  }
+
+  .apex-rpage__photo:empty {
+    display: none;
+  }
+
+  .apex-rpage__share-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .apex-rpage__share {
+    display: flex;
+    gap: 6px;
+  }
+
+  .apex-rpage__share-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 30px;
+    padding: 0 10px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .apex-rpage__share-btn--fb {
+    background: #3b5998;
+  }
+
+  .apex-rpage__share-btn--pin {
+    background: #cb2027;
+  }
+
+  .apex-rpage__share-btn--mail {
+    background: #282829;
+  }
+
+  .apex-rpage__date {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .apex-rpage__facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 0 0 32px;
+  }
+
+  .apex-rpage__fact {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 120px;
+    height: 100px;
+    border: 1px solid #ddd;
+    font-size: 13px;
+    text-align: center;
+  }
+
+  .apex-rpage__title {
+    margin: 0 0 16px;
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-rpage__title {
+      font-size: 26px;
+    }
+  }
+
+  .apex-rpage__lede,
+  .apex-rpage__lede p {
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .apex-rpage__h2 {
+    margin: 0 0 20px;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-rpage__h2 {
+      font-size: 30px;
+    }
+  }
+
+  .apex-rpage__ingredients ul {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding-inline-start: 18px;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .apex-rpage__method {
+    padding: 24px 16px 40px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-rpage__method {
+      padding: 32px 32px 48px;
+    }
+
+    .apex-rpage__method-body ol,
+    .apex-rpage__method-body ul {
+      columns: 2;
+      column-gap: 64px;
+    }
+  }
+
+  .apex-rpage__method-body {
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .apex-rpage__method-body li {
+    margin-bottom: 14px;
+    break-inside: avoid;
+  }
+
+  .apex-rpage__section {
+    max-width: 1300px;
+    margin-inline: auto;
+    padding: 40px 16px 0;
+  }
+
+  .apex-rpage__tools {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 70%;
+    gap: 20px;
+    margin: 0;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+  }
+
+  .apex-rpage__tools::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media screen and (min-width: 750px) {
+    .apex-rpage__tools {
+      grid-auto-columns: calc((100% - 40px) / 3);
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-rpage__tools {
+      grid-auto-columns: calc((100% - 60px) / 4);
+    }
+  }
+
+  .apex-rpage__tool {
+    scroll-snap-align: start;
+  }
+
+  .apex-rpage__others {
+    display: grid;
+    gap: 20px;
+    margin: 0;
+  }
+
+  @media screen and (min-width: 750px) {
+    .apex-rpage__others {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .apex-rpage__other {
+    height: 100%;
+    background: #fff;
+  }
+
+  .apex-rpage__other-media {
+    display: block;
+    aspect-ratio: 640 / 315;
+    background: #e9e9e9;
+  }
+
+  .apex-rpage__other-media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .apex-rpage__other-body {
+    display: grid;
+    gap: 10px;
+    padding: 20px;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Recipe page",
+  "tag": "section",
+  "class": "apex-section apex-recipe-page-section",
+  "settings": [
+    { "type": "image_picker", "id": "banner_image", "label": "Banner image", "info": "Empty = the recipe's image." },
+    { "type": "text", "id": "hub_label", "label": "First tab / breadcrumb label", "default": "The Kitchen" },
+    { "type": "link_list", "id": "extra_links", "label": "Extra tabs" },
+    { "type": "collection", "id": "tools_collection", "label": "Tools collection", "info": "Tops up 'Shop the tools you will need' after the recipe's own products." }
+  ],
+  "presets": [{ "name": "Recipe page" }]
+}
+{% endschema %}

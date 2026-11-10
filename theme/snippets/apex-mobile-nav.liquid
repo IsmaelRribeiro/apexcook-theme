@@ -35,7 +35,7 @@
             aria-label="{{ 'apex.nav.search' | t }}"
           >
         </form>
-        <button type="button" class="apex-mnav__icon-btn" data-close>
+        <button type="button" class="apex-mnav__icon-btn" data-close autofocus>
           <span class="visually-hidden">{{ 'apex.nav.close_menu' | t }}</span>
           {%- render 'apex-mnav-icon', icon: 'close' -%}
         </button>
@@ -98,7 +98,8 @@
 
           <div class="apex-mnav__scroll">
             <p class="apex-mnav__eyebrow">{{ link.title | escape }}</p>
-            {%- render 'apex-nav-highlights', link: link, context: 'mobile' -%}
+            {%- capture mobile_highlights -%}{%- render 'apex-nav-highlights', link: link, context: 'mobile' -%}{%- endcapture -%}
+            {{ mobile_highlights }}
             {%- for column in column_links -%}
               <details class="apex-mnav__acc">
                 <summary class="apex-mnav__acc-title">
@@ -112,7 +113,7 @@
                 </ul>
               </details>
             {%- endfor -%}
-            {%- if column_links.size == 0 -%}
+            {%- if column_links.size == 0 and mobile_highlights == blank -%}
               <a class="apex-mnav__shop-all" href="{{ link.url }}">{{ 'apex.nav.shop_all' | t: title: link.title }}</a>
             {%- endif -%}
           </div>

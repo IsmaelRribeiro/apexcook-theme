@@ -18,7 +18,7 @@
 <div class="apex-free-delivery" {{ block.shopify_attributes }}>
   <p class="apex-free-delivery__text" role="status">
     {%- if qualified -%}
-      {{ 'apex.free_delivery.qualified' | t }} ✓
+      {{ 'apex.free_delivery.qualified' | t }} {{ 'ph-check-circle.svg' | inline_asset_content | replace: '<svg ', '<svg width="16" height="16" ' }}
     {%- else -%}
       {%- assign remaining_money = remaining | money -%}
       {{ 'apex.free_delivery.remaining' | t: amount: remaining_money }}

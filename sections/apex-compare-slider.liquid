@@ -36,7 +36,7 @@
     </div>
     <span class="apex-cmp__line" aria-hidden="true">
       <span class="apex-cmp__handle">
-        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m9 7-5 5 5 5M15 7l5 5-5 5"/></svg>
+        {{ 'ph-arrows-horizontal.svg' | inline_asset_content | replace: '<svg ', '<svg width="24" height="24" ' }}
       </span>
     </span>
     <input

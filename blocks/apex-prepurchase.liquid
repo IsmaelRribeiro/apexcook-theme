@@ -13,7 +13,7 @@
   <h2 class="apex-precheck__title">{{ block.settings.title | escape }}</h2>
   <div class="apex-precheck__card">
     <span class="apex-precheck__icon" aria-hidden="true">
-      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9h16v13H3zM19 13h6l4 5v4h-10z"/><circle cx="9" cy="24" r="2.5"/><circle cx="24" cy="24" r="2.5"/></svg>
+      {{ 'ph-truck-light.svg' | inline_asset_content | replace: '<svg ', '<svg width="32" height="32" ' }}
     </span>
     <div>
       <p class="apex-precheck__heading">{{ block.settings.delivery_title | escape }}</p>
@@ -24,19 +24,19 @@
         {%- endfor -%}
       </ul>
       {%- if block.settings.delivery_link != blank -%}
-        <a class="apex-precheck__link" href="{{ block.settings.delivery_link }}">{{ block.settings.delivery_link_label | escape }} ↗</a>
+        <a class="apex-precheck__link" href="{{ block.settings.delivery_link }}">{{ block.settings.delivery_link_label | escape }} {{ 'ph-arrow-up-right.svg' | inline_asset_content | replace: '<svg ', '<svg width="14" height="14" ' }}</a>
       {%- endif -%}
     </div>
   </div>
   {%- if has_guide -%}
     <div class="apex-precheck__card">
       <span class="apex-precheck__icon" aria-hidden="true">
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="26" height="10"/><path d="M8 11v4M13 11v6M18 11v4M23 11v6"/></svg>
+        {{ 'ph-ruler-light.svg' | inline_asset_content | replace: '<svg ', '<svg width="32" height="32" ' }}
       </span>
       <div>
         <p class="apex-precheck__heading">{{ block.settings.size_title | escape }}</p>
         <p class="apex-precheck__text">{{ block.settings.size_text | escape }}</p>
-        <button type="button" class="apex-precheck__link" popovertarget="ApexSizeGuide">{{ block.settings.size_link_label | escape }} ↗</button>
+        <button type="button" class="apex-precheck__link" popovertarget="ApexSizeGuide">{{ block.settings.size_link_label | escape }} {{ 'ph-arrow-up-right.svg' | inline_asset_content | replace: '<svg ', '<svg width="14" height="14" ' }}</button>
       </div>
     </div>
   {%- endif -%}

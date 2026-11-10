@@ -32,13 +32,13 @@
                     {{ media | video_tag: playsinline: true, preload: 'metadata', class: 'apex-testimonials__media', image_size: '720x' }}
                     <button type="button" class="apex-testimonials__play" data-apex-play>
                       <span class="visually-hidden">{{ 'apex.testimonials.play' | t: name: t.author.value }}</span>
-                      <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg>
+                      {{ 'ph-play-fill.svg' | inline_asset_content | replace: '<svg ', '<svg width="28" height="28" ' }}
                     </button>
                   {%- elsif media != blank -%}
                     {{ media | image_url: width: 720 | image_tag: loading: 'lazy', class: 'apex-testimonials__media', alt: '' }}
                   {%- else -%}
                     <span class="apex-testimonials__media apex-testimonials__media--empty" aria-hidden="true">
-                      <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="5" width="13" height="14"/><path d="m16 10 5-3v10l-5-3"/></svg>
+                      {{ 'ph-video-camera.svg' | inline_asset_content | replace: '<svg ', '<svg width="40" height="40" ' }}
                     </span>
                   {%- endif -%}
                 </div>

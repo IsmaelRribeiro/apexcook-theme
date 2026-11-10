@@ -1,24 +1,26 @@
 {%- doc -%}
-  Thin line icons used by the Samsung-style navigation.
+  Navigation icons from Phosphor Icons (regular weight, MIT licence – phosphoricons.com).
 
   @param {string} icon - 'menu', 'close', 'search', 'right', 'left' or 'down'
 
   @example
   {% render 'apex-mnav-icon', icon: 'close' %}
 {%- enddoc -%}
-<svg class="apex-mnav__svg apex-mnav__svg--{{ icon }}" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5">
-  {%- case icon -%}
-    {%- when 'menu' -%}
-      <path d="M3 5.5h18M3 12h18M3 18.5h18"/>
-    {%- when 'close' -%}
-      <path d="M4.5 4.5l15 15M19.5 4.5l-15 15"/>
-    {%- when 'search' -%}
-      <circle cx="10.5" cy="10.5" r="7"/><path d="M15.6 15.6 21 21"/>
-    {%- when 'right' -%}
-      <path d="M9 4.5 16.5 12 9 19.5"/>
-    {%- when 'left' -%}
-      <path d="M15 4.5 7.5 12 15 19.5"/>
-    {%- when 'down' -%}
-      <path d="M4.5 9 12 16.5 19.5 9"/>
-  {%- endcase -%}
-</svg>
+{%- liquid
+  case icon
+    when 'menu'
+      assign file = 'ph-list.svg'
+    when 'close'
+      assign file = 'ph-x.svg'
+    when 'search'
+      assign file = 'ph-magnifying-glass.svg'
+    when 'right'
+      assign file = 'ph-caret-right.svg'
+    when 'left'
+      assign file = 'ph-caret-left.svg'
+    else
+      assign file = 'ph-caret-down.svg'
+  endcase
+  assign cls = '<svg class="apex-mnav__svg apex-mnav__svg--' | append: icon | append: '" width="24" height="24" '
+-%}
+{{- file | inline_asset_content | replace: '<svg ', cls -}}

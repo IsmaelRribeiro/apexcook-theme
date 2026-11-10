@@ -104,6 +104,29 @@
       "search_placeholder": "Search",
       "search": "Search"
     },
+    "recipe_page": {
+      "breadcrumb": "Breadcrumb",
+      "home": "Home",
+      "share": "Share",
+      "email": "Email",
+      "published": "Published",
+      "time": "Total time",
+      "makes": "Makes {{ count }}",
+      "difficulty": "Difficulty",
+      "what_you_need": "What you'll need…",
+      "method": "Method",
+      "shop_tools": "Shop the tools you will need",
+      "in_stock": "In stock",
+      "add": "Add",
+      "choose": "Choose options",
+      "other": "Other recipes"
+    },
+    "pantry": {
+      "search_label": "Search recipes and guides",
+      "read_more": "Read more",
+      "read_more_short": "Read more",
+      "empty": "No articles here yet."
+    },
     "deal": {
       "add": "Add to basket",
       "learn_more": "Learn more",

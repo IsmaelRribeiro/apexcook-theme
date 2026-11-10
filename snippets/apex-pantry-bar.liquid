@@ -1,0 +1,37 @@
+{%- doc -%}
+  Pill tabs (hub + one per blog tag + extra links) and an article search, used on the Pantry
+  blog page and on recipe articles.
+
+  @param {object} blog - Blog
+  @param {string} [hub_label] - First tab label (default: blog title)
+  @param {object} [extra_links] - Menu with extra tabs
+  @param {string} [active_tag] - Tag to mark as current (articles pass their first tag)
+
+  @example
+  {% render 'apex-pantry-bar', blog: blog, hub_label: 'The Kitchen' %}
+{%- enddoc -%}
+<div class="apex-pantry__bar">
+  <nav class="apex-pantry__tabs" aria-label="{{ blog.title | escape }}">
+    <a class="apex-pantry__tab" href="{{ blog.url }}"{% if current_tags == blank and active_tag == blank %} aria-current="page"{% endif %}>
+      {{- hub_label | default: blog.title | escape -}}
+    </a>
+    {%- for tag in blog.all_tags -%}
+      {%- if tag == 'Test' -%}{%- continue -%}{%- endif -%}
+      <a class="apex-pantry__tab" href="{{ blog.url }}/tagged/{{ tag | handleize }}"{% if current_tags contains tag or active_tag == tag %} aria-current="page"{% endif %}>
+        {{- tag | escape -}}
+      </a>
+    {%- endfor -%}
+    {%- for link in extra_links.links -%}
+      <a class="apex-pantry__tab" href="{{ link.url }}">{{ link.title | escape }}</a>
+    {%- endfor -%}
+  </nav>
+  <form class="apex-pantry__search" action="{{ routes.search_url }}" method="get" role="search">
+    <input type="hidden" name="type" value="article">
+    <input type="hidden" name="options[prefix]" value="last">
+    <label class="visually-hidden" for="ApexPantrySearch">{{ 'apex.pantry.search_label' | t }}</label>
+    <input id="ApexPantrySearch" type="search" name="q" placeholder="{{ 'apex.nav.search' | t }}">
+    <button type="submit" aria-label="{{ 'apex.nav.search' | t }}">
+      {%- render 'apex-mnav-icon', icon: 'search' -%}
+    </button>
+  </form>
+</div>

@@ -127,8 +127,8 @@
     "apex_testimonials": {
       "type": "apex-testimonials",
       "settings": {
-        "anchor": "features",
-        "section_title": "Features",
+        "anchor": "",
+        "section_title": "",
         "eyebrow": "Customer stories",
         "heading": "See what people are saying",
         "limit": 8,
@@ -456,61 +456,54 @@
       }
     },
     "apex_feature": {
-      "type": "apex-feature-story",
+      "type": "apex-feature-hero",
       "blocks": {
-        "st1": {
-          "type": "stat",
-          "settings": {
-            "label": "Hob compatibility",
-            "value": "Every hob",
-            "note": "Gas, electric, ceramic and induction"
-          }
-        },
-        "st2": {
-          "type": "stat",
-          "settings": {
-            "label": "Coating",
-            "value": "None",
-            "note": "Nothing to chip, peel or flake"
-          }
-        },
-        "c1": {
+        "f1": {
           "type": "card",
           "settings": {
-            "eyebrow": "Sear",
+            "eyebrow": "Searing",
             "title": "A proper crust, every time",
-            "text": "<p>Titanium handles high heat, so steaks and veg brown properly instead of steaming.</p>"
+            "text": "<p>Titanium handles high heat without a coating to protect, so you can preheat properly and let steak, fish or halloumi build real colour.</p>"
           }
         },
-        "c2": {
+        "f2": {
           "type": "card",
           "settings": {
-            "eyebrow": "Eggs & pancakes",
-            "title": "Breakfast without the stress",
-            "text": "<p>Preheat on medium, add a little oil and let food release on its own.</p>"
+            "eyebrow": "Eggs",
+            "title": "Easy release with a little oil",
+            "text": "<p>Warm the pan on medium, add a little oil and give eggs a moment before you move them. They slide off without a coating to wear out.</p>"
           }
         },
-        "c3": {
+        "f3": {
           "type": "card",
           "settings": {
-            "eyebrow": "Care",
-            "title": "Built for everyday cooking",
-            "text": "<p>No coating to baby. Metal utensils are fine; wash, dry and it is ready for the next meal.</p>"
+            "eyebrow": "Sauces",
+            "title": "Deglaze straight in the pan",
+            "text": "<p>Scrape up every bit of flavour with a metal spatula and finish your sauce in the same pan. There is no coating to scratch.</p>"
           }
         }
       },
       "block_order": [
-        "st1",
-        "st2",
-        "c1",
-        "c2",
-        "c3"
+        "f1",
+        "f2",
+        "f3"
       ],
       "settings": {
+        "anchor": "features",
         "heading": "Built for heat.\nMade to last.",
-        "text": "<p>ApexCook takes everyday cooking further. A <strong>titanium cooking surface</strong> with nothing to wear away, on a body that works on <strong>every hob</strong> — from the first fry-up to the thousandth.</p>",
-        "background_color": "#2b241f",
-        "accent_color": "#d4ecb0"
+        "text": "<p>Titanium Pro is made for real everyday cooking — searing, frying and simmering on any hob. With <strong>no coating to chip or wear away</strong>, it keeps cooking the same way, meal after meal.</p>",
+        "stat1_label": "Sizes",
+        "stat1_prefix": "",
+        "stat1_value": "22–32",
+        "stat1_suffix": "cm",
+        "stat1_note": "Five sizes, with or without a glass lid",
+        "stat2_label": "Hob compatibility",
+        "stat2_prefix": "",
+        "stat2_value": "Every hob",
+        "stat2_suffix": "",
+        "stat2_note": "Gas, electric, ceramic and induction",
+        "base_color": "#2b2520",
+        "accent_color": "#d4e6a5"
       }
     }
   },
@@ -519,6 +512,7 @@
     "apex_nav",
     "main",
     "apex_highlights",
+    "apex_feature",
     "apex_feature",
     "apex_testimonials",
     "apex_chefs",

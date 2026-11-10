@@ -1,0 +1,294 @@
+{% comment %}
+  Section contract.
+  Samsung Watch Ultra2 "Off-grid. On track" feature block: full-width photo background that fades to
+  a dark base, large headline on the left, text and two big stats on the right, then a row of
+  expanding "+" cards (same behaviour as the chef cards) with dot navigation.
+  Stats are product claims: only show figures your supplier can back up.
+  @example
+  <!-- Product template, before "ApexCook testimonials"; anchor "features" -->
+{% endcomment %}
+<script src="{{ 'apex-chef-cards.js' | asset_url }}" type="module" fetchpriority="low"></script>
+<div
+  {% if section.settings.anchor != blank %}id="{{ section.settings.anchor | handle }}"{% endif %}
+  class="apex-fh"
+  style="--apex-fh-base: {{ section.settings.base_color }}; --apex-fh-accent: {{ section.settings.accent_color }};"
+>
+  <div class="apex-fh__bg" aria-hidden="true">
+    {%- if section.settings.image -%}
+      {{ section.settings.image | image_url: width: 2400 | image_tag: loading: 'lazy', widths: '750, 1200, 1800, 2400', sizes: '100vw', alt: '' }}
+    {%- else -%}
+      {{ 'lifestyle-1' | placeholder_svg_tag: 'apex-fh__ph' }}
+    {%- endif -%}
+  </div>
+
+  <div class="apex-fh__top">
+    <h2 class="apex-fh__heading">{{ section.settings.heading | escape | newline_to_br }}</h2>
+    <div class="apex-fh__side">
+      {%- if section.settings.text != blank -%}<div class="apex-fh__text">{{ section.settings.text }}</div>{%- endif -%}
+      {%- for i in (1..2) -%}
+        {%- liquid
+          assign k_label = 'stat' | append: i | append: '_label'
+          assign k_prefix = 'stat' | append: i | append: '_prefix'
+          assign k_value = 'stat' | append: i | append: '_value'
+          assign k_suffix = 'stat' | append: i | append: '_suffix'
+          assign k_note = 'stat' | append: i | append: '_note'
+        -%}
+        {%- if section.settings[k_value] != blank -%}
+          <div class="apex-fh__stat">
+            {%- if section.settings[k_label] != blank -%}<p class="apex-fh__stat-label">{{ section.settings[k_label] | escape }}</p>{%- endif -%}
+            <p class="apex-fh__stat-value">
+              {%- if section.settings[k_prefix] != blank -%}<span class="apex-fh__stat-small">{{ section.settings[k_prefix] | escape }}</span> {% endif -%}
+              <span class="apex-fh__stat-big">{{ section.settings[k_value] | escape }}</span>
+              {%- if section.settings[k_suffix] != blank %} <span class="apex-fh__stat-small">{{ section.settings[k_suffix] | escape }}</span>{%- endif -%}
+            </p>
+            {%- if section.settings[k_note] != blank -%}<p class="apex-fh__stat-note">{{ section.settings[k_note] | escape }}</p>{%- endif -%}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+
+  {%- if section.blocks.size > 0 -%}
+    <apex-chef-cards class="apex-chefs__carousel apex-fh__cards">
+      <ul class="apex-chefs__track list-unstyled" role="list" data-track>
+        {%- for block in section.blocks -%}
+          {%- assign panel_id = 'ApexFeature-' | append: block.id -%}
+          <li class="apex-chefs__card" {{ block.shopify_attributes }}>
+            <div class="apex-chefs__inner">
+              <div class="apex-chefs__textbox">
+                {%- if block.settings.eyebrow != blank -%}<p class="apex-chefs__eyebrow">{{ block.settings.eyebrow | escape }}</p>{%- endif -%}
+                <h3 class="apex-chefs__title">{{ block.settings.title | escape }}</h3>
+                <div class="apex-chefs__desc" id="{{ panel_id }}">{{ block.settings.text }}</div>
+              </div>
+              <div class="apex-chefs__media">
+                {%- if block.settings.video != blank -%}
+                  {{ block.settings.video | video_tag: autoplay: true, loop: true, muted: true, playsinline: true, preload: 'metadata', class: 'apex-chefs__img', image_size: '1200x' }}
+                {%- elsif block.settings.image != blank -%}
+                  {{ block.settings.image | image_url: width: 1200 | image_tag: loading: 'lazy', widths: '600, 900, 1200', sizes: '(min-width: 990px) 600px, 85vw', class: 'apex-chefs__img', alt: block.settings.image.alt | default: block.settings.title }}
+                {%- else -%}
+                  {{ 'image' | placeholder_svg_tag: 'apex-chefs__img apex-chefs__img--ph' }}
+                {%- endif -%}
+              </div>
+            </div>
+            {%- if block.settings.text != blank -%}
+              <button
+                type="button"
+                class="apex-chefs__toggle"
+                aria-expanded="false"
+                aria-controls="{{ panel_id }}"
+                aria-label="{{ 'apex.chefs.more' | t: title: block.settings.title }}"
+                data-label-open="{{ 'apex.chefs.more' | t: title: block.settings.title | escape }}"
+                data-label-close="{{ 'apex.chefs.close' | t | escape }}"
+              >
+                {{ 'ph-plus.svg' | inline_asset_content | replace: '<svg ', '<svg width="22" height="22" ' }}
+              </button>
+            {%- endif -%}
+          </li>
+        {%- endfor -%}
+      </ul>
+      {%- if section.blocks.size > 1 -%}
+        <div class="apex-chefs__dots" role="group" aria-label="{{ section.settings.heading | escape }}">
+          {%- for block in section.blocks -%}
+            <button type="button" class="apex-chefs__dot{% if forloop.first %} is-active{% endif %}" data-index="{{ forloop.index0 }}" aria-label="{{ 'apex.chefs.go_to' | t: number: forloop.index }}"></button>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </apex-chef-cards>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  /* Samsung Watch Ultra2 "Off-grid. On track" at 1440px: photo ~900px tall fading into a dark base,
+     56px headline, 16px text in a 470px right column, stats with a large light-green number,
+     translucent dark cards (white text, white-outline + button). Square corners, weights ≤ 600. */
+  .apex-fh {
+    position: relative;
+    isolation: isolate;
+    padding-block: var(--apex-space) calc(var(--apex-space) + 8px);
+    background: var(--apex-fh-base);
+    color: #fff;
+    overflow: hidden;
+  }
+
+  .apex-fh__bg {
+    position: absolute;
+    inset: 0 0 auto;
+    z-index: -1;
+    height: min(110vw, 960px);
+  }
+
+  .apex-fh__bg img,
+  .apex-fh__ph {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .apex-fh__ph {
+    background: #6b5d4f;
+    fill: #8a7a69;
+  }
+
+  /* Dark at the top for the text, clear in the middle, then fades into the base colour. */
+  .apex-fh__bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgb(0 0 0 / 0.45) 0%, rgb(0 0 0 / 0.05) 35%, rgb(0 0 0 / 0) 55%, var(--apex-fh-base) 100%);
+  }
+
+  .apex-fh__top {
+    display: grid;
+    gap: 24px;
+    max-width: var(--page-width, 1440px);
+    margin-inline: auto;
+    padding-inline: 24px;
+    min-height: min(85vw, 620px);
+    align-content: start;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-fh__top {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 470px);
+      gap: 64px;
+      padding-inline: 32px;
+    }
+  }
+
+  .apex-fh__heading {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(34px, 4vw, 56px);
+    font-weight: 600;
+    line-height: 1.15;
+  }
+
+  .apex-fh__text {
+    font-size: 15px;
+    line-height: 1.45;
+  }
+
+  .apex-fh__text p {
+    margin: 0;
+  }
+
+  .apex-fh__stat {
+    margin-top: 28px;
+  }
+
+  .apex-fh__stat-label {
+    margin: 0 0 6px;
+    font-size: 15px;
+  }
+
+  .apex-fh__stat-value {
+    margin: 0;
+    color: var(--apex-fh-accent);
+    font-weight: 600;
+    line-height: 1.1;
+  }
+
+  .apex-fh__stat-small {
+    font-size: 28px;
+  }
+
+  .apex-fh__stat-big {
+    font-size: clamp(36px, 3.4vw, 48px);
+  }
+
+  .apex-fh__stat-note {
+    margin: 6px 0 0;
+    font-size: 13px;
+    opacity: 0.8;
+  }
+
+  /* Dark translucent version of the chef cards. */
+  .apex-fh__cards {
+    margin-top: 40px;
+  }
+
+  .apex-fh .apex-chefs__card {
+    background: rgb(255 255 255 / 0.08);
+    backdrop-filter: blur(12px);
+    color: #fff;
+  }
+
+  .apex-fh .apex-chefs__desc {
+    color: rgb(255 255 255 / 0.8);
+  }
+
+  .apex-fh .apex-chefs__img--ph {
+    background: rgb(255 255 255 / 0.06);
+    fill: rgb(255 255 255 / 0.25);
+  }
+
+  .apex-fh .apex-chefs__toggle {
+    background: transparent;
+    border: 1.5px solid #fff;
+    color: #fff;
+  }
+
+  .apex-fh .apex-chefs__toggle:hover,
+  .apex-fh .apex-chefs__card.is-open .apex-chefs__toggle {
+    background: #fff;
+    color: #000;
+  }
+
+  .apex-fh .apex-chefs__dots {
+    border-color: rgb(255 255 255 / 0.3);
+  }
+
+  .apex-fh .apex-chefs__dot {
+    background: rgb(255 255 255 / 0.45);
+  }
+
+  .apex-fh .apex-chefs__dot.is-active {
+    background: #fff;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "ApexCook feature hero",
+  "tag": "section",
+  "class": "apex-section",
+  "settings": [
+    { "type": "text", "id": "anchor", "label": "Anchor id", "default": "features" },
+    { "type": "image_picker", "id": "image", "label": "Background image", "info": "Wide photo, at least 2400px. The lower part fades into the base colour." },
+    { "type": "textarea", "id": "heading", "label": "Heading", "default": "Built for heat.\nMade to last." },
+    { "type": "richtext", "id": "text", "label": "Text" },
+    { "type": "header", "content": "Stat 1" },
+    { "type": "text", "id": "stat1_label", "label": "Label" },
+    { "type": "text", "id": "stat1_prefix", "label": "Small text before" },
+    { "type": "text", "id": "stat1_value", "label": "Large value" },
+    { "type": "text", "id": "stat1_suffix", "label": "Small text after" },
+    { "type": "text", "id": "stat1_note", "label": "Note" },
+    { "type": "header", "content": "Stat 2" },
+    { "type": "text", "id": "stat2_label", "label": "Label" },
+    { "type": "text", "id": "stat2_prefix", "label": "Small text before" },
+    { "type": "text", "id": "stat2_value", "label": "Large value" },
+    { "type": "text", "id": "stat2_suffix", "label": "Small text after" },
+    { "type": "text", "id": "stat2_note", "label": "Note" },
+    { "type": "paragraph", "content": "Only show figures your supplier's specs or test reports back up." },
+    { "type": "header", "content": "Colours" },
+    { "type": "color", "id": "base_color", "label": "Base colour", "default": "#2b2520" },
+    { "type": "color", "id": "accent_color", "label": "Stat colour", "default": "#d4e6a5" }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Card",
+      "settings": [
+        { "type": "text", "id": "eyebrow", "label": "Label", "default": "Searing" },
+        { "type": "text", "id": "title", "label": "Title", "default": "A proper crust, every time" },
+        { "type": "richtext", "id": "text", "label": "Text (shown after +)" },
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "video", "id": "video", "label": "Video (overrides image)" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "ApexCook feature hero", "blocks": [{ "type": "card" }, { "type": "card" }, { "type": "card" }] }]
+}
+{% endschema %}

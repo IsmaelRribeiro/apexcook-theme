@@ -503,7 +503,8 @@
         "stat2_suffix": "",
         "stat2_note": "Gas, electric, ceramic and induction",
         "base_color": "#2b2520",
-        "accent_color": "#d4e6a5"
+        "accent_color": "#d4e6a5",
+        "section_title": "Features"
       }
     }
   },

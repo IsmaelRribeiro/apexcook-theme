@@ -96,6 +96,40 @@
       "search_placeholder": "Search",
       "search": "Search"
     },
+    "search": {
+      "popular": "Popular searches",
+      "recommended": "Recommended",
+      "suggestions": "Suggestions",
+      "other": "Collections, recipes & pages",
+      "from": "From {{ price }}",
+      "results_for": "Results for <strong>\"{{ terms }}\"</strong>",
+      "results_title": "Search",
+      "tab_products": "Products",
+      "tab_articles": "Recipes",
+      "tab_pages": "Pages",
+      "filters": "Filters",
+      "results": {
+        "one": "{{ count }} Result",
+        "other": "{{ count }} Results"
+      },
+      "sort": "Sort",
+      "price_range": "Price range",
+      "price_min": "Minimum price",
+      "price_max": "Maximum price",
+      "confirm": "Confirm",
+      "view_more": "View more",
+      "view_less": "View less",
+      "clear_all": "Clear all",
+      "apply": "View results",
+      "close_filters": "Close filters",
+      "colour": "Colour",
+      "buy_now": "Buy now",
+      "learn_more": "Learn more",
+      "sold_out": "Sold out",
+      "no_results": "No results for \"{{ terms }}\". Check the spelling or try a different word.",
+      "read_more": "Read more",
+      "prompt": "What are you looking for?"
+    },
     "specs": {
       "expand_all": "Expand all",
       "collapse_all": "Collapse all"

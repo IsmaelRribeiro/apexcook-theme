@@ -38,73 +38,49 @@
       </div>
 
       {% if predictive_search.performed %}
-        {% if predictive_search.resources.queries.size > 0 %}
-          <ul
-            class="predictive-search-results__list predictive-search-results__wrapper predictive-search-results__wrapper-queries list-unstyled"
-          >
-            {%- for resource in predictive_search.resources.queries -%}
-              <li
-                class="predictive-search-results__card--query"
-                ref="resultsItems[]"
-                on:keydown="/onSearchKeyDown"
-              >
-                <a
-                  class="pills__pill predictive-search-results__pill"
-                  href="{{ resource.url }}"
-                  aria-label="{{ resource.text }}"
-                >
-                  <span>
-                    {{ resource.styled_text }}
-                  </span>
-                </a>
-              </li>
-            {% endfor %}
-          </ul>
-        {% endif %}
+        {%- comment -%} ApexCook: Samsung layout — text suggestions left, product thumbnails right {%- endcomment -%}
+        <div class="apex-search">
+          <div class="apex-search__col apex-search__col--links">
+            {%- if predictive_search.resources.queries.size > 0 -%}
+              <p class="apex-search__label">{{ 'apex.search.suggestions' | t }}</p>
+              <ul class="apex-search__links predictive-search-results__wrapper-queries list-unstyled" role="list">
+                {%- for resource in predictive_search.resources.queries -%}
+                  <li ref="resultsItems[]" on:keydown="/onSearchKeyDown">
+                    <a class="apex-search__link" href="{{ resource.url }}" aria-label="{{ resource.text }}">
+                      {{- resource.styled_text -}}
+                    </a>
+                  </li>
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
 
-        {%- if search_results_count > 0 -%}
-          {% if predictive_search.resources.products.size > 0 %}
-            {%- liquid
-              assign title = 'content.search_results_resource_products' | t
-              assign products = predictive_search.resources.products
-              render 'predictive-search-products-list', title: title, products: products
+            {%- assign other_links = predictive_search.resources.collections
+              | concat: predictive_search.resources.articles
+              | concat: predictive_search.resources.pages
             -%}
-          {% endif %}
+            {%- if other_links.size > 0 -%}
+              <p class="apex-search__label">{{ 'apex.search.other' | t }}</p>
+              <ul class="apex-search__links predictive-search-results__wrapper-queries list-unstyled" role="list">
+                {%- for resource in other_links limit: 6 -%}
+                  <li ref="resultsItems[]">
+                    <a class="apex-search__link" href="{{ resource.url }}">{{ resource.title | escape }}</a>
+                  </li>
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
 
-          {% if predictive_search.resources.collections.size > 0 %}
-            {% assign resource_title = 'content.search_results_resource_collections' | t %}
+            {%- if search_results_count == 0 and predictive_search.resources.queries.size == 0 -%}
+              <p class="apex-search__empty">
+                {{ 'content.search_results_no_results' | t: terms: predictive_search.terms }}
+              </p>
+            {%- endif -%}
+          </div>
 
-            {% render 'predictive-search-resource-carousel',
-              title: resource_title,
-              resource_type: 'collection',
-              resources: predictive_search.resources.collections
-            %}
-          {% endif %}
-
-          {% if predictive_search.resources.pages.size > 0 %}
-            {% assign resource_title = 'content.search_results_resource_pages' | t %}
-
-            {% render 'predictive-search-resource-carousel',
-              title: resource_title,
-              resource_type: 'page',
-              resources: predictive_search.resources.pages
-            %}
-          {% endif %}
-
-          {% if predictive_search.resources.articles.size > 0 %}
-            {% assign resource_title = 'content.search_results_resource_articles' | t %}
-
-            {% render 'predictive-search-resource-carousel',
-              title: resource_title,
-              resource_type: 'article',
-              resources: predictive_search.resources.articles
-            %}
-          {% endif %}
-        {%- elsif predictive_search.resources.queries.size == 0 -%}
-          <p class="predictive-search-results__no-results">
-            {{ 'content.search_results_no_results' | t: terms: predictive_search.terms }}
-          </p>
-        {% endif %}
+          {%- if predictive_search.resources.products.size > 0 -%}
+            {%- assign products_title = 'content.search_results_resource_products' | t -%}
+            {% render 'apex-search-thumbs', title: products_title, products: predictive_search.resources.products, limit: 4 %}
+          {%- endif -%}
+        </div>
       {% else %}
         {%- liquid
           assign title = 'content.recently_viewed_products' | t

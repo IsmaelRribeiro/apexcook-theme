@@ -1,0 +1,42 @@
+{%- doc -%}
+  Samsung-style product thumbnails for the search overlay (grey square image, bold name, bold price).
+  Items carry the predictive-search refs so arrow-key navigation keeps working.
+
+  @param {string} title - Label above the row, e.g. "Recommended"
+  @param {object[]} products - Products to show
+  @param {number} [limit] - Max products (default 4)
+
+  @example
+  {% render 'apex-search-thumbs', title: 'Recommended', products: collection.products %}
+{%- enddoc -%}
+
+{%- assign limit = limit | default: 4 -%}
+<div class="apex-search__col apex-search__col--thumbs">
+  <p class="apex-search__label">{{ title }}</p>
+  <ul class="apex-search__thumbs predictive-search-results__wrapper-products list-unstyled" role="list">
+    {%- for product in products limit: limit -%}
+      <li class="predictive-search-results__card apex-search__thumb" ref="resultsItems[]">
+        <a class="apex-search__thumb-link" href="{{ product.url }}">
+          <span class="apex-search__thumb-image">
+            {%- if product.featured_media -%}
+              {{
+                product.featured_media.preview_image
+                | image_url: width: 500
+                | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 242px, 45vw', widths: '250, 500', alt: ''
+              }}
+            {%- endif -%}
+          </span>
+          <span class="apex-search__thumb-name">{{ product.title | escape }}</span>
+          <span class="apex-search__thumb-price">
+            {%- if product.price_varies -%}
+              {%- assign from_price = product.price_min | money -%}
+              {{ 'apex.search.from' | t: price: from_price }}
+            {%- else -%}
+              {{ product.price | money }}
+            {%- endif -%}
+          </span>
+        </a>
+      </li>
+    {%- endfor -%}
+  </ul>
+</div>

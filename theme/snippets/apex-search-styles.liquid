@@ -1,0 +1,350 @@
+{%- doc -%}
+  Samsung-style search overlay: full-width white sheet at the top of the page,
+  36px bold input, divider, "Popular searches" / suggestions on the left and
+  product thumbnails on the right, dimmed page behind.
+
+  @example
+  {% render 'apex-search-styles' %}
+{%- enddoc -%}
+
+{% stylesheet %}
+  /* Sheet */
+  .search-modal .search-modal__content.dialog-modal {
+    position: fixed;
+    inset: 0 0 auto;
+    width: 100%;
+    max-width: none;
+    height: auto;
+    max-height: 100dvh;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: hidden;
+    background: #fff;
+  }
+
+  .search-modal .dialog-modal[open].search-modal__content {
+    border-radius: 0;
+    transform-origin: top center;
+    animation: apex-search-drop 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  .search-modal .dialog-modal.search-modal__content.dialog-closing {
+    animation: apex-search-lift 0.2s ease forwards;
+  }
+
+  .search-modal .search-modal__content::backdrop {
+    display: block;
+    background: rgb(0 0 0 / 0.6);
+  }
+
+  @keyframes apex-search-drop {
+    from {
+      opacity: 0;
+      transform: translateY(-16px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes apex-search-lift {
+    to {
+      opacity: 0;
+      transform: translateY(-16px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .search-modal .dialog-modal[open].search-modal__content,
+    .search-modal .dialog-modal.search-modal__content.dialog-closing {
+      animation: none;
+    }
+  }
+
+  .search-modal predictive-search-component {
+    display: block;
+    background: #fff;
+  }
+
+  /* Input row */
+  .search-modal .predictive-search-form__header {
+    position: relative;
+    height: 64px;
+    padding: 0 56px 0 16px;
+    border: 0;
+    border-radius: 0;
+    background: #fff;
+  }
+
+  .search-modal .predictive-search-form__header::after {
+    content: '';
+    position: absolute;
+    inset-inline: 16px;
+    bottom: 0;
+    height: 1px;
+    background: #ddd;
+  }
+
+  @media screen and (min-width: 990px) {
+    .search-modal .predictive-search-form__header {
+      height: 108px;
+      padding: 0 72px 0 24px;
+    }
+
+    .search-modal .predictive-search-form__header::after {
+      inset-inline: 24px;
+    }
+  }
+
+  .search-modal .predictive-search-form__header-inner {
+    position: relative;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    outline: 0;
+  }
+
+  .search-modal .predictive-search-form__header-inner:focus-within {
+    outline: 0;
+  }
+
+  .search-modal input.search-input {
+    height: 43px;
+    padding: 1px 2px 1px 34px;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.15;
+    color: #000;
+  }
+
+  @media screen and (min-width: 990px) {
+    .search-modal input.search-input {
+      font-size: 36px;
+    }
+  }
+
+  .search-modal input.search-input::placeholder {
+    color: #757575;
+  }
+
+  .search-modal .predictive-search__icon {
+    inset-inline-start: 0;
+    width: 24px;
+    height: 24px;
+    color: #000;
+  }
+
+  .search-modal .predictive-search__icon > svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .search-modal .predictive-search__reset-button,
+  .search-modal .predictive-search-form__header::before {
+    display: none;
+  }
+
+  .search-modal .predictive-search__close-modal-button {
+    position: absolute;
+    inset-inline-end: 16px;
+    top: 50%;
+    width: 40px;
+    height: 40px;
+    margin: 0;
+    transform: translateY(-50%);
+    color: #000;
+  }
+
+  .search-modal .predictive-search__close-modal-button .svg-wrapper,
+  .search-modal .predictive-search__close-modal-button svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .search-modal .predictive-search__close-modal-button {
+      inset-inline-end: 32px;
+    }
+  }
+
+  /* Results area */
+  .search-modal .predictive-search-form__content-wrapper {
+    position: static;
+    max-height: none;
+    border-radius: 0;
+    overflow: visible;
+  }
+
+  .search-modal .predictive-search-form__content {
+    max-height: calc(100dvh - 64px);
+    padding: 0;
+  }
+
+  @media screen and (min-width: 990px) {
+    .search-modal .predictive-search-form__content {
+      max-height: calc(100dvh - 108px);
+    }
+  }
+
+  .search-modal .predictive-search-form__footer,
+  .search-modal predictive-search-component .predictive-search-form__footer {
+    display: none;
+  }
+
+  .search-modal .predictive-search-results__inner:has(> .apex-search),
+  .search-modal .predictive-search-results__inner.apex-search {
+    overflow: visible;
+  }
+
+  .search-modal .predictive-search-results__inner:has(> .apex-search) {
+    padding: 0;
+  }
+
+  .apex-search {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 24px;
+    padding: 24px 4px 40px;
+    color: #000;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-search {
+      grid-template-columns: 349px minmax(0, 1fr);
+      column-gap: 36px;
+      padding: 32px 24px 54px 12px;
+    }
+
+    .apex-search > .apex-search__col--thumbs:only-child {
+      grid-column: 2;
+    }
+  }
+
+  .apex-search__label {
+    margin: 0 0 15px;
+    padding-inline: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.33;
+    color: #757575;
+  }
+
+  .apex-search__col--thumbs .apex-search__label {
+    padding-inline: 12px 0;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-search__col--thumbs .apex-search__label {
+      padding-inline: 0;
+    }
+  }
+
+  .apex-search__links {
+    margin: 0 0 24px;
+  }
+
+  .apex-search__link {
+    display: block;
+    padding: 5px 12px 4px;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.33;
+    color: #000;
+    text-decoration: none;
+  }
+
+  .apex-search__link:hover,
+  .keyboard-focus > .apex-search__link {
+    text-decoration: underline;
+  }
+
+  .apex-search__link mark {
+    background: none;
+    color: inherit;
+    font-weight: 400;
+  }
+
+  .apex-search__empty {
+    margin: 0;
+    padding-inline: 12px;
+    font-size: 16px;
+  }
+
+  .apex-search__thumbs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 12px;
+    margin: 0;
+    padding-inline: 12px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-search__thumbs {
+      grid-template-columns: repeat(4, minmax(0, 242px));
+      padding-inline: 0;
+    }
+  }
+
+  .apex-search__thumb-link {
+    display: flex;
+    flex-direction: column;
+    color: #000;
+    text-decoration: none;
+  }
+
+  .apex-search__thumb-image {
+    display: block;
+    aspect-ratio: 1;
+    padding: 21px;
+    background: #f7f7f7;
+  }
+
+  .apex-search__thumb-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+  }
+
+  .apex-search__thumb-link:hover img {
+    transform: scale(1.05);
+  }
+
+  .apex-search__thumb-name {
+    display: -webkit-box;
+    margin-top: 18px;
+    overflow: hidden;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.33;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .apex-search__thumb-price {
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.33;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-search__thumb-name {
+      font-size: 22px;
+    }
+
+    .apex-search__thumb-price {
+      font-size: 20px;
+    }
+  }
+
+  .keyboard-focus .apex-search__thumb-name,
+  .apex-search__thumb-link:hover .apex-search__thumb-name {
+    text-decoration: underline;
+  }
+{% endstylesheet %}

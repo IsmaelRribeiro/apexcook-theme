@@ -23,7 +23,7 @@
         {%- if section.settings.heading != blank -%}<h3 class="apex-testimonials__heading">{{ section.settings.heading | escape }}</h3>{%- endif -%}
         <ul class="apex-testimonials__list" role="list">
           {%- for t in shop.metaobjects.apex_testimonial.values limit: section.settings.limit -%}
-            <li class="apex-testimonials__card" {% if section.settings.enable_animation %}data-apex-reveal style="--apex-reveal-index: {{ forloop.index0 }};"{% endif %}>
+            <li class="apex-testimonials__card">
               {%- assign media = t.media.value -%}
               {%- if media.media_type == 'video' -%}
                 {{ media | video_tag: controls: true, muted: true, playsinline: true, preload: 'none', class: 'apex-testimonials__media' }}

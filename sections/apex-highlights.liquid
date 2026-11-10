@@ -11,7 +11,7 @@
     <h2 class="apex-highlights__heading">{{ section.settings.heading | escape }}</h2>
     <ul class="apex-highlights__list" role="list">
       {%- for block in section.blocks -%}
-        <li class="apex-highlights__card" {% if section.settings.enable_animation %}data-apex-reveal style="--apex-reveal-index: {{ forloop.index0 }};"{% endif %} {{ block.shopify_attributes }}>
+        <li class="apex-highlights__card" {{ block.shopify_attributes }}>
           {%- if block.settings.icon != blank -%}
             {{ block.settings.icon | image_url: width: 96 | image_tag: loading: 'lazy', alt: '', class: 'apex-highlights__icon' }}
           {%- endif -%}

@@ -1,0 +1,391 @@
+{%- comment -%}
+  Samsung UK-style footer.
+  Desktop: columns of categories divided by hairlines (each top-level link of the menu is a category,
+  its child links are the list; categories beyond "columns" stack in the last column), then a
+  copyright row with payment icons, then a row with region · legal links · "Stay in the loop?" socials.
+  Mobile: categories become accordions.
+{%- endcomment -%}
+{%- liquid
+  assign menu = section.settings.menu
+  assign cols = section.settings.columns
+  assign cat_count = menu.links.size
+  if cat_count < cols
+    assign cols = cat_count
+  endif
+  assign last_index = cols | minus: 1
+  assign year = 'now' | date: '%Y'
+  assign socials = 'facebook,instagram,tiktok,youtube,pinterest,x' | split: ','
+  assign has_social = false
+  for s in socials
+    assign key = 'social_' | append: s
+    if section.settings[key] != blank
+      assign has_social = true
+    endif
+  endfor
+-%}
+
+<footer class="apex-footer" style="--apex-footer-cols: {{ cols | at_least: 1 }};">
+  <h2 class="visually-hidden">{{ 'apex.footer.navigation' | t }}</h2>
+
+  {%- if cat_count > 0 -%}
+    <div class="apex-footer__columns">
+      {%- for link in menu.links -%}
+        {%- assign i = forloop.index0 -%}
+        {%- if i <= last_index -%}<div class="apex-footer__column">{%- endif -%}
+        <details class="apex-footer__cat">
+          <summary class="apex-footer__title">
+            {{- link.title | escape -}}
+            <svg class="apex-footer__chevron" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m4 8.5 8 8 8-8"/></svg>
+          </summary>
+          <ul class="apex-footer__links list-unstyled" role="list">
+            {%- for child in link.links -%}
+              <li><a class="apex-footer__link" href="{{ child.url }}">{{ child.title | escape }}</a></li>
+            {%- else -%}
+              <li><a class="apex-footer__link" href="{{ link.url }}">{{ link.title | escape }}</a></li>
+            {%- endfor -%}
+          </ul>
+        </details>
+        {%- liquid
+          if i < last_index
+            echo '</div>'
+          elsif forloop.last
+            echo '</div>'
+          endif
+        -%}
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+
+  <div class="apex-footer__copy-row">
+    <p class="apex-footer__copyright">
+      {{ 'apex.footer.copyright' | t: year: year, shop: shop.name }}
+      {%- if section.settings.company_info != blank %} {{ section.settings.company_info | escape }}{% endif -%}
+    </p>
+    {%- if section.settings.show_payment_icons and shop.enabled_payment_types.size > 0 -%}
+      <ul class="apex-footer__payments list-unstyled" role="list" aria-label="{{ 'apex.footer.payment_methods' | t }}">
+        {%- for type in shop.enabled_payment_types -%}
+          <li>{{ type | payment_type_svg_tag: class: 'apex-footer__pay-icon' }}</li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+
+  <div class="apex-footer__bottom">
+    <div class="apex-footer__legal">
+      {%- if section.settings.region_label != blank -%}
+        <span class="apex-footer__region">{{ section.settings.region_label | escape }}</span>
+      {%- endif -%}
+      <ul class="apex-footer__terms list-unstyled" role="list">
+        {%- for link in section.settings.legal_menu.links -%}
+          <li><a href="{{ link.url }}">{{ link.title | escape }}</a></li>
+        {%- endfor -%}
+        {%- if section.settings.show_policies -%}
+          {%- for policy in shop.policies -%}
+            {%- if policy != blank -%}
+              <li><a href="{{ policy.url }}">{{ policy.title | escape }}</a></li>
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
+      </ul>
+    </div>
+
+    {%- if has_social -%}
+      <div class="apex-footer__social">
+        <span class="apex-footer__social-title">{{ section.settings.social_title | escape }}</span>
+        <ul class="list-unstyled" role="list">
+          {%- for s in socials -%}
+            {%- assign key = 'social_' | append: s -%}
+            {%- assign url = section.settings[key] -%}
+            {%- if url != blank -%}
+              <li>
+                <a href="{{ url }}" target="_blank" rel="noopener">
+                  <span class="visually-hidden">{{ s | capitalize }} ({{ 'accessibility.new_window' | t }})</span>
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true">
+                    {%- case s -%}
+                      {%- when 'facebook' -%}<path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4H7.1V12h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.4l-.5 3.5h-2.9v8.4A12 12 0 0 0 24 12z"/>
+                      {%- when 'instagram' -%}<path d="M12 2.2c3.2 0 3.6 0 4.8.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 3.2-1.7 4.8-4.9 4.9-1.3.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-3.3-.1-4.8-1.7-4.9-4.9C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8C2.4 3.9 3.9 2.4 7.2 2.3c1.2-.1 1.6-.1 4.8-.1zM12 0C8.7 0 8.3 0 7.1.1 2.7.3.3 2.7.1 7.1 0 8.3 0 8.7 0 12s0 3.7.1 4.9c.2 4.4 2.6 6.8 7 7 1.2.1 1.6.1 4.9.1s3.7 0 4.9-.1c4.4-.2 6.8-2.6 7-7 .1-1.2.1-1.6.1-4.9s0-3.7-.1-4.9c-.2-4.4-2.6-6.8-7-7C15.7 0 15.3 0 12 0zm0 5.8a6.2 6.2 0 1 0 0 12.4 6.2 6.2 0 0 0 0-12.4zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.4-11.8a1.4 1.4 0 1 0 0 2.9 1.4 1.4 0 0 0 0-2.9z"/>
+                      {%- when 'tiktok' -%}<path d="M12.5 0h4c.3 2.2 1.6 3.9 4 4.3v4c-1.6 0-3.1-.5-4-1.2v8.4c0 4.9-5.4 8-9.6 5.4-4.3-2.6-3.6-9.6 1.6-10.5v4.1c-2 .5-2.3 3.2-.6 4.1 1.6.9 3.6-.2 3.6-2.2z"/>
+                      {%- when 'youtube' -%}<path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4l6.2 3.6z"/>
+                      {%- when 'pinterest' -%}<path d="M12 0a12 12 0 0 0-4.4 23.2c-.1-.9-.2-2.4 0-3.4l1.4-6s-.3-.7-.3-1.8c0-1.7 1-2.9 2.2-2.9 1 0 1.5.8 1.5 1.7 0 1-.7 2.6-1 4-.3 1.2.6 2.2 1.8 2.2 2.1 0 3.8-2.3 3.8-5.5 0-2.9-2.1-4.9-5-4.9-3.4 0-5.4 2.6-5.4 5.2 0 1 .4 2.1.9 2.7.1.1.1.2.1.4l-.3 1.4c-.1.2-.2.3-.4.2-1.5-.7-2.4-2.9-2.4-4.6 0-3.8 2.7-7.2 7.9-7.2 4.1 0 7.4 3 7.4 6.9 0 4.1-2.6 7.5-6.2 7.5-1.2 0-2.4-.6-2.8-1.4l-.7 2.9c-.3 1-1 2.3-1.5 3.1A12 12 0 1 0 12 0z"/>
+                      {%- else -%}<path d="M18.2 2.3h3.4l-7.4 8.4 8.7 11.5h-6.8l-5.3-7-6.1 7H1.3l7.9-9L.8 2.3h7l4.8 6.4zm-1.2 17.9h1.9L6.8 4.2h-2z"/>
+                    {%- endcase -%}
+                  </svg>
+                </a>
+              </li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- endif -%}
+  </div>
+</footer>
+
+<script>
+  (() => {
+    const mq = window.matchMedia('(min-width: 990px)');
+    const sync = () => {
+      document.querySelectorAll('.apex-footer__cat').forEach((d) => {
+        d.open = mq.matches;
+      });
+    };
+    sync();
+    mq.addEventListener('change', sync);
+    document.querySelectorAll('.apex-footer__title').forEach((s) => {
+      s.addEventListener('click', (e) => {
+        if (mq.matches) e.preventDefault();
+      });
+    });
+  })();
+</script>
+
+{% stylesheet %}
+  /* Measured from samsung.com/uk at 1440px: 18px titles (600 here), 14px links with 7px vertical padding,
+     24px side padding, #ddd hairlines, 12px legal row. */
+  .apex-footer {
+    background: #fff;
+    color: #000;
+  }
+
+  .apex-footer a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .apex-footer a:hover {
+    text-decoration: underline;
+  }
+
+  .apex-footer__columns {
+    max-width: 1440px;
+    margin-inline: auto;
+    padding-inline: 24px;
+  }
+
+  .apex-footer__cat {
+    border-bottom: 1px solid #ddd;
+  }
+
+  .apex-footer__title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 0;
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.33;
+    list-style: none;
+    cursor: pointer;
+  }
+
+  .apex-footer__title::-webkit-details-marker {
+    display: none;
+  }
+
+  .apex-footer__chevron {
+    flex: none;
+    transition: transform 0.2s ease;
+  }
+
+  .apex-footer__cat[open] .apex-footer__chevron {
+    transform: rotate(180deg);
+  }
+
+  .apex-footer__links {
+    margin: 0;
+    padding: 0 0 16px;
+  }
+
+  .apex-footer__link {
+    display: block;
+    padding: 7px 0;
+    font-size: 14px;
+    line-height: 1.33;
+  }
+
+  .apex-footer__copy-row,
+  .apex-footer__bottom {
+    max-width: 1440px;
+    margin-inline: auto;
+    padding: 24px;
+  }
+
+  .apex-footer__copy-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .apex-footer__copyright {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.33;
+  }
+
+  .apex-footer__payments {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+  }
+
+  .apex-footer__pay-icon {
+    display: block;
+    width: 38px;
+    height: 24px;
+  }
+
+  .apex-footer__bottom {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: 24px;
+    padding-top: 8px;
+    padding-bottom: 32px;
+  }
+
+  .apex-footer__legal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    font-size: 12px;
+  }
+
+  .apex-footer__region {
+    font-weight: 600;
+  }
+
+  .apex-footer__terms {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 22px;
+    margin: 0;
+    line-height: 24px;
+  }
+
+  .apex-footer__social {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .apex-footer__social-title {
+    font-size: 12px;
+    text-transform: uppercase;
+  }
+
+  .apex-footer__social ul {
+    display: flex;
+    gap: 18px;
+    margin: 0;
+  }
+
+  .apex-footer__social a {
+    display: block;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-footer {
+      border-top: 1px solid #ddd;
+    }
+
+    .apex-footer__columns {
+      display: grid;
+      grid-template-columns: repeat(var(--apex-footer-cols), minmax(0, 1fr));
+      padding-inline: 0;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .apex-footer__column {
+      padding-bottom: 32px;
+    }
+
+    .apex-footer__column + .apex-footer__column {
+      border-left: 1px solid #ddd;
+    }
+
+    .apex-footer__cat {
+      border-bottom: 0;
+    }
+
+    .apex-footer__title {
+      padding: 16px 24px;
+      font-size: 18px;
+      cursor: default;
+    }
+
+    .apex-footer__chevron {
+      display: none;
+    }
+
+    .apex-footer__links {
+      padding: 0 0 8px;
+    }
+
+    .apex-footer__link {
+      padding: 7px 24px;
+    }
+
+    .apex-footer__copy-row {
+      padding-block: 28px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .apex-footer__bottom {
+      flex-direction: row;
+      justify-content: space-between;
+      padding-block: 20px;
+    }
+
+    .apex-footer__legal {
+      flex-direction: row;
+      gap: 0;
+    }
+
+    .apex-footer__region {
+      padding-right: 32px;
+      margin-right: 32px;
+      border-right: 1px solid #ddd;
+      line-height: 24px;
+    }
+
+    .apex-footer__terms {
+      justify-content: flex-start;
+      gap: 0 32px;
+    }
+
+    .apex-footer__social {
+      flex-direction: row;
+      gap: 24px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "ApexCook footer",
+  "tag": "section",
+  "class": "apex-footer-section",
+  "settings": [
+    { "type": "link_list", "id": "menu", "label": "Menu", "info": "Each top-level link is a column heading; its child links are listed below it." },
+    { "type": "range", "id": "columns", "label": "Columns (desktop)", "min": 3, "max": 6, "step": 1, "default": 5, "info": "Extra headings stack in the last column." },
+    { "type": "text", "id": "company_info", "label": "Company details after copyright", "info": "E.g. registered company name and number." },
+    { "type": "checkbox", "id": "show_payment_icons", "label": "Show payment icons", "default": true },
+    { "type": "text", "id": "region_label", "label": "Region label", "default": "United Kingdom/English" },
+    { "type": "link_list", "id": "legal_menu", "label": "Legal links" },
+    { "type": "checkbox", "id": "show_policies", "label": "Show store policies", "default": true },
+    { "type": "text", "id": "social_title", "label": "Social heading", "default": "Stay in the loop?" },
+    { "type": "url", "id": "social_facebook", "label": "Facebook" },
+    { "type": "url", "id": "social_instagram", "label": "Instagram" },
+    { "type": "url", "id": "social_tiktok", "label": "TikTok" },
+    { "type": "url", "id": "social_youtube", "label": "YouTube" },
+    { "type": "url", "id": "social_pinterest", "label": "Pinterest" },
+    { "type": "url", "id": "social_x", "label": "X" }
+  ],
+  "presets": [{ "name": "ApexCook footer" }]
+}
+{% endschema %}

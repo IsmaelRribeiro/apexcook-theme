@@ -205,12 +205,12 @@
         "text": "<p>Drag to compare. Coated pans wear with every scrub; ApexCook's titanium has no coating to wear away.</p>",
         "full_width": true,
         "start_position": 50,
-        "left_label": "Non-stick coating",
-        "left_stat": "Toxic",
-        "left_stat_color": "#9a9a9a",
-        "right_label": "Pure titanium",
-        "right_stat": "Safe",
-        "right_stat_color": "#7f9c6e"
+        "left_label": "Pure titanium",
+        "left_stat": "Safe",
+        "left_stat_color": "#7f9c6e",
+        "right_label": "Non-stick coating",
+        "right_stat": "Toxic",
+        "right_stat_color": "#9a9a9a"
       }
     },
     "apex_compare": {

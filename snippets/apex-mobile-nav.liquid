@@ -1,0 +1,364 @@
+{%- doc -%}
+  Samsung-style mobile navigation: full-screen menu with a search pill,
+  large top-level links that slide into a level with accordions
+  (highlight tiles + link columns), and the utility links below.
+
+  @param {object} linklist - Main menu
+  @param {object} [utility_menu] - Small links shown under the main list
+
+  @example
+  {% render 'apex-mobile-nav', linklist: block.settings.menu, utility_menu: settings.apex_utility_menu %}
+{%- enddoc -%}
+
+<apex-mobile-nav class="apex-mnav">
+  <button
+    type="button"
+    class="apex-mnav__toggle header__icon"
+    aria-haspopup="dialog"
+    aria-expanded="false"
+    aria-controls="ApexMobileNav"
+  >
+    <span class="visually-hidden">{{ 'apex.nav.open_menu' | t }}</span>
+    {%- render 'apex-mnav-icon', icon: 'menu' -%}
+  </button>
+
+  <dialog id="ApexMobileNav" class="apex-mnav__dialog" aria-label="{{ 'accessibility.header_navigation_label' | t }}">
+    <div class="apex-mnav__view is-active" data-view="root">
+      <div class="apex-mnav__bar">
+        <form action="{{ routes.search_url }}" method="get" role="search" class="apex-mnav__search">
+          {%- render 'apex-mnav-icon', icon: 'search' -%}
+          <input
+            class="apex-mnav__search-input"
+            type="search"
+            name="q"
+            placeholder="{{ 'apex.nav.search_placeholder' | t }}"
+            aria-label="{{ 'apex.nav.search' | t }}"
+          >
+        </form>
+        <button type="button" class="apex-mnav__icon-btn" data-close>
+          <span class="visually-hidden">{{ 'apex.nav.close_menu' | t }}</span>
+          {%- render 'apex-mnav-icon', icon: 'close' -%}
+        </button>
+      </div>
+
+      <div class="apex-mnav__scroll">
+        <ul class="apex-mnav__l0 list-unstyled" role="list">
+          {%- for link in linklist.links -%}
+            <li>
+              {%- if link.links != blank or link.type == 'collection_link' -%}
+                <button
+                  type="button"
+                  class="apex-mnav__l0-item"
+                  data-open="ApexMnavPanel-{{ forloop.index }}"
+                  aria-controls="ApexMnavPanel-{{ forloop.index }}"
+                  aria-expanded="false"
+                >
+                  <span>{{ link.title | escape }}</span>
+                  {%- render 'apex-mnav-icon', icon: 'right' -%}
+                </button>
+              {%- else -%}
+                <a class="apex-mnav__l0-item" href="{{ link.url }}">
+                  <span>{{ link.title | escape }}</span>
+                </a>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+
+        {%- if utility_menu.links.size > 0 -%}
+          <hr class="apex-mnav__sep">
+          <ul class="apex-mnav__utility list-unstyled" role="list">
+            {%- for link in utility_menu.links -%}
+              <li><a class="apex-mnav__utility-link" href="{{ link.url }}">{{ link.title | escape }}</a></li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+      </div>
+    </div>
+
+    {%- for link in linklist.links -%}
+      {%- if link.links != blank or link.type == 'collection_link' -%}
+        {%- assign column_links = link.links | where: 'levels', 1 -%}
+        <div class="apex-mnav__view" id="ApexMnavPanel-{{ forloop.index }}" data-view hidden>
+          <div class="apex-mnav__bar">
+            <button type="button" class="apex-mnav__icon-btn" data-back>
+              <span class="visually-hidden">{{ 'apex.nav.back' | t }}</span>
+              {%- render 'apex-mnav-icon', icon: 'left' -%}
+            </button>
+            <span class="apex-mnav__bar-spacer"></span>
+            <button type="button" class="apex-mnav__icon-btn" data-search>
+              <span class="visually-hidden">{{ 'apex.nav.search' | t }}</span>
+              {%- render 'apex-mnav-icon', icon: 'search' -%}
+            </button>
+            <button type="button" class="apex-mnav__icon-btn" data-close>
+              <span class="visually-hidden">{{ 'apex.nav.close_menu' | t }}</span>
+              {%- render 'apex-mnav-icon', icon: 'close' -%}
+            </button>
+          </div>
+
+          <div class="apex-mnav__scroll">
+            <p class="apex-mnav__eyebrow">{{ link.title | escape }}</p>
+            {%- render 'apex-nav-highlights', link: link, context: 'mobile' -%}
+            {%- for column in column_links -%}
+              <details class="apex-mnav__acc">
+                <summary class="apex-mnav__acc-title">
+                  {{- column.title | escape -}}
+                  {%- render 'apex-mnav-icon', icon: 'down' -%}
+                </summary>
+                <ul class="apex-mnav__links list-unstyled" role="list">
+                  {%- for sub in column.links -%}
+                    <li><a class="apex-mnav__link" href="{{ sub.url }}">{{ sub.title | escape }}</a></li>
+                  {%- endfor -%}
+                </ul>
+              </details>
+            {%- endfor -%}
+            {%- if column_links.size == 0 -%}
+              <a class="apex-mnav__shop-all" href="{{ link.url }}">{{ 'apex.nav.shop_all' | t: title: link.title }}</a>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </dialog>
+</apex-mobile-nav>
+
+<script src="{{ 'apex-mobile-nav.js' | asset_url }}" type="module" fetchpriority="low"></script>
+
+{% stylesheet %}
+  .apex-mnav__toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+    border: 0;
+    background: none;
+    color: currentColor;
+    cursor: pointer;
+  }
+
+  .apex-mnav__dialog {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    background: #fff;
+    color: #000;
+  }
+
+  .apex-mnav__dialog::backdrop {
+    background: transparent;
+  }
+
+  html:has(.apex-mnav__dialog[open]) {
+    overflow: hidden;
+  }
+
+  .apex-mnav__view {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .apex-mnav__view[data-view='root'] {
+    transform: translateX(-30%);
+  }
+
+  .apex-mnav__view.is-active {
+    transform: none;
+  }
+
+  .apex-mnav__view[hidden] {
+    display: flex;
+    visibility: hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .apex-mnav__view {
+      transition: none;
+    }
+  }
+
+  .apex-mnav__bar {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 64px;
+    padding: 11px 8px 11px 16px;
+  }
+
+  .apex-mnav__view:not([data-view='root']) .apex-mnav__bar {
+    padding-inline-start: 11px;
+  }
+
+  .apex-mnav__bar-spacer {
+    flex: 1;
+  }
+
+  .apex-mnav__search {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: 6px;
+    height: 41px;
+    padding: 0 12px;
+    border: 1px solid #ddd;
+    border-radius: 100px;
+  }
+
+  .apex-mnav__search .apex-mnav__svg {
+    flex: none;
+    width: 18px;
+    height: 18px;
+  }
+
+  .apex-mnav__search-input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: none;
+    font-size: 16px;
+    color: #000;
+  }
+
+  .apex-mnav__search:focus-within {
+    border-color: #000;
+  }
+
+  .apex-mnav__icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+    border: 0;
+    background: none;
+    color: #000;
+    cursor: pointer;
+  }
+
+  .apex-mnav__scroll {
+    flex: 1;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-block-end: 40px;
+  }
+
+  .apex-mnav__l0-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 48px;
+    padding: 8px 20px 8px 24px;
+    border: 0;
+    background: none;
+    color: #000;
+    font: inherit;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.33;
+    text-align: start;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .apex-mnav__l0-item .apex-mnav__svg {
+    flex: none;
+    width: 20px;
+    height: 20px;
+  }
+
+  .apex-mnav__sep {
+    height: 1px;
+    margin: 16px 24px;
+    border: 0;
+    background: #ddd;
+  }
+
+  .apex-mnav__utility-link {
+    display: block;
+    padding: 10px 24px;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.33;
+    color: #000;
+    text-decoration: none;
+  }
+
+  .apex-mnav__eyebrow {
+    margin: 0;
+    padding: 4px 24px 6px;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.33;
+    text-transform: uppercase;
+    color: #707070;
+  }
+
+  .apex-mnav__acc-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 49px;
+    padding: 9px 20px 8px 24px;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.33;
+    list-style: none;
+    cursor: pointer;
+  }
+
+  .apex-mnav__acc-title::-webkit-details-marker {
+    display: none;
+  }
+
+  .apex-mnav__acc-title .apex-mnav__svg {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    transition: transform 0.2s ease;
+  }
+
+  .apex-mnav__acc[open] > .apex-mnav__acc-title .apex-mnav__svg {
+    transform: rotate(180deg);
+  }
+
+  .apex-mnav__tiles.apex-mega__tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 13px;
+    padding: 8px 24px 16px;
+  }
+
+  .apex-mnav__links {
+    padding: 0 24px 12px;
+  }
+
+  .apex-mnav__link,
+  .apex-mnav__shop-all {
+    display: block;
+    padding: 10px 0;
+    font-size: 16px;
+    line-height: 1.33;
+    color: #000;
+    text-decoration: none;
+  }
+
+  .apex-mnav__shop-all {
+    padding-inline: 24px;
+    font-weight: 700;
+  }
+{% endstylesheet %}

@@ -1,0 +1,68 @@
+{%- doc -%}
+  Samsung-style highlight tiles for a top-level menu link.
+  - Child links without their own children render as collection tiles ("Shop Highlights").
+  - Otherwise, a collection link renders its first products ("Product Highlights").
+  Outputs nothing when there is nothing to show.
+
+  @param {object} link - Top-level menu link
+  @param {string} [context] - 'desktop' (heading + grid) or 'mobile' (accordion)
+
+  @example
+  {% render 'apex-nav-highlights', link: link %}
+{%- enddoc -%}
+
+{%- liquid
+  assign tile_links = link.links | where: 'levels', 0
+  assign sizes = '148px'
+  if context == 'mobile'
+    assign sizes = '(max-width: 989px) 50vw, 148px'
+  endif
+  assign heading = blank
+-%}
+
+{%- capture tiles -%}
+  {%- if tile_links.size > 0 -%}
+    {%- assign heading = 'apex.nav.shop_highlights' | t -%}
+    {%- for child in tile_links -%}
+      <li>
+        <a class="apex-mega__tile" href="{{ child.url }}">
+          {%- render 'link-featured-image', link: child, class: 'apex-mega__tile-image', sizes: sizes, placeholder: true -%}
+          <span class="apex-mega__tile-label">{{ child.title | escape }}</span>
+        </a>
+      </li>
+    {%- endfor -%}
+  {%- elsif link.type == 'collection_link' and link.object.products_count > 0 -%}
+    {%- assign heading = 'apex.nav.product_highlights' | t -%}
+    {%- for product in link.object.products limit: 6 -%}
+      <li>
+        <a class="apex-mega__tile" href="{{ product.url }}">
+          {%- if product.featured_media -%}
+            {{
+              product.featured_media.preview_image
+              | image_url: width: 400
+              | image_tag: loading: 'lazy', class: 'apex-mega__tile-image', sizes: sizes, alt: ''
+            }}
+          {%- else -%}
+            <span class="apex-mega__tile-image apex-mega__placeholder" aria-hidden="true"></span>
+          {%- endif -%}
+          <span class="apex-mega__tile-label">{{ product.title | escape }}</span>
+        </a>
+      </li>
+    {%- endfor -%}
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- if heading != blank -%}
+  {%- if context == 'mobile' -%}
+    <details class="apex-mnav__acc">
+      <summary class="apex-mnav__acc-title">
+        {{- heading -}}
+        {%- render 'apex-mnav-icon', icon: 'down' -%}
+      </summary>
+      <ul class="apex-mega__tiles apex-mnav__tiles list-unstyled" role="list">{{ tiles }}</ul>
+    </details>
+  {%- else -%}
+    <p class="apex-mega__heading">{{ heading }}</p>
+    <ul class="apex-mega__tiles list-unstyled" role="list">{{ tiles }}</ul>
+  {%- endif -%}
+{%- endif -%}

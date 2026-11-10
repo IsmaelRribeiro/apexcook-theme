@@ -13,11 +13,6 @@
   "sections": {
     "apex_utility_bar": {
       "type": "apex-utility-bar",
-      "blocks": {
-        "link_recipes": { "type": "link", "settings": { "label": "Recipes", "link": "shopify://blogs/recipes", "new_tab": false } },
-        "link_support": { "type": "link", "settings": { "label": "Support", "link": "shopify://pages/contact", "new_tab": false } }
-      },
-      "block_order": ["link_recipes", "link_support"],
       "settings": {}
     },
     "header_announcements_9jGBFp": {

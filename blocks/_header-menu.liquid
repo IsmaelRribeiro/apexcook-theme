@@ -18,12 +18,8 @@
       data-hydration-key="header-drawer-mobile"
       {{ block.shopify_attributes }}
     >
-      {% render 'header-drawer',
-        linklist: block_settings.menu,
-        data_header_drawer_type: 'mobile-drawer',
-        block: block,
-        section: section
-      %}
+      {%- comment -%} ApexCook: Samsung-style mobile menu replaces Horizon's drawer {%- endcomment -%}
+      {% render 'apex-mobile-nav', linklist: block_settings.menu, utility_menu: settings.apex_utility_menu %}
     </div>
 
   {% when 'navigation_bar' %}
@@ -65,8 +61,6 @@
   {% else %}
     {% liquid
       assign block_settings = block.settings
-      assign menu_content_type = block_settings.menu_style | default: 'text'
-      assign image_border_radius = block_settings.image_border_radius
 
       render 'contrast-override', background_color: block_settings.background_color, text_color: block_settings.text_color, section_id: block.id
 
@@ -83,12 +77,6 @@
       if parent_background_color.rgb == current_background_color.rgb
         assign background_color_classes = background_color_classes | append: ' background-matches-parent'
       endif
-
-      if block_settings.menu_style == 'featured_collections'
-        assign ratio = block_settings.featured_collections_aspect_ratio
-      elsif block_settings.menu_style == 'featured_products'
-        assign ratio = block_settings.featured_products_aspect_ratio
-      endif
     %}
 
     {% capture children %}
@@ -99,7 +87,13 @@
           on:pointerenter="/activate"
           on:pointerleave="/deactivate"
         >
-          {%- if link.links != blank -%}
+          {%- liquid
+            assign has_panel = false
+            if link.links != blank or link.type == 'collection_link'
+              assign has_panel = true
+            endif
+          -%}
+          {%- if has_panel -%}
             <span class="menu-list__trigger">
           {%- endif -%}
           <a
@@ -113,7 +107,7 @@
           >
             <span class="menu-list__link-title">{{- link.title -}}</span>
           </a>
-          {%- if link.links != blank -%}
+          {%- if has_panel -%}
             <button
               type="button"
               class="menu-list__disclosure button-unstyled"
@@ -144,28 +138,9 @@
                 class="menu-list__submenu-inner"
                 style="{% render 'submenu-font-styles', settings: block_settings %}"
               >
-                {% assign list_id = 'MegaMenuList-' | append: forloop.index %}
                 <div class="mega-menu section section--full-width-margin section--{{ section.settings.section_width }}">
-                  {%- comment -%} ApexCook: Samsung-style "Shop Highlights" panel for collection images {%- endcomment -%}
-                  {%- if menu_content_type == 'collection_images' -%}
-                    <p class="apex-mega__heading">{{ 'apex.nav.shop_highlights' | t }}</p>
-                  {%- endif -%}
-                  <div
-                    class="mega-menu__grid{% if menu_content_type == 'collection_images' %} apex-mega__grid{% endif %}"
-                    data-menu-grid-id="{{ list_id }}"
-                  >
-                    {% render 'mega-menu-list',
-                      parent_link: link,
-                      id: list_id,
-                      section: section,
-                      grid_columns_count: 6,
-                      grid_columns_count_tablet: 4,
-                      grid_columns_count_collection_images: 2,
-                      menu_content_type: menu_content_type,
-                      content_aspect_ratio: ratio,
-                      image_border_radius: image_border_radius
-                    %}
-                  </div>
+                  {%- comment -%} ApexCook: Samsung-style panel (highlights + link columns) {%- endcomment -%}
+                  {% render 'apex-mega-panel', link: link %}
                 </div>
               </div>
             </div>
@@ -987,58 +962,140 @@
     }
   }
 
+  /* Samsung-style mega panel */
+  .apex-mega {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding-block: 24px 46px;
+  }
+
+  .apex-mega__highlights {
+    position: relative;
+    flex: 0 0 308px;
+    padding-block-start: 8px;
+  }
+
+  .apex-mega__highlights--divided {
+    margin-inline-end: 94px;
+  }
+
+  .apex-mega__highlights--divided::after {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: -57px;
+    width: 1px;
+    background: #ddd;
+  }
+
   .apex-mega__heading {
-    margin: 0 0 28px;
-    padding-block-start: 24px;
+    margin: 0 0 29px;
     font-size: 14px;
     font-weight: 700;
     line-height: 16px;
   }
 
-  .mega-menu__grid.apex-mega__grid {
-    display: block;
-    max-width: 308px;
-    margin-inline: 0;
-    padding-block-end: 22px;
-  }
-
-  .apex-mega__grid .mega-menu__list {
+  .apex-mega__tiles {
     display: grid;
     grid-template-columns: repeat(2, 148px);
-    gap: 0 12px;
+    gap: 10px 12px;
+    margin: 0;
   }
 
-  .apex-mega__grid .mega-menu__column {
-    grid-column: auto;
-  }
-
-  .apex-mega__grid .mega-menu__link {
+  .apex-mega__tile {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    padding: 0;
+    color: var(--color-foreground);
+    text-decoration: none;
+  }
+
+  .apex-mega__tile-image {
+    display: block;
+    width: 100%;
+    aspect-ratio: 148 / 104;
+    height: auto;
+    object-fit: cover;
+    border-radius: 0;
+    background: var(--apex-tile, #f4f4f4);
+  }
+
+  .apex-mega__tile-label {
+    min-height: 40px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+  }
+
+  .apex-mega__tile:hover .apex-mega__tile-label,
+  .apex-mega__col-link:hover {
+    text-decoration: underline;
+  }
+
+  .apex-mega__col {
+    flex: 0 0 200px;
+    padding-block-start: 2px;
+  }
+
+  .apex-mega__col ul {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+  }
+
+  .apex-mega__col-title {
+    margin: 0 0 7px;
+    padding-block: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 16px;
+  }
+
+  .apex-mega__col-link {
+    display: block;
+    padding-block: 6px;
     font-size: 14px;
     font-weight: 400;
     line-height: 20px;
     color: var(--color-foreground);
+    text-decoration: none;
   }
 
-  .apex-mega__grid .mega-menu__link .wrap-text {
-    min-height: 40px;
+  /* ApexCook: Samsung mobile header — logo left; search, basket, account, menu on the right */
+  @media screen and (max-width: 749px) {
+    #header-component .header__columns.header__columns {
+      grid-template-columns: 1fr repeat(4, 40px);
+      grid-template-areas: 'center leftB rightB rightB leftA';
+      column-gap: 4px;
+      padding-inline: 16px 8px;
+    }
   }
 
-  .apex-mega__grid .mega-menu__link:hover .wrap-text {
-    text-decoration: underline;
+  #header-component[data-menu-style='drawer'] .header__columns.header__columns {
+    grid-template-columns: 1fr repeat(4, 40px);
+    grid-template-areas: 'center leftB rightB rightB leftA';
+    column-gap: 4px;
+    padding-inline: 16px 8px;
   }
 
-  .apex-mega__grid .mega-menu__link-image,
-  .apex-mega__grid img {
-    display: block;
-    width: 148px;
-    height: 104px;
-    object-fit: cover;
-    border-radius: 0;
-    background: var(--apex-tile, #f4f4f4);
+  #header-component[data-menu-style='drawer'] .header__columns .header-logo,
+  #header-component .header__columns .header-logo {
+    justify-self: start;
+  }
+
+  #header-component[data-menu-style='drawer'] .header__drawer {
+    grid-area: leftA;
+    justify-content: flex-end;
+  }
+
+  #header-component[data-menu-style='drawer'] header-actions {
+    gap: 4px;
+  }
+
+  #header-component[data-menu-style='drawer'] header-actions .action__cart {
+    order: -1;
   }
 {% endstylesheet %}
 

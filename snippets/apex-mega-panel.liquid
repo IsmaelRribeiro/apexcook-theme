@@ -1,0 +1,38 @@
+{%- doc -%}
+  Samsung-style desktop mega menu panel: highlight tiles on the left,
+  a divider, then one column per child link that has its own links.
+
+  @param {object} link - Top-level menu link
+
+  @example
+  {% render 'apex-mega-panel', link: link %}
+{%- enddoc -%}
+
+{%- assign column_links = link.links | where: 'levels', 1 -%}
+{%- capture highlights -%}{%- render 'apex-nav-highlights', link: link, context: 'desktop' -%}{%- endcapture -%}
+
+<div class="apex-mega">
+  {%- if highlights != blank -%}
+    <div class="apex-mega__highlights{% if column_links.size > 0 %} apex-mega__highlights--divided{% endif %}">
+      {{ highlights }}
+    </div>
+  {%- endif -%}
+  {%- for column in column_links -%}
+    <div class="apex-mega__col">
+      <p class="apex-mega__col-title">{{ column.title | escape }}</p>
+      <ul class="list-unstyled" role="list">
+        {%- for sub in column.links -%}
+          <li><a class="apex-mega__col-link" href="{{ sub.url }}">{{ sub.title | escape }}</a></li>
+        {%- endfor -%}
+      </ul>
+    </div>
+  {%- endfor -%}
+  {%- if highlights == blank and column_links.size == 0 -%}
+    <div class="apex-mega__col">
+      <p class="apex-mega__col-title">{{ link.title | escape }}</p>
+      <ul class="list-unstyled" role="list">
+        <li><a class="apex-mega__col-link" href="{{ link.url }}">{{ 'apex.nav.shop_all' | t: title: link.title }}</a></li>
+      </ul>
+    </div>
+  {%- endif -%}
+</div>

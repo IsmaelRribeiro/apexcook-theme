@@ -5,7 +5,7 @@
   <!-- Add "ApexCook FAQ" and add question blocks -->
 {% endcomment %}
 {% render 'apex-accordion-styles' %}
-<div class="apex-faq section section--page-width">
+<div class="apex-faq apex-faq--{{ section.settings.alignment | default: 'left' }} section section--page-width">
   <apex-expand-all>
     <div class="apex-accordion__header">
       <h2 class="apex-faq__heading">{{ section.settings.heading | escape }}</h2>
@@ -57,6 +57,17 @@
   .apex-faq__heading {
     margin: 0;
   }
+  .apex-faq--center apex-expand-all {
+    display: block;
+    max-width: 880px;
+    margin-inline: auto;
+  }
+
+  .apex-faq--center .apex-accordion__header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
 {% endstylesheet %}
 
 {% schema %}
@@ -64,7 +75,10 @@
   "name": "ApexCook FAQ",
   "tag": "section",
   "class": "apex-section",
-  "settings": [{ "type": "text", "id": "heading", "label": "Heading", "default": "Frequently asked questions" }],
+  "settings": [
+    { "type": "select", "id": "alignment", "label": "Alignment", "options": [ { "value": "left", "label": "Left" }, { "value": "center", "label": "Center" } ], "default": "left" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Frequently asked questions" }
+  ],
   "blocks": [
     {
       "type": "question",

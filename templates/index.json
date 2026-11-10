@@ -58,6 +58,7 @@
     "list_kitchen": {
       "type": "apex-product-carousel",
       "settings": {
+        "alignment": "center",
         "heading": "Complete your ApexCook kitchen",
         "collection": "cookware",
         "limit": 8,
@@ -67,6 +68,7 @@
     "list_life": {
       "type": "apex-product-carousel",
       "settings": {
+        "alignment": "center",
         "heading": "Simplify your life, enjoy your family",
         "collection": "accessories",
         "limit": 8,
@@ -130,6 +132,7 @@
         "b4"
       ],
       "settings": {
+        "alignment": "center",
         "heading": "Join ApexCook. Enjoy the benefits",
         "enable_animation": true
       }
@@ -165,6 +168,7 @@
         "q3"
       ],
       "settings": {
+        "alignment": "center",
         "heading": "Frequently asked questions"
       }
     }

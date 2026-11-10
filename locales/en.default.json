@@ -104,6 +104,11 @@
       "search_placeholder": "Search",
       "search": "Search"
     },
+    "chefs": {
+      "more": "View more: {{ title }}",
+      "close": "Close",
+      "go_to": "Go to card {{ number }}"
+    },
     "compare": {
       "label": "Drag to compare {{ left }} and {{ right }}"
     },

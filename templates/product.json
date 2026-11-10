@@ -425,6 +425,47 @@
         "heading": "Highlights",
         "enable_animation": true
       }
+    },
+    "apex_chefs": {
+      "type": "apex-chef-cards",
+      "blocks": {
+        "chef1": {
+          "type": "chef",
+          "settings": {
+            "eyebrow": "Chef name",
+            "title": "Add the chef's headline quote",
+            "text": "<p>Add the full testimonial here.</p>",
+            "author": ""
+          }
+        },
+        "chef2": {
+          "type": "chef",
+          "settings": {
+            "eyebrow": "Chef name",
+            "title": "Add the chef's headline quote",
+            "text": "<p>Add the full testimonial here.</p>",
+            "author": ""
+          }
+        },
+        "chef3": {
+          "type": "chef",
+          "settings": {
+            "eyebrow": "Chef name",
+            "title": "Add the chef's headline quote",
+            "text": "<p>Add the full testimonial here.</p>",
+            "author": ""
+          }
+        }
+      },
+      "block_order": [
+        "chef1",
+        "chef2",
+        "chef3"
+      ],
+      "settings": {
+        "heading": "Trusted by chefs who cook all day",
+        "text": "<p>We asked professional chefs to put ApexCook through a real service. Here is what they told us.</p>"
+      }
     }
   },
   "order": [
@@ -433,6 +474,7 @@
     "main",
     "apex_highlights",
     "apex_testimonials",
+    "apex_chefs",
     "apex_press",
     "apex_story",
     "apex_slider",

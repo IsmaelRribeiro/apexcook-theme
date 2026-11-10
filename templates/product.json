@@ -454,6 +454,64 @@
         "heading": "Trusted by chefs who cook all day",
         "text": "<p>We asked professional chefs to put ApexCook through a real service. Here is what they told us.</p>"
       }
+    },
+    "apex_feature": {
+      "type": "apex-feature-story",
+      "blocks": {
+        "st1": {
+          "type": "stat",
+          "settings": {
+            "label": "Hob compatibility",
+            "value": "Every hob",
+            "note": "Gas, electric, ceramic and induction"
+          }
+        },
+        "st2": {
+          "type": "stat",
+          "settings": {
+            "label": "Coating",
+            "value": "None",
+            "note": "Nothing to chip, peel or flake"
+          }
+        },
+        "c1": {
+          "type": "card",
+          "settings": {
+            "eyebrow": "Sear",
+            "title": "A proper crust, every time",
+            "text": "<p>Titanium handles high heat, so steaks and veg brown properly instead of steaming.</p>"
+          }
+        },
+        "c2": {
+          "type": "card",
+          "settings": {
+            "eyebrow": "Eggs & pancakes",
+            "title": "Breakfast without the stress",
+            "text": "<p>Preheat on medium, add a little oil and let food release on its own.</p>"
+          }
+        },
+        "c3": {
+          "type": "card",
+          "settings": {
+            "eyebrow": "Care",
+            "title": "Built for everyday cooking",
+            "text": "<p>No coating to baby. Metal utensils are fine; wash, dry and it is ready for the next meal.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "st1",
+        "st2",
+        "c1",
+        "c2",
+        "c3"
+      ],
+      "settings": {
+        "heading": "Built for heat.\nMade to last.",
+        "text": "<p>ApexCook takes everyday cooking further. A <strong>titanium cooking surface</strong> with nothing to wear away, on a body that works on <strong>every hob</strong> — from the first fry-up to the thousandth.</p>",
+        "background_color": "#2b241f",
+        "accent_color": "#d4ecb0"
+      }
     }
   },
   "order": [
@@ -461,6 +519,7 @@
     "apex_nav",
     "main",
     "apex_highlights",
+    "apex_feature",
     "apex_testimonials",
     "apex_chefs",
     "apex_slider",

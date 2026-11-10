@@ -104,6 +104,9 @@
       "search_placeholder": "Search",
       "search": "Search"
     },
+    "compare": {
+      "label": "Drag to compare {{ left }} and {{ right }}"
+    },
     "testimonials": {
       "play": "Play {{ name }}'s video"
     },

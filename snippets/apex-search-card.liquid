@@ -1,0 +1,124 @@
+{%- doc -%}
+  Samsung-style search result card: grey image box, bold name, rating, option chips
+  (colour swatches and e.g. size buttons), price with genuine "Was", SKU, "Buy now" and "Learn more".
+  Picking an option swaps the variant client-side (assets/apex-search.js).
+
+  @param {object} product - Product to show
+
+  @example
+  {% render 'apex-search-card', product: product %}
+{%- enddoc -%}
+
+{%- liquid
+  assign variant = product.selected_or_first_available_variant
+  assign colour_option = null
+  for option in product.options_with_values
+    assign option_name = option.name | downcase
+    if option_name == 'colour' or option_name == 'color'
+      assign colour_option = option
+    endif
+  endfor
+
+  capture summary
+    render 'apex-reviews-collect', product: product, mode: 'summary'
+  endcapture
+  assign parts = summary | strip | split: '|'
+  assign review_count = parts[0] | plus: 0
+  assign review_sum = parts[1] | plus: 0
+-%}
+
+<apex-search-card class="apex-sr__card" data-product-url="{{ product.url }}">
+  <a class="apex-sr__image" href="{{ product.url }}" tabindex="-1" aria-hidden="true">
+    {%- if product.featured_media -%}
+      {{
+        product.featured_media.preview_image
+        | image_url: width: 700
+        | image_tag: loading: 'lazy', widths: '350, 500, 700', sizes: '(min-width: 990px) 310px, (min-width: 750px) 45vw, 90vw', alt: ''
+      }}
+    {%- endif -%}
+  </a>
+
+  <a class="apex-sr__name" href="{{ product.url }}">{{ product.title | escape }}</a>
+
+  {%- if review_count > 0 -%}
+    {%- assign average = review_sum | times: 10.0 | divided_by: review_count | round | divided_by: 10.0 -%}
+    <p class="apex-sr__rating">
+      <span aria-hidden="true">★</span>
+      <span class="visually-hidden">{{ 'apex.reviews.rating_label' | t: rating: average }}</span>
+      <strong aria-hidden="true">{{ average }}</strong>
+      <span>({{ review_count }})</span>
+    </p>
+  {%- endif -%}
+
+  {%- unless product.has_only_default_variant -%}
+    {%- for option in product.options_with_values -%}
+      {%- assign is_colour = false -%}
+      {%- if colour_option and option.name == colour_option.name -%}
+        {%- assign is_colour = true -%}
+      {%- endif -%}
+      <fieldset class="apex-sr__option" data-option-index="{{ forloop.index0 }}">
+        {%- if is_colour -%}
+          <legend class="apex-sr__option-label">
+            {{ 'apex.search.colour' | t }} : <span data-colour-name>{{ option.selected_value }}</span>
+          </legend>
+        {%- else -%}
+          <legend class="visually-hidden">{{ option.name | escape }}</legend>
+        {%- endif -%}
+        <div class="apex-sr__chips{% if is_colour %} apex-sr__chips--swatch{% endif %}">
+          {%- for value in option.values -%}
+            <button
+              type="button"
+              class="apex-sr__chip{% if is_colour %} apex-sr__chip--swatch{% endif %}"
+              data-value="{{ value | escape }}"
+              aria-pressed="{% if value == option.selected_value %}true{% else %}false{% endif %}"
+              {% if is_colour %}
+                aria-label="{{ value | escape }}"
+                style="--swatch: {{ value.swatch.color | default: '#ddd' }};"
+              {% endif %}
+            >
+              {%- unless is_colour -%}{{ value | escape }}{%- endunless -%}
+            </button>
+          {%- endfor -%}
+        </div>
+      </fieldset>
+    {%- endfor -%}
+  {%- endunless -%}
+
+  <div class="apex-sr__price" data-price>
+    {% render 'apex-price-was', product: product, variant: variant %}
+  </div>
+
+  <p class="apex-sr__sku" data-sku{% if variant.sku == blank %} hidden{% endif %}>{{ variant.sku }}</p>
+
+  <form method="post" action="{{ routes.cart_add_url }}" class="apex-sr__actions">
+    <input type="hidden" name="id" value="{{ variant.id }}" data-variant-id>
+    <input type="hidden" name="quantity" value="1">
+    <input type="hidden" name="return_to" value="{{ routes.cart_url }}">
+    <button
+      type="submit"
+      class="apex-sr__cta apex-sr__cta--buy"
+      data-buy
+      data-label-buy="{{ 'apex.search.buy_now' | t }}"
+      data-label-sold-out="{{ 'apex.search.sold_out' | t }}"
+      {% unless variant.available %}disabled{% endunless %}
+    >
+      {%- if variant.available -%}
+        {{- 'apex.search.buy_now' | t -}}
+      {%- else -%}
+        {{- 'apex.search.sold_out' | t -}}
+      {%- endif -%}
+    </button>
+    <a class="apex-sr__cta apex-sr__cta--learn" href="{{ product.url }}" data-learn>
+      {{- 'apex.search.learn_more' | t -}}
+      <span class="visually-hidden">: {{ product.title | escape }}</span>
+    </a>
+  </form>
+
+  {%- unless product.has_only_default_variant -%}
+    {%- for v in product.variants -%}
+      <template data-variant="{{ v.id }}" data-options="{{ v.options | join: '|' | escape }}" data-available="{{ v.available }}" data-sku="{{ v.sku | escape }}" data-url="{{ v.url }}">
+        {% render 'apex-price-was', product: product, variant: v %}
+      </template>
+    {%- endfor -%}
+  {%- endunless -%}
+</apex-search-card>

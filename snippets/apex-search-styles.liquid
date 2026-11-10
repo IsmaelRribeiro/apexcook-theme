@@ -274,7 +274,7 @@
     font-size: 16px;
   }
 
-  .apex-search__thumbs {
+  .apex-search .apex-search__thumbs.apex-search__thumbs {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 24px 12px;
@@ -283,10 +283,20 @@
   }
 
   @media screen and (min-width: 990px) {
-    .apex-search__thumbs {
+    .apex-search .apex-search__thumbs.apex-search__thumbs {
       grid-template-columns: repeat(4, minmax(0, 242px));
       padding-inline: 0;
     }
+  }
+
+  .apex-search .apex-search__thumb.predictive-search-results__card {
+    width: auto;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    outline: 0;
   }
 
   .apex-search__thumb-link {

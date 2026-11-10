@@ -21,6 +21,9 @@
     <div class="predictive-search-results__inner apex-search" data-testid="{{ products_test_id }}">
       {%- liquid
         assign collection = settings.empty_state_collection | default: collections.all
+        if collection.products_count < 4
+          assign collection = collections.all
+        endif
         assign popular = settings.apex_popular_searches
       -%}
       <div class="apex-search__col apex-search__col--links">

@@ -12,7 +12,7 @@
       <h2 class="apex-uses__heading">{{ section.settings.heading | escape }}</h2>
       <ul class="apex-uses__list" role="list">
         {%- for block in section.blocks -%}
-          <li class="apex-uses__card" {% if section.settings.enable_animation %}data-apex-reveal style="--apex-reveal-index: {{ forloop.index0 }};"{% endif %} {{ block.shopify_attributes }}>
+          <li class="apex-uses__card" {{ block.shopify_attributes }}>
             {%- if block.settings.image != blank -%}
               {{ block.settings.image | image_url: width: 700 | image_tag: loading: 'lazy', widths: '350, 700', sizes: '(min-width: 990px) 25vw, 70vw', class: 'apex-uses__image' }}
             {%- else -%}

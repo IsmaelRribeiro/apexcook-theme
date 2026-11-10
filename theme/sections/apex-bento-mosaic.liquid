@@ -29,7 +29,6 @@
         <{{ tag }}
           class="apex-bento__tile{% if forloop.first %} apex-bento__tile--large{% endif %}"
           {% if block.settings.link != blank %}href="{{ block.settings.link }}"{% endif %}
-          {% if section.settings.enable_animation %}data-apex-reveal style="--apex-reveal-index: {{ forloop.index0 }};"{% endif %}
           {{ block.shopify_attributes }}
         >
           {%- if block.settings.image != blank -%}

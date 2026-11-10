@@ -1,0 +1,818 @@
+{%- comment -%}
+  Samsung-style collection page ("Explore Galaxy Watches"):
+  - "Explore <collection>" heading
+  - category carousel built from a menu (the current collection is highlighted with its description)
+  - product-type tabs (All / each type in the collection)
+  - sticky "Filters | N Results … Sort" bar with filter dropdown pills
+  - 4-column grey product cards (snippets/apex-search-card, layout 'plp') with promo tiles at set positions
+  Filter controls use form="ApexCollectionFilters", so the cards' own Buy forms are never nested.
+{%- endcomment -%}
+
+{%- liquid
+  assign heading_prefix = section.settings.heading_prefix
+  assign active_type = blank
+  assign filter_count = 0
+  for filter in collection.filters
+    for value in filter.active_values
+      if filter.param_name == 'filter.p.product_type'
+        assign active_type = value.value
+      else
+        assign filter_count = filter_count | plus: 1
+      endif
+    endfor
+    if filter.type == 'price_range'
+      if filter.min_value.value != blank or filter.max_value.value != blank
+        assign filter_count = filter_count | plus: 1
+      endif
+    endif
+  endfor
+  assign base_url = collection.url
+  if collection.sort_by != blank and collection.sort_by != collection.default_sort_by
+    assign sort_param = '?sort_by=' | append: collection.sort_by
+  endif
+-%}
+
+<script src="{{ 'apex-carousel.js' | asset_url }}" type="module" fetchpriority="low"></script>
+<script src="{{ 'apex-search.js' | asset_url }}" type="module" fetchpriority="low"></script>
+
+<apex-search-results class="apex-plp apex-sr" data-active-type="product">
+  <h1 class="apex-plp__title">
+    {%- if heading_prefix != blank -%}{{ heading_prefix | escape }} {% endif -%}
+    {{- collection.title | escape -}}
+  </h1>
+
+  {%- assign category_menu = section.settings.category_menu -%}
+  {%- if category_menu.links.size > 0 -%}
+    <apex-carousel class="apex-plp__cats">
+      <ul class="apex-plp__cats-track" role="list" data-track tabindex="0" aria-label="{{ 'apex.plp.categories' | t }}">
+        {%- for link in category_menu.links -%}
+          {%- liquid
+            assign cat_collection = null
+            if link.type == 'collection_link'
+              assign cat_collection = link.object
+            endif
+            assign is_current = false
+            if cat_collection and cat_collection.id == collection.id
+              assign is_current = true
+            endif
+          -%}
+          <li class="apex-plp__cat{% if is_current %} is-current{% endif %}">
+            <a class="apex-plp__cat-link" href="{{ link.url }}"{% if is_current %} aria-current="page"{% endif %}>
+              <span class="apex-plp__cat-text">
+                <span class="apex-plp__cat-name">{{ link.title | escape }}</span>
+                {%- if is_current and collection.description != blank -%}
+                  <span class="apex-plp__cat-desc">{{ collection.description | strip_html | truncatewords: 8 }}</span>
+                {%- endif -%}
+              </span>
+              <span class="apex-plp__cat-image">
+                {%- if cat_collection.featured_image -%}
+                  {{ cat_collection.featured_image | image_url: width: 240 | image_tag: loading: 'lazy', alt: '', sizes: '80px' }}
+                {%- elsif cat_collection.products.first.featured_media -%}
+                  {{ cat_collection.products.first.featured_media.preview_image | image_url: width: 240 | image_tag: loading: 'lazy', alt: '', sizes: '80px' }}
+                {%- endif -%}
+              </span>
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+      <div class="apex-pcarousel__controls apex-plp__cats-controls">
+        <div class="apex-pcarousel__progress" aria-hidden="true"><span data-progress></span></div>
+        <div class="apex-pcarousel__arrows">
+          <button type="button" class="apex-pcarousel__arrow" data-prev aria-label="{{ 'apex.reviews.previous' | t }}">←</button>
+          <button type="button" class="apex-pcarousel__arrow" data-next aria-label="{{ 'apex.reviews.next' | t }}">→</button>
+        </div>
+      </div>
+    </apex-carousel>
+  {%- endif -%}
+
+  {%- if collection.all_types.size > 1 -%}
+    <nav class="apex-plp__tabs" aria-label="{{ 'apex.plp.types' | t }}">
+      <a class="apex-sr__tab" href="{{ base_url }}{{ sort_param }}"{% if active_type == blank %} aria-current="page"{% endif %}>
+        {{- 'apex.plp.all' | t -}}
+      </a>
+      {%- for type in collection.all_types -%}
+        {%- if type != blank -%}
+          <a
+            class="apex-sr__tab"
+            href="{{ base_url }}?filter.p.product_type={{ type | url_encode }}{% if sort_param %}&sort_by={{ collection.sort_by }}{% endif %}"
+            {% if active_type == type %}
+              aria-current="page"
+            {% endif %}
+          >
+            {{- type | escape -}}
+          </a>
+        {%- endif -%}
+      {%- endfor -%}
+    </nav>
+  {%- endif -%}
+
+  {%- paginate collection.products by section.settings.products_per_page -%}
+    <form id="ApexCollectionFilters" class="apex-sr__form" action="{{ collection.url }}" method="get" data-filters-form>
+      {%- if active_type != blank -%}
+        <input type="hidden" name="filter.p.product_type" value="{{ active_type | escape }}">
+      {%- endif -%}
+    </form>
+
+    <div class="apex-sr__bar apex-plp__bar">
+      <button type="button" class="apex-sr__filters-btn" data-open-filters aria-controls="ApexSearchFilters">
+        {{- 'apex.search.filters' | t -}}
+        {%- if filter_count > 0 %} ({{ filter_count }}){% endif -%}
+      </button>
+      <span class="apex-sr__count">{{ 'apex.search.results' | t: count: collection.products_count }}</span>
+      <label class="apex-sr__sort">
+        <span class="apex-sr__sort-label">{{ 'apex.search.sort' | t }}</span>
+        <select name="sort_by" form="ApexCollectionFilters" data-autosubmit>
+          {%- assign current_sort = collection.sort_by | default: collection.default_sort_by -%}
+          {%- for option in collection.sort_options -%}
+            <option value="{{ option.value }}"{% if option.value == current_sort %} selected{% endif %}>
+              {{- option.name -}}
+            </option>
+          {%- endfor -%}
+        </select>
+      </label>
+    </div>
+
+    {%- comment -%} Desktop: a row of dropdown pills. Mobile: the same filters inside a full-screen dialog. {%- endcomment -%}
+    <dialog class="apex-plp__filters" id="ApexSearchFilters" aria-label="{{ 'apex.search.filters' | t }}">
+      <div class="apex-sr__aside-head">
+        <p>{{ 'apex.search.filters' | t }}</p>
+        <button type="button" class="apex-sr__aside-close" data-close-filters>
+          <span class="visually-hidden">{{ 'apex.search.close_filters' | t }}</span>
+          {%- render 'apex-mnav-icon', icon: 'close' -%}
+        </button>
+      </div>
+
+      <div class="apex-plp__pills">
+        {%- for filter in collection.filters -%}
+          {%- if filter.param_name == 'filter.p.product_type' -%}{%- continue -%}{%- endif -%}
+          {%- liquid
+            assign pill_active = filter.active_values.size
+            if filter.type == 'price_range'
+              if filter.min_value.value != blank or filter.max_value.value != blank
+                assign pill_active = 1
+              endif
+            endif
+          -%}
+          <details class="apex-plp__pill{% if pill_active > 0 %} is-active{% endif %}" data-pill>
+            <summary class="apex-plp__pill-btn">
+              {%- if filter.type == 'price_range' -%}
+                {{- 'apex.search.price_range' | t -}}
+              {%- else -%}
+                {{- filter.label | escape -}}
+              {%- endif -%}
+              {%- if pill_active > 0 and filter.type != 'price_range' %} ({{ pill_active }}){% endif -%}
+              {%- render 'apex-mnav-icon', icon: 'down' -%}
+            </summary>
+            <div class="apex-plp__pill-panel">
+              {%- if filter.type == 'price_range' -%}
+                {%- liquid
+                  assign max_price = filter.range_max | money_without_currency | remove: ','
+                  assign min_value = filter.min_value.value | money_without_currency | remove: ','
+                  assign max_value = filter.max_value.value | money_without_currency | remove: ','
+                -%}
+                <div class="apex-sr__price-range">
+                  <label class="visually-hidden" for="ApexPlpPriceMin">{{ 'apex.search.price_min' | t }}</label>
+                  <input
+                    class="apex-sr__price-input"
+                    id="ApexPlpPriceMin"
+                    type="number"
+                    inputmode="decimal"
+                    min="0"
+                    max="{{ max_price }}"
+                    step="0.01"
+                    name="{{ filter.min_value.param_name }}"
+                    form="ApexCollectionFilters"
+                    value="{% if filter.min_value.value != blank %}{{ min_value }}{% endif %}"
+                    placeholder="{{ cart.currency.symbol }}0"
+                  >
+                  <span aria-hidden="true">–</span>
+                  <label class="visually-hidden" for="ApexPlpPriceMax">{{ 'apex.search.price_max' | t }}</label>
+                  <input
+                    class="apex-sr__price-input"
+                    id="ApexPlpPriceMax"
+                    type="number"
+                    inputmode="decimal"
+                    min="0"
+                    max="{{ max_price }}"
+                    step="0.01"
+                    name="{{ filter.max_value.param_name }}"
+                    form="ApexCollectionFilters"
+                    value="{% if filter.max_value.value != blank %}{{ max_value }}{% endif %}"
+                    placeholder="{{ cart.currency.symbol }}{{ max_price }}"
+                  >
+                </div>
+                <button type="submit" form="ApexCollectionFilters" class="apex-sr__confirm">{{ 'apex.search.confirm' | t }}</button>
+              {%- else -%}
+                <ul class="apex-sr__checks list-unstyled" role="list">
+                  {%- for value in filter.values -%}
+                    <li>
+                      <label class="apex-sr__check{% if value.count == 0 and value.active == false %} is-disabled{% endif %}">
+                        <input
+                          type="checkbox"
+                          name="{{ value.param_name }}"
+                          value="{{ value.value }}"
+                          form="ApexCollectionFilters"
+                          data-autosubmit
+                          {% if value.active %}checked{% endif %}
+                          {% if value.count == 0 and value.active == false %}disabled{% endif %}
+                        >
+                        <span>{{ value.label | escape }} <span class="apex-plp__count">({{ value.count }})</span></span>
+                      </label>
+                    </li>
+                  {%- endfor -%}
+                </ul>
+              {%- endif -%}
+            </div>
+          </details>
+        {%- endfor -%}
+
+        {%- if filter_count > 0 -%}
+          <a class="apex-plp__clear" href="{{ base_url }}{% if active_type != blank %}?filter.p.product_type={{ active_type | url_encode }}{% endif %}">
+            {{- 'apex.search.clear_all' | t -}}
+          </a>
+        {%- endif -%}
+      </div>
+
+      <div class="apex-sr__aside-foot">
+        <a class="apex-sr__cta apex-sr__cta--learn" href="{{ base_url }}">{{ 'apex.search.clear_all' | t }}</a>
+        <button type="button" class="apex-sr__cta apex-sr__cta--buy" data-close-filters>{{ 'apex.search.apply' | t }}</button>
+      </div>
+    </dialog>
+
+    <div class="apex-plp__main">
+      {%- if collection.products.size > 0 -%}
+        <ul class="apex-plp__grid list-unstyled" role="list">
+          {%- for product in collection.products -%}
+            {%- assign position = forloop.index -%}
+            {%- if paginate.current_page == 1 -%}
+              {%- for block in section.blocks -%}
+                {%- if block.type == 'promo' and block.settings.position == position -%}
+                  {% render 'apex-plp-promo', block: block %}
+                {%- endif -%}
+              {%- endfor -%}
+            {%- endif -%}
+            <li class="apex-plp__item">{% render 'apex-search-card', product: product, layout: 'plp' %}</li>
+          {%- endfor -%}
+          {%- if paginate.current_page == 1 -%}
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'promo' and block.settings.position > collection.products.size -%}
+                {% render 'apex-plp-promo', block: block %}
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endif -%}
+        </ul>
+      {%- else -%}
+        <p class="apex-sr__empty">{{ 'apex.plp.empty' | t }}</p>
+      {%- endif -%}
+
+      {%- if paginate.pages > 1 -%}
+        {% render 'pagination-controls', paginate: paginate %}
+      {%- endif -%}
+    </div>
+  {%- endpaginate -%}
+</apex-search-results>
+
+{% stylesheet %}
+  .apex-plp {
+    display: block;
+    padding-inline: 16px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-plp {
+      padding-inline: 24px;
+    }
+  }
+
+  .apex-plp__title {
+    margin: 0;
+    padding: 32px 0 16px;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.15;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-plp__title {
+      padding: 44px 0 22px;
+      font-size: 40px;
+    }
+  }
+
+  /* Category carousel */
+  .apex-plp__cats-track {
+    display: flex;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    list-style: none;
+  }
+
+  .apex-plp__cats-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .apex-plp__cat {
+    flex: 0 0 150px;
+    scroll-snap-align: start;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-plp__cat {
+      flex-basis: 192px;
+    }
+  }
+
+  .apex-plp__cat.is-current {
+    flex-basis: 260px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-plp__cat.is-current {
+      flex-basis: 312px;
+    }
+  }
+
+  .apex-plp__cat-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    height: 132px;
+    padding: 12px 8px 8px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: #f7f7f7;
+    color: #000;
+    text-decoration: none;
+    transition: border-color 0.2s ease;
+  }
+
+  .apex-plp__cat-link:hover {
+    border-color: #ddd;
+  }
+
+  .apex-plp__cat.is-current .apex-plp__cat-link {
+    flex-direction: row;
+    align-items: center;
+    padding: 12px 16px;
+    border-color: #000;
+    background: #fff;
+  }
+
+  .apex-plp__cat-text {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: center;
+  }
+
+  .apex-plp__cat.is-current .apex-plp__cat-text {
+    flex: 1;
+    text-align: start;
+  }
+
+  .apex-plp__cat-name {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.33;
+  }
+
+  .apex-plp__cat.is-current .apex-plp__cat-name {
+    font-size: 16px;
+  }
+
+  .apex-plp__cat-desc {
+    font-size: 12px;
+    line-height: 1.33;
+    color: #444;
+  }
+
+  .apex-plp__cat-image {
+    display: block;
+    flex: none;
+    width: 72px;
+    height: 72px;
+  }
+
+  .apex-plp__cat.is-current .apex-plp__cat-image {
+    width: 96px;
+    height: 96px;
+  }
+
+  .apex-plp__cat-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+  }
+
+  .apex-plp__cats-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    margin-top: 16px;
+  }
+
+  .apex-plp__cats-controls .apex-pcarousel__progress {
+    flex: 0 1 560px;
+  }
+
+  /* Type tabs */
+  .apex-plp__tabs {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 16px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .apex-plp__tabs .apex-sr__tab {
+    padding-block: 16px;
+  }
+
+  /* Bar */
+  .apex-plp__bar.apex-sr__bar {
+    margin-inline: -16px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-plp__bar.apex-sr__bar {
+      margin-inline: -24px;
+    }
+  }
+
+  /* Filter pills (desktop) / drawer (mobile) */
+  .apex-plp__filters {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: #fff;
+    color: #000;
+  }
+
+  .apex-plp__filters[open] {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .apex-plp__filters::backdrop {
+    background: rgb(0 0 0 / 0.6);
+  }
+
+  .apex-plp__pills {
+    flex: 1;
+    overflow-y: auto;
+    padding-inline: 24px;
+  }
+
+  @media screen and (max-width: 989px) {
+    .apex-plp__pill {
+      padding-block: 20px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .apex-plp__pill-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      list-style: none;
+      cursor: pointer;
+    }
+
+    .apex-plp__pill-panel {
+      padding-top: 12px;
+    }
+
+    .apex-plp__clear {
+      display: none;
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-plp__filters,
+    .apex-plp__filters[open] {
+      position: static;
+      display: block;
+      width: auto;
+      height: auto;
+      overflow: visible;
+      background: none;
+    }
+
+    .apex-plp__filters .apex-sr__aside-head,
+    .apex-plp__filters .apex-sr__aside-foot {
+      display: none;
+    }
+
+    .apex-plp__pills {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      padding: 24px 0 0;
+      overflow: visible;
+    }
+
+    .apex-plp__pill {
+      position: relative;
+    }
+
+    .apex-plp__pill-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      height: 40px;
+      padding: 1px 15px 0;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      list-style: none;
+      cursor: pointer;
+    }
+
+    .apex-plp__pill.is-active .apex-plp__pill-btn,
+    .apex-plp__pill[open] .apex-plp__pill-btn {
+      border-color: #000;
+    }
+
+    .apex-plp__pill-panel {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      z-index: 5;
+      min-width: 260px;
+      max-height: 360px;
+      overflow-y: auto;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 8px 24px rgb(0 0 0 / 0.08);
+    }
+
+    .apex-plp__pill-panel .apex-sr__checks {
+      margin: 0;
+    }
+
+    .apex-plp__pill-panel .apex-sr__price-range {
+      margin-top: 0;
+    }
+
+    .apex-plp__clear {
+      margin-inline-start: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #000;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+  }
+
+  .apex-plp__pill-btn::-webkit-details-marker {
+    display: none;
+  }
+
+  .apex-plp__pill-btn .apex-mnav__svg {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.2s ease;
+  }
+
+  .apex-plp__pill[open] .apex-plp__pill-btn .apex-mnav__svg {
+    transform: rotate(180deg);
+  }
+
+  .apex-plp__count {
+    color: #757575;
+  }
+
+  /* Grid */
+  .apex-plp__main {
+    padding-block: 24px 64px;
+  }
+
+  .apex-plp__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin: 0;
+  }
+
+  @media screen and (min-width: 750px) {
+    .apex-plp__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+  }
+
+  @media screen and (min-width: 1200px) {
+    .apex-plp__grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 24px;
+    }
+  }
+
+  .apex-plp__item {
+    display: flex;
+  }
+
+  /* PLP card */
+  .apex-sr__card.apex-sr__card--plp {
+    width: 100%;
+    padding: 16px;
+    border-radius: 20px;
+    background: #f7f7f7;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-sr__card.apex-sr__card--plp {
+      padding: 24px;
+    }
+  }
+
+  .apex-sr__card--plp .apex-sr__image {
+    width: 78%;
+    max-width: 216px;
+    aspect-ratio: 1;
+    margin: 4px auto 20px;
+    border-radius: 0;
+    background: none;
+  }
+
+  .apex-sr__card--plp .apex-sr__image:not(:has(img)) {
+    border-radius: 12px;
+    background: #ebebeb;
+  }
+
+  .apex-sr__card--plp .apex-sr__image img {
+    mix-blend-mode: multiply;
+  }
+
+  .apex-sr__card--plp .apex-sr__name {
+    min-height: calc(2 * 1.33em);
+    font-size: 16px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-sr__card--plp .apex-sr__name {
+      font-size: 18px;
+    }
+  }
+
+  .apex-sr__card--plp .apex-sr__rating {
+    gap: 6px;
+    font-size: 14px;
+  }
+
+  .apex-sr__rating-count {
+    color: #000;
+    text-decoration: underline;
+  }
+
+  .apex-sr__card--plp .apex-sr__chip {
+    background: #fff;
+  }
+
+  .apex-sr__card--plp .apex-sr__price .apex-price__now {
+    font-size: 18px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-sr__card--plp .apex-sr__price .apex-price__now {
+      font-size: 20px;
+    }
+  }
+
+  .apex-sr__card--plp .apex-sr__sku {
+    display: none;
+  }
+
+  .apex-sr__card--plp .apex-sr__actions {
+    margin-top: auto;
+  }
+
+  .apex-sr__card--plp .apex-sr__cta--learn {
+    background: transparent;
+  }
+
+  @media screen and (max-width: 749px) {
+    .apex-sr__card--plp .apex-sr__chips {
+      gap: 6px;
+    }
+
+    .apex-sr__card--plp .apex-sr__chip {
+      min-width: 0;
+      padding: 0 6px;
+      font-size: 12px;
+    }
+
+    .apex-sr__card--plp .apex-sr__cta {
+      padding-inline: 8px;
+      font-size: 13px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Collection (Samsung)",
+  "tag": "section",
+  "class": "apex-section apex-plp-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading_prefix",
+      "label": "Heading prefix",
+      "default": "Explore"
+    },
+    {
+      "type": "link_list",
+      "id": "category_menu",
+      "label": "Category carousel menu",
+      "info": "Collections from this menu appear in the carousel under the heading."
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "Products per page",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "default": 24
+    }
+  ],
+  "blocks": [
+    {
+      "type": "promo",
+      "name": "Promo tile",
+      "settings": [
+        {
+          "type": "range",
+          "id": "position",
+          "label": "Position in the grid",
+          "min": 1,
+          "max": 24,
+          "step": 1,
+          "default": 4
+        },
+        {
+          "type": "select",
+          "id": "style",
+          "label": "Style",
+          "options": [
+            { "value": "dark", "label": "Dark" },
+            { "value": "light", "label": "Light" }
+          ],
+          "default": "dark"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Bundle and save"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "Build your kit with a set and pay less than buying the pans one by one."
+        },
+        {
+          "type": "text",
+          "id": "link_label",
+          "label": "Link label",
+          "default": "Shop sets"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

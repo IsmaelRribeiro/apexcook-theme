@@ -20,6 +20,30 @@ class ApexSearchResults extends HTMLElement {
     this.drawer = this.querySelector('#ApexSearchFilters');
 
     this.addEventListener('change', (event) => this.onChange(event));
+
+    // Collection filter pills: one dropdown open at a time, closed by an outside click or Escape.
+    this.addEventListener(
+      'toggle',
+      (event) => {
+        const pill = event.target;
+        if (!(pill instanceof HTMLDetailsElement) || !pill.matches('[data-pill]') || !pill.open || !DESKTOP.matches) return;
+        this.querySelectorAll('[data-pill][open]').forEach((other) => {
+          if (other !== pill) other.removeAttribute('open');
+        });
+      },
+      true
+    );
+    document.addEventListener('click', (event) => {
+      if (!DESKTOP.matches) return;
+      const inside = event.target instanceof Element && event.target.closest('[data-pill]');
+      this.querySelectorAll('[data-pill][open]').forEach((pill) => {
+        if (pill !== inside) pill.removeAttribute('open');
+      });
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      this.querySelectorAll('[data-pill][open]').forEach((pill) => pill.removeAttribute('open'));
+    });
     this.addEventListener('click', (event) => this.onClick(event));
     this.form?.addEventListener('submit', () => this.cleanForm());
     this.drawer?.addEventListener('click', (event) => {

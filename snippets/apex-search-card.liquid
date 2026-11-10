@@ -4,6 +4,7 @@
   Picking an option swaps the variant client-side (assets/apex-search.js).
 
   @param {object} product - Product to show
+  @param {string} [layout] - 'search' (default) or 'plp' (grey rounded card, stars, no SKU — collection pages)
 
   @example
   {% render 'apex-search-card', product: product %}
@@ -27,7 +28,7 @@
   assign review_sum = parts[1] | plus: 0
 -%}
 
-<apex-search-card class="apex-sr__card" data-product-url="{{ product.url }}">
+<apex-search-card class="apex-sr__card{% if layout == 'plp' %} apex-sr__card--plp{% endif %}" data-product-url="{{ product.url }}">
   <a class="apex-sr__image" href="{{ product.url }}" tabindex="-1" aria-hidden="true">
     {%- if product.featured_media -%}
       {{
@@ -43,10 +44,16 @@
   {%- if review_count > 0 -%}
     {%- assign average = review_sum | times: 10.0 | divided_by: review_count | round | divided_by: 10.0 -%}
     <p class="apex-sr__rating">
-      <span aria-hidden="true">★</span>
-      <span class="visually-hidden">{{ 'apex.reviews.rating_label' | t: rating: average }}</span>
-      <strong aria-hidden="true">{{ average }}</strong>
-      <span>({{ review_count }})</span>
+      {%- if layout == 'plp' -%}
+        {% render 'apex-stars', rating: average %}
+        <strong aria-hidden="true">{{ average }}</strong>
+        <a class="apex-sr__rating-count" href="{{ product.url }}#reviews" aria-label="{{ 'apex.reviews.based_on' | t: count: review_count }}">({{ review_count }})</a>
+      {%- else -%}
+        <span aria-hidden="true">★</span>
+        <span class="visually-hidden">{{ 'apex.reviews.rating_label' | t: rating: average }}</span>
+        <strong aria-hidden="true">{{ average }}</strong>
+        <span>({{ review_count }})</span>
+      {%- endif -%}
     </p>
   {%- endif -%}
 

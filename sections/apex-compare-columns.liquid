@@ -1,0 +1,447 @@
+{% comment %}
+  Section contract.
+  Samsung "Compare Galaxy Watch" layout for two products: underlined column titles, product image,
+  name and short description, then "Key specs" rows. Each row shows, per column, a small label, an
+  outline icon, a bold value with a ✓ / ✗ / – mark and a short note. Rows beyond "visible rows"
+  sit behind a "View more" button.
+  Comparative claims must be fair, accurate and verifiable (CMA / ASA).
+  @example
+  <!-- Product template, right after the compare slider -->
+{% endcomment %}
+{%- liquid
+  assign p = product
+  assign ours_image = section.settings.ours_image | default: p.featured_image
+  assign visible = section.settings.visible_rows
+-%}
+<div class="apex-cc" id="compare">
+  <div class="apex-cc__wrap">
+    {%- if section.settings.heading != blank -%}<h2 class="apex-cc__heading">{{ section.settings.heading | escape }}</h2>{%- endif -%}
+    {%- if section.settings.link_label != blank and section.settings.link != blank -%}
+      <p class="apex-cc__link-row">
+        <a class="apex-cc__link" href="{{ section.settings.link }}">
+          {{- section.settings.link_label | escape -}}
+          <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4.5 11.5 11.5 4.5M5.5 4.5h6v6"/></svg>
+        </a>
+      </p>
+    {%- endif -%}
+
+    <div class="apex-cc__products" role="list">
+      {%- for side in (1..2) -%}
+        {%- liquid
+          if side == 1
+            assign title = section.settings.ours_title | default: p.title
+            assign img = ours_image
+            assign name = section.settings.ours_name | default: title
+            assign desc = section.settings.ours_text
+          else
+            assign title = section.settings.theirs_title
+            assign img = section.settings.theirs_image
+            assign name = section.settings.theirs_name | default: title
+            assign desc = section.settings.theirs_text
+          endif
+        -%}
+        <div class="apex-cc__product" role="listitem">
+          <h3 class="apex-cc__col-title">{{ title | escape }}</h3>
+          <div class="apex-cc__img">
+            {%- if img -%}
+              {{ img | image_url: width: 600 | image_tag: loading: 'lazy', widths: '300, 450, 600', sizes: '(min-width: 990px) 300px, 45vw', alt: name }}
+            {%- else -%}
+              {{ 'product-apparel-1' | placeholder_svg_tag: 'apex-cc__ph' }}
+            {%- endif -%}
+          </div>
+          <p class="apex-cc__name">{{ name | escape }}</p>
+          {%- if desc != blank -%}<p class="apex-cc__desc">{{ desc | escape }}</p>{%- endif -%}
+        </div>
+      {%- endfor -%}
+    </div>
+
+    {%- if section.blocks.size > 0 -%}
+      {%- if section.settings.specs_heading != blank -%}<h3 class="apex-cc__specs-heading">{{ section.settings.specs_heading | escape }}</h3>{%- endif -%}
+      <apex-compare-more class="apex-cc__rows-wrap">
+        <div class="apex-cc__rows" id="ApexCompareRows-{{ section.id }}">
+          {%- for block in section.blocks -%}
+            <div class="apex-cc__row{% if forloop.index > visible %} is-extra{% endif %}" {{ block.shopify_attributes }}>
+              {%- for side in (1..2) -%}
+                {%- liquid
+                  if side == 1
+                    assign value = block.settings.ours_value
+                    assign note = block.settings.ours_note
+                    assign mark = block.settings.ours_mark
+                    assign col = section.settings.ours_title | default: p.title
+                  else
+                    assign value = block.settings.theirs_value
+                    assign note = block.settings.theirs_note
+                    assign mark = block.settings.theirs_mark
+                    assign col = section.settings.theirs_title
+                  endif
+                -%}
+                <div class="apex-cc__cell">
+                  <p class="apex-cc__label">{{ block.settings.label | escape }}<span class="visually-hidden"> – {{ col | escape }}</span></p>
+                  <div class="apex-cc__value-wrap">
+                    {%- if block.settings.icon != 'none' -%}
+                      <span class="apex-cc__icon">{% render 'apex-benefit-icon', icon: block.settings.icon %}</span>
+                    {%- endif -%}
+                    <span class="apex-cc__value">
+                      {%- case mark -%}
+                        {%- when 'yes' -%}<span class="apex-cc__mark apex-cc__mark--yes" aria-label="{{ 'apex.compare_cols.yes' | t }}">✓</span>
+                        {%- when 'no' -%}<span class="apex-cc__mark apex-cc__mark--no" aria-label="{{ 'apex.compare_cols.no' | t }}">✗</span>
+                        {%- when 'partial' -%}<span class="apex-cc__mark apex-cc__mark--partial" aria-label="{{ 'apex.compare_cols.partial' | t }}">–</span>
+                      {%- endcase -%}
+                      {{ value | escape }}
+                    </span>
+                    {%- if note != blank -%}<span class="apex-cc__note">{{ note | escape }}</span>{%- endif -%}
+                  </div>
+                </div>
+              {%- endfor -%}
+            </div>
+          {%- endfor -%}
+        </div>
+        {%- if section.blocks.size > visible -%}
+          <button type="button" class="apex-cc__more" aria-expanded="false" aria-controls="ApexCompareRows-{{ section.id }}" data-more="{{ 'apex.search.view_more' | t | escape }}" data-less="{{ 'apex.search.view_less' | t | escape }}">
+            <span>{{ 'apex.search.view_more' | t }}</span>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg>
+          </button>
+        {%- endif -%}
+      </apex-compare-more>
+    {%- endif -%}
+  </div>
+</div>
+
+{% javascript %}
+  if (!customElements.get('apex-compare-more')) {
+    customElements.define(
+      'apex-compare-more',
+      class extends HTMLElement {
+        connectedCallback() {
+          const button = this.querySelector('.apex-cc__more');
+          button?.addEventListener('click', () => {
+            const open = !this.classList.contains('is-open');
+            this.classList.toggle('is-open', open);
+            button.setAttribute('aria-expanded', String(open));
+            const label = button.querySelector('span');
+            if (label) label.textContent = open ? button.dataset.less : button.dataset.more;
+          });
+        }
+      }
+    );
+  }
+{% endjavascript %}
+
+{% stylesheet %}
+  /* Samsung "Compare Galaxy Watch" (Watch Ultra2 page) at 1440px: 1044px content, 20px underlined
+     column titles, 300px product images, 13px grey labels, 40px outline icons, 16px bold values,
+     #ddd row rules, pill "View more". Square corners, weights ≤ 600. */
+  .apex-cc {
+    padding-block: 80px;
+    color: #000;
+  }
+
+  .apex-cc__wrap {
+    max-width: 1092px;
+    margin-inline: auto;
+    padding-inline: 24px;
+  }
+
+  .apex-cc__heading {
+    margin: 0;
+    text-align: center;
+  }
+
+  .apex-cc__link-row {
+    margin: 16px 0 0;
+    text-align: center;
+  }
+
+  .apex-cc__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding-bottom: 2px;
+    border-bottom: 1px solid currentColor;
+    color: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .apex-cc__products,
+  .apex-cc__row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 16px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-cc__products,
+    .apex-cc__row {
+      column-gap: 52px;
+    }
+  }
+
+  .apex-cc__products {
+    margin-top: 56px;
+  }
+
+  .apex-cc__product {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .apex-cc__col-title {
+    align-self: stretch;
+    margin: 0 0 32px;
+    padding-bottom: 14px;
+    border-bottom: 3px solid #000;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.3;
+    text-align: start;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-cc__col-title {
+      font-size: 20px;
+    }
+  }
+
+  .apex-cc__img {
+    width: 100%;
+    max-width: 300px;
+    aspect-ratio: 1;
+  }
+
+  .apex-cc__img img,
+  .apex-cc__ph {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .apex-cc__ph {
+    background: #f4f4f4;
+    fill: #d0d0d0;
+  }
+
+  .apex-cc__name {
+    margin: 24px 0 0;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .apex-cc__desc {
+    max-width: 380px;
+    margin: 16px 0 0;
+    font-size: 13px;
+    line-height: 1.45;
+    color: #313131;
+  }
+
+  .apex-cc__specs-heading {
+    margin: 96px 0 40px;
+    font-size: 28px;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-cc__specs-heading {
+      font-size: 32px;
+    }
+  }
+
+  .apex-cc__rows {
+    margin: 0;
+  }
+
+  .apex-cc__row {
+    padding-block: 36px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .apex-cc__row.is-extra {
+    display: none;
+  }
+
+  .apex-cc__rows-wrap {
+    display: block;
+  }
+
+  .apex-cc__rows-wrap.is-open .apex-cc__row.is-extra {
+    display: grid;
+    animation: apex-cc-in 0.4s ease both;
+  }
+
+  @keyframes apex-cc-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+
+  .apex-cc__cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .apex-cc__label {
+    margin: 0 0 16px;
+    font-size: 13px;
+    color: #555;
+  }
+
+  .apex-cc__value-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+  }
+
+  .apex-cc__icon {
+    color: #000;
+  }
+
+  .apex-cc__icon .apex-benefit-icon {
+    width: 40px;
+    height: 40px;
+    stroke-width: 1.3;
+  }
+
+  .apex-cc__value {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-cc__value {
+      font-size: 17px;
+    }
+  }
+
+  .apex-cc__mark {
+    font-weight: 600;
+  }
+
+  .apex-cc__mark--yes {
+    color: #2e7d32;
+  }
+
+  .apex-cc__mark--no {
+    color: #c62828;
+  }
+
+  .apex-cc__mark--partial {
+    color: #757575;
+  }
+
+  .apex-cc__note {
+    max-width: 320px;
+    margin-top: -4px;
+    font-size: 13px;
+    line-height: 1.45;
+    color: #555;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-cc__note {
+      font-size: 14px;
+    }
+  }
+
+  .apex-cc__more {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 48px auto 0;
+    padding: 10px 22px;
+    border: 1px solid #000;
+    background: #fff;
+    color: #000;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .apex-cc__more:hover {
+    background: #000;
+    color: #fff;
+  }
+
+  .apex-cc__more svg {
+    transition: transform 0.25s ease;
+  }
+
+  .apex-cc__rows-wrap.is-open .apex-cc__more svg {
+    transform: rotate(180deg);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "ApexCook compare columns",
+  "tag": "section",
+  "class": "apex-section",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Compare Titanium Pro" },
+    { "type": "text", "id": "link_label", "label": "Link label" },
+    { "type": "url", "id": "link", "label": "Link" },
+    { "type": "text", "id": "specs_heading", "label": "Specs heading", "default": "Key specs" },
+    { "type": "range", "id": "visible_rows", "label": "Rows before 'View more'", "min": 2, "max": 12, "step": 1, "default": 5 },
+    { "type": "header", "content": "Our product (left)" },
+    { "type": "text", "id": "ours_title", "label": "Column title", "info": "Empty = product title." },
+    { "type": "image_picker", "id": "ours_image", "label": "Image", "info": "Empty = product image." },
+    { "type": "text", "id": "ours_name", "label": "Name under image" },
+    { "type": "text", "id": "ours_text", "label": "Short description" },
+    { "type": "header", "content": "Compared with (right)" },
+    { "type": "text", "id": "theirs_title", "label": "Column title", "default": "Standard stainless steel" },
+    { "type": "image_picker", "id": "theirs_image", "label": "Image" },
+    { "type": "text", "id": "theirs_name", "label": "Name under image" },
+    { "type": "text", "id": "theirs_text", "label": "Short description" },
+    { "type": "paragraph", "content": "Comparisons must be fair and backed by evidence (CMA / ASA). Compare with a product type, not a named brand, unless you can prove every claim." }
+  ],
+  "blocks": [
+    {
+      "type": "row",
+      "name": "Spec row",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "Cooking surface" },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "none", "label": "None" },
+            { "value": "pan", "label": "Pan" },
+            { "value": "leaf", "label": "Leaf / healthy" },
+            { "value": "flame", "label": "Hob / flame" },
+            { "value": "guarantee", "label": "Shield" },
+            { "value": "dishwasher", "label": "Dishwasher" },
+            { "value": "rewards", "label": "Sparkle" },
+            { "value": "secure", "label": "Lock" }
+          ],
+          "default": "pan"
+        },
+        { "type": "header", "content": "Our product" },
+        { "type": "select", "id": "ours_mark", "label": "Mark", "options": [{ "value": "none", "label": "None" }, { "value": "yes", "label": "✓" }, { "value": "no", "label": "✗" }, { "value": "partial", "label": "–" }], "default": "yes" },
+        { "type": "text", "id": "ours_value", "label": "Value", "default": "Titanium surface" },
+        { "type": "text", "id": "ours_note", "label": "Note" },
+        { "type": "header", "content": "Compared with" },
+        { "type": "select", "id": "theirs_mark", "label": "Mark", "options": [{ "value": "none", "label": "None" }, { "value": "yes", "label": "✓" }, { "value": "no", "label": "✗" }, { "value": "partial", "label": "–" }], "default": "no" },
+        { "type": "text", "id": "theirs_value", "label": "Value", "default": "Stainless steel" },
+        { "type": "text", "id": "theirs_note", "label": "Note" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "ApexCook compare columns", "blocks": [{ "type": "row" }, { "type": "row" }, { "type": "row" }] }]
+}
+{% endschema %}

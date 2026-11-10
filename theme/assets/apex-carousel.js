@@ -55,6 +55,8 @@ class ApexCarousel extends HTMLElement {
     if (next) next.disabled = track.scrollLeft >= max - 1;
     const controls = /** @type {HTMLElement | null} */ (this.querySelector('.apex-pcarousel__controls'));
     if (controls) controls.hidden = max <= 1;
+    // Lets centred carousels centre their cards when everything fits without scrolling.
+    this.toggleAttribute('data-fits', max <= 1);
   }
 }
 

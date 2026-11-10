@@ -389,6 +389,7 @@
         "h1": {
           "type": "highlight",
           "settings": {
+            "icon_name": "pan",
             "title": "Pure titanium",
             "text": "No coating to chip or peel"
           }
@@ -396,6 +397,7 @@
         "h2": {
           "type": "highlight",
           "settings": {
+            "icon_name": "leaf",
             "title": "PFAS-free",
             "text": "Add your verified claim here"
           }
@@ -403,6 +405,7 @@
         "h3": {
           "type": "highlight",
           "settings": {
+            "icon_name": "flame",
             "title": "Every hob",
             "text": "Gas, electric and induction"
           }
@@ -410,6 +413,7 @@
         "h4": {
           "type": "highlight",
           "settings": {
+            "icon_name": "guarantee",
             "title": "10-year guarantee",
             "text": "Built to last"
           }

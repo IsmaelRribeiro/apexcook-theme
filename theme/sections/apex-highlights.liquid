@@ -12,9 +12,13 @@
     <ul class="apex-highlights__list" role="list">
       {%- for block in section.blocks -%}
         <li class="apex-highlights__card" {{ block.shopify_attributes }}>
-          {%- if block.settings.icon != blank -%}
-            {{ block.settings.icon | image_url: width: 96 | image_tag: loading: 'lazy', alt: '', class: 'apex-highlights__icon' }}
-          {%- endif -%}
+          <span class="apex-benefits__icon-tile">
+            {%- if block.settings.icon != blank -%}
+              {{ block.settings.icon | image_url: width: 96 | image_tag: loading: 'lazy', alt: '', class: 'apex-benefits__icon' }}
+            {%- else -%}
+              {% render 'apex-benefit-icon', icon: block.settings.icon_name %}
+            {%- endif -%}
+          </span>
           <p class="apex-highlights__title">{{ block.settings.title | escape }}</p>
           {%- if block.settings.text != blank -%}<p class="apex-highlights__text">{{ block.settings.text | escape }}</p>{%- endif -%}
         </li>
@@ -24,51 +28,61 @@
 </div>
 
 {% stylesheet %}
+  /* Same card as "ApexCook benefits" (white, hairline border, blue outline icon tile); icon tile styles live there. */
   .apex-highlights {
     padding-block: 48px;
   }
 
   .apex-highlights__heading {
-    margin: 0 0 24px;
+    margin: 0 0 32px;
   }
 
   .apex-highlights__list {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
-  .apex-highlights__card {
-    padding: 24px;
-    background: rgb(var(--color-foreground-rgb) / 0.05);
-  }
-
-  .apex-highlights__icon {
-    width: 40px;
-    height: 40px;
-    margin-bottom: 16px;
-    object-fit: contain;
-  }
-
-  .apex-highlights__title {
-    margin: 0 0 4px;
-    font-weight: 600;
-  }
-
-  .apex-highlights__text {
-    margin: 0;
-    font-size: 0.8125rem;
-    opacity: 0.8;
+  @media screen and (min-width: 750px) {
+    .apex-highlights__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 
   @media screen and (min-width: 990px) {
     .apex-highlights__list {
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 16px;
+      gap: 24px;
     }
+  }
+
+  .apex-highlights__card {
+    padding: 28px 28px 32px;
+    border: 1px solid #ddd;
+    background: #fff;
+    color: #000;
+  }
+
+  .apex-highlights__title {
+    margin: 0 0 10px;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.33;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-highlights__title {
+      font-size: 22px;
+    }
+  }
+
+  .apex-highlights__text {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.33;
   }
 {% endstylesheet %}
 
@@ -87,7 +101,26 @@
       "type": "highlight",
       "name": "Highlight",
       "settings": [
-        { "type": "image_picker", "id": "icon", "label": "Icon" },
+        {
+          "type": "select",
+          "id": "icon_name",
+          "label": "Icon",
+          "options": [
+            { "value": "pan", "label": "Pan" },
+            { "value": "leaf", "label": "Leaf / healthy" },
+            { "value": "flame", "label": "Hob / flame" },
+            { "value": "guarantee", "label": "Guarantee" },
+            { "value": "dishwasher", "label": "Dishwasher" },
+            { "value": "delivery", "label": "Delivery" },
+            { "value": "returns", "label": "Returns" },
+            { "value": "secure", "label": "Secure" },
+            { "value": "support", "label": "Support" },
+            { "value": "recipes", "label": "Recipes" },
+            { "value": "rewards", "label": "Sparkle" }
+          ],
+          "default": "pan"
+        },
+        { "type": "image_picker", "id": "icon", "label": "Custom icon", "info": "Overrides the icon above." },
         { "type": "text", "id": "title", "label": "Title", "default": "Pure titanium" },
         { "type": "text", "id": "text", "label": "Text" }
       ]

@@ -4,7 +4,8 @@
   Picking an option swaps the variant client-side (assets/apex-search.js).
 
   @param {object} product - Product to show
-  @param {string} [layout] - 'search' (default) or 'plp' (grey rounded card, stars, no SKU — collection pages)
+  @param {string} [layout] - 'search' (default), 'plp' (grey card, stars, no SKU — collection pages)
+    or 'upsell' (centred white card with an "Add" button — the complete-your-order page)
 
   @example
   {% render 'apex-search-card', product: product %}
@@ -28,7 +29,17 @@
   assign review_sum = parts[1] | plus: 0
 -%}
 
-<apex-search-card class="apex-sr__card{% if layout == 'plp' %} apex-sr__card--plp{% endif %}" data-product-url="{{ product.url }}">
+{%- liquid
+  assign buy_label = 'apex.search.buy_now' | t
+  if layout == 'upsell'
+    assign buy_label = 'apex.upsell.add' | t
+  endif
+  assign return_to = routes.cart_url
+  if settings.apex_upsell_page != blank and layout != 'upsell'
+    assign return_to = settings.apex_upsell_page.url | append: '?added=' | append: variant.id
+  endif
+-%}
+<apex-search-card class="apex-sr__card{% if layout == 'plp' %} apex-sr__card--plp{% elsif layout == 'upsell' %} apex-sr__card--upsell{% endif %}" data-product-url="{{ product.url }}"{% if settings.apex_upsell_page != blank and layout != 'upsell' %} data-upsell-url="{{ settings.apex_upsell_page.url }}"{% endif %}>
   <a class="apex-sr__image" href="{{ product.url }}" tabindex="-1" aria-hidden="true">
     {%- if product.featured_media -%}
       {{
@@ -101,17 +112,17 @@
   <form method="post" action="{{ routes.cart_add_url }}" class="apex-sr__actions">
     <input type="hidden" name="id" value="{{ variant.id }}" data-variant-id>
     <input type="hidden" name="quantity" value="1">
-    <input type="hidden" name="return_to" value="{{ routes.cart_url }}">
+    <input type="hidden" name="return_to" value="{{ return_to }}" data-return-to>
     <button
       type="submit"
       class="apex-sr__cta apex-sr__cta--buy"
       data-buy
-      data-label-buy="{{ 'apex.search.buy_now' | t }}"
+      data-label-buy="{{ buy_label }}"
       data-label-sold-out="{{ 'apex.search.sold_out' | t }}"
       {% unless variant.available %}disabled{% endunless %}
     >
       {%- if variant.available -%}
-        {{- 'apex.search.buy_now' | t -}}
+        {{- buy_label -}}
       {%- else -%}
         {{- 'apex.search.sold_out' | t -}}
       {%- endif -%}
@@ -121,6 +132,7 @@
       <span class="visually-hidden">: {{ product.title | escape }}</span>
     </a>
   </form>
+  <p class="apex-sr__error" data-error role="alert" hidden></p>
 
   {%- unless product.has_only_default_variant -%}
     {%- for v in product.variants -%}

@@ -1,0 +1,196 @@
+{
+  "sections": {
+    "apex_promo_strip": {
+      "type": "apex-promo-strip",
+      "settings": {
+        "text": "Free UK delivery on orders over £50",
+        "background_color": "#000000",
+        "text_color": "#FFFFFF"
+      }
+    },
+    "apex_nav": {
+      "type": "apex-pdp-anchor-nav",
+      "settings": {
+        "show_features": false
+      }
+    },
+    "main": {
+      "type": "product-information",
+      "blocks": {
+        "media-gallery": {
+          "type": "_product-media-gallery",
+          "static": true,
+          "settings": {
+            "media_presentation": "carousel",
+            "media_columns": "two",
+            "image_gap": 4,
+            "large_first_image": false,
+            "icons_style": "arrow",
+            "slideshow_controls_style": "thumbnails",
+            "slideshow_mobile_controls_style": "dots",
+            "thumbnail_position": "bottom",
+            "thumbnail_width": 44,
+            "aspect_ratio": "adapt",
+            "constrain_to_viewport": true,
+            "media_fit": "contain",
+            "media_radius": 0,
+            "extend_media": false,
+            "zoom": true,
+            "video_loop": false,
+            "hide_variants": true,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "product-details": {
+          "type": "_product-details",
+          "static": true,
+          "settings": {
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "details_position": "flex-start",
+            "gap": 28,
+            "sticky_details_desktop": false,
+            "background_media": "none",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "padding-block-start": 24,
+            "padding-block-end": 24,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "variant_picker_R3rGDr": {
+              "type": "variant-picker",
+              "settings": {
+                "variant_style": "buttons",
+                "show_swatches": false,
+                "alignment": "left",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "apex_size_guide": {
+              "type": "apex-size-guide",
+              "settings": {}
+            },
+            "apex_addons": {
+              "type": "apex-addons",
+              "settings": {
+                "visible_count": 3
+              }
+            },
+            "apex_buy_box": {
+              "type": "apex-buy-box",
+              "settings": {}
+            },
+            "apex_precheck": {
+              "type": "apex-prepurchase",
+              "settings": {
+                "delivery_link": "/policies/shipping-policy"
+              }
+            }
+          },
+          "block_order": [
+            "variant_picker_R3rGDr",
+            "apex_size_guide",
+            "apex_addons",
+            "apex_precheck",
+            "apex_buy_box"
+          ]
+        }
+      },
+      "settings": {
+        "content_width": "content-center-aligned",
+        "desktop_media_position": "left",
+        "equal_columns": false,
+        "limit_details_width": false,
+        "gap": 48,
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "apex_specs": {
+      "type": "apex-specs",
+      "settings": {
+        "heading": "Specifications",
+        "default_group": "General"
+      }
+    },
+    "apex_reviews": {
+      "type": "apex-reviews",
+      "settings": {
+        "per_page": 10
+      }
+    },
+    "apex_also": {
+      "type": "apex-product-carousel",
+      "settings": {
+        "heading": "You may also like",
+        "collection": "accessories",
+        "limit": 8,
+        "show_button": false,
+        "alignment": "left"
+      }
+    },
+    "apex_support": {
+      "type": "apex-support",
+      "blocks": {
+        "l1": {
+          "type": "link",
+          "settings": {
+            "title": "Delivery",
+            "text": "3–7 working days. Free over £50.",
+            "link": "/policies/shipping-policy"
+          }
+        },
+        "l2": {
+          "type": "link",
+          "settings": {
+            "title": "Returns",
+            "text": "30 days to change your mind.",
+            "link": "/policies/refund-policy"
+          }
+        },
+        "l3": {
+          "type": "link",
+          "settings": {
+            "title": "Contact us",
+            "text": "We reply within one working day.",
+            "link": "/pages/contact"
+          }
+        }
+      },
+      "block_order": [
+        "l1",
+        "l2",
+        "l3"
+      ],
+      "settings": {
+        "heading": "Care & support"
+      }
+    }
+  },
+  "order": [
+    "apex_promo_strip",
+    "apex_nav",
+    "main",
+    "apex_specs",
+    "apex_reviews",
+    "apex_also",
+    "apex_support"
+  ]
+}

@@ -168,6 +168,9 @@ class ApexSearchCard extends HTMLElement {
     const idInput = /** @type {HTMLInputElement | null} */ (this.querySelector('[data-variant-id]'));
     if (idInput && variant) idInput.value = variant;
 
+    const returnTo = /** @type {HTMLInputElement | null} */ (this.querySelector('[data-return-to]'));
+    if (returnTo && variant && this.dataset.upsellUrl) returnTo.value = `${this.dataset.upsellUrl}?added=${variant}`;
+
     const buy = /** @type {HTMLButtonElement | null} */ (this.querySelector('[data-buy]'));
     if (buy) {
       const isAvailable = available === 'true';

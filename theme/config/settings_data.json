@@ -89,7 +89,8 @@
     "empty_state_collection": "cookware",
     "apex_hero_product": "titanium-pro-frying-pan",
     "apex_utility_menu": "apexcook-utility",
-    "apex_popular_searches": "apexcook-popular-searches"
+    "apex_popular_searches": "apexcook-popular-searches",
+    "apex_upsell_page": "complete-your-order"
   },
   "presets": {
     "Default": {

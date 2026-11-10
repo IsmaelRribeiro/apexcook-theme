@@ -170,7 +170,14 @@ class ApexBuyBox extends HTMLElement {
         throw new Error(body.description || body.message || '');
       }
       this.#navigating = true;
-      window.location.assign(this.dataset.cartUrl ?? '/cart');
+      // Go to the "Complete your order" page when one is set, otherwise straight to the basket.
+      if (this.dataset.upsellUrl) {
+        const next = new URL(this.dataset.upsellUrl, window.location.origin);
+        next.searchParams.set('added', String(main.variantId));
+        window.location.assign(next.toString());
+      } else {
+        window.location.assign(this.dataset.cartUrl ?? '/cart');
+      }
     } catch (err) {
       if (/** @type {Error} */ (err)?.name === 'AbortError') return;
       error.textContent = /** @type {Error} */ (err)?.message || this.dataset.errorGeneric || '';

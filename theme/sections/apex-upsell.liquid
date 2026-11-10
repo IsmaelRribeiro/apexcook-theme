@@ -1,0 +1,546 @@
+{%- comment -%}
+  "Complete your order" page shown right after a customer adds something to the basket
+  (Samsung's accessories step). Shows what was just added with a Continue button, then
+  "Recommended" plus one row per chosen collection, each card with an "Add" button that
+  adds to the basket without leaving the page. Products already in the basket are left out.
+  The buy box, cards and quick-add buttons send customers here with ?added=<variant id>.
+{%- endcomment -%}
+
+{%- liquid
+  assign in_basket = ','
+  for item in cart.items
+    assign in_basket = in_basket | append: item.product_id | append: ','
+  endfor
+
+  assign rec_source = section.settings.recommended_collection | default: collections.all
+  assign rec_limit = section.settings.recommended_limit
+  assign rec_count = 0
+  capture rec_cards
+    for product in rec_source.products
+      assign key = ',' | append: product.id | append: ','
+      if in_basket contains key or product.available == false
+        continue
+      endif
+      assign rec_count = rec_count | plus: 1
+      echo '<li class="apex-up__slide">'
+      render 'apex-search-card', product: product, layout: 'upsell'
+      echo '</li>'
+      if rec_count >= rec_limit
+        break
+      endif
+    endfor
+  endcapture
+-%}
+
+<script src="{{ 'apex-search.js' | asset_url }}" type="module" fetchpriority="low"></script>
+<script src="{{ 'apex-carousel.js' | asset_url }}" type="module" fetchpriority="low"></script>
+<script src="{{ 'apex-upsell.js' | asset_url }}" type="module" fetchpriority="low"></script>
+
+<apex-upsell
+  class="apex-up"
+  data-cart-url="{{ routes.cart_url }}"
+  data-cart-add-url="{{ routes.cart_add_url }}.js"
+  data-cart-js-url="{{ routes.cart_url }}.js"
+  data-money-format="{{ shop.money_format | escape }}"
+  data-label-add="{{ 'apex.upsell.add' | t }}"
+  data-label-adding="{{ 'apex.upsell.adding' | t }}"
+  data-label-added="{{ 'apex.upsell.added' | t }}"
+>
+  {%- comment -%} Sticky bar: the item just added (picked from the basket by ?added=…), subtotal and Continue. {%- endcomment -%}
+  <div class="apex-up__bar">
+    <div class="apex-up__bar-inner">
+      <div class="apex-up__bar-item">
+        {%- for item in cart.items -%}
+          <p class="apex-up__bar-title" data-added-variant="{{ item.variant_id }}"{% unless forloop.first %} hidden{% endunless %}>
+            <span class="apex-up__tick" aria-hidden="true">✓</span>
+            {{ 'apex.upsell.added_title' | t: title: item.product.title }}
+            {%- unless item.product.has_only_default_variant %} · {{ item.variant.title }}{% endunless -%}
+          </p>
+        {%- else -%}
+          <p class="apex-up__bar-title">{{ 'apex.upsell.empty_bar' | t }}</p>
+        {%- endfor -%}
+      </div>
+      <div class="apex-up__bar-total">
+        <span class="apex-up__bar-label">{{ 'apex.upsell.subtotal' | t }}</span>
+        <strong data-subtotal>{{ cart.total_price | money }}</strong>
+        <span class="apex-up__bar-count" data-count>({{ 'apex.upsell.items' | t: count: cart.item_count }})</span>
+      </div>
+      <a class="apex-up__continue" href="{{ routes.cart_url }}">{{ 'apex.upsell.continue' | t }}</a>
+    </div>
+  </div>
+
+  <div class="apex-up__intro">
+    <h1 class="apex-up__title">{{ section.settings.heading | escape }}</h1>
+    {%- if section.settings.subheading != blank -%}
+      <p class="apex-up__sub">{{ section.settings.subheading | escape }}</p>
+    {%- endif -%}
+  </div>
+
+  {%- comment -%} Collect the collection rows first so the tabs can show their counts. {%- endcomment -%}
+  {%- liquid
+    assign tab_labels = ''
+    assign rows = ''
+  -%}
+  {%- capture rows -%}
+    {%- for block in section.blocks -%}
+      {%- assign row_collection = block.settings.collection -%}
+      {%- if row_collection == blank -%}{%- continue -%}{%- endif -%}
+      {%- assign row_count = 0 -%}
+      {%- capture row_cards -%}
+        {%- for product in row_collection.products limit: 12 -%}
+          {%- assign key = ',' | append: product.id | append: ',' -%}
+          {%- if in_basket contains key or product.available == false -%}{%- continue -%}{%- endif -%}
+          {%- assign row_count = row_count | plus: 1 -%}
+          <li class="apex-up__cell">{% render 'apex-search-card', product: product, layout: 'upsell' %}</li>
+        {%- endfor -%}
+      {%- endcapture -%}
+      {%- if row_count > 0 -%}
+        {%- assign row_title = block.settings.title | default: row_collection.title -%}
+        <section class="apex-up__row" id="apex-up-{{ block.id }}" data-tab-target {{ block.shopify_attributes }}>
+          <h2 class="apex-up__row-title">{{ row_title | escape }} ({{ row_count }})</h2>
+          <ul class="apex-up__grid list-unstyled" role="list">{{ row_cards }}</ul>
+        </section>
+        {%- capture tab -%}<a class="apex-up__tab" href="#apex-up-{{ block.id }}">{{ row_title | escape }} ({{ row_count }})</a>{%- endcapture -%}
+        {%- assign tab_labels = tab_labels | append: tab -%}
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endcapture -%}
+
+  {%- if rec_count > 0 or tab_labels != blank -%}
+    <nav class="apex-up__tabs" aria-label="{{ 'apex.upsell.sections' | t }}">
+      {%- if rec_count > 0 -%}
+        <a class="apex-up__tab" href="#apex-up-recommended" aria-current="true">{{ 'apex.upsell.recommended' | t }} ({{ rec_count }})</a>
+      {%- endif -%}
+      {{ tab_labels }}
+    </nav>
+  {%- endif -%}
+
+  {%- if rec_count > 0 -%}
+    <section class="apex-up__row apex-up__row--rec" id="apex-up-recommended" data-tab-target>
+      <h2 class="apex-up__row-title">{{ 'apex.upsell.recommended' | t }} ({{ rec_count }})</h2>
+      <apex-carousel class="apex-up__carousel">
+        <ul class="apex-up__track list-unstyled" role="list" data-track tabindex="0" aria-label="{{ 'apex.upsell.recommended' | t }}">
+          {{ rec_cards }}
+        </ul>
+        <div class="apex-pcarousel__controls apex-up__controls">
+          <div class="apex-pcarousel__progress" aria-hidden="true"><span data-progress></span></div>
+          <div class="apex-pcarousel__arrows">
+            <button type="button" class="apex-pcarousel__arrow" data-prev aria-label="{{ 'apex.reviews.previous' | t }}">←</button>
+            <button type="button" class="apex-pcarousel__arrow" data-next aria-label="{{ 'apex.reviews.next' | t }}">→</button>
+          </div>
+        </div>
+      </apex-carousel>
+    </section>
+  {%- endif -%}
+
+  {{ rows }}
+
+  {%- if rec_count == 0 and tab_labels == blank -%}
+    <p class="apex-up__empty">{{ 'apex.upsell.nothing_more' | t }}</p>
+  {%- endif -%}
+
+  <div class="apex-up__footer">
+    <a class="apex-up__continue apex-up__continue--large" href="{{ routes.cart_url }}">{{ 'apex.upsell.continue' | t }}</a>
+  </div>
+
+  <p class="apex-up__status visually-hidden" role="status" aria-live="polite" data-status></p>
+</apex-upsell>
+
+{% stylesheet %}
+  .apex-up {
+    display: block;
+    padding-bottom: 64px;
+    background: #f7f7f7;
+    color: #000;
+  }
+
+  /* Sticky bar */
+  .apex-up__bar {
+    position: sticky;
+    top: var(--header-height, 0px);
+    z-index: 3;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .apex-up__bar-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 24px;
+    max-width: 1440px;
+    margin-inline: auto;
+    padding: 14px 16px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-up__bar-inner {
+      padding: 18px 24px;
+    }
+  }
+
+  .apex-up__bar-item {
+    flex: 1 1 260px;
+    min-width: 0;
+  }
+
+  .apex-up__bar-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.33;
+  }
+
+  .apex-up__tick {
+    margin-inline-end: 6px;
+  }
+
+  .apex-up__bar-total {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    font-size: 14px;
+  }
+
+  .apex-up__bar-total strong {
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .apex-up__bar-count {
+    color: #757575;
+  }
+
+  .apex-up__continue {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 9px 28px;
+    border: 1px solid #000;
+    background: #000;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+  }
+
+  .apex-up__continue:hover {
+    background: #333;
+  }
+
+  /* Intro + tabs */
+  .apex-up__intro {
+    max-width: 960px;
+    margin-inline: auto;
+    padding: 40px 16px 8px;
+    text-align: center;
+  }
+
+  .apex-up__title {
+    margin: 0 0 12px;
+    font-size: 25px;
+    font-weight: 600;
+    line-height: 1.33;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-up__title {
+      font-size: 40px;
+    }
+  }
+
+  .apex-up__sub {
+    margin: 0;
+    font-size: 14px;
+    color: #444;
+  }
+
+  .apex-up__tabs {
+    display: flex;
+    gap: 24px;
+    max-width: 1440px;
+    margin: 16px auto 0;
+    padding-inline: 16px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-up__tabs {
+      padding-inline: 48px;
+    }
+  }
+
+  .apex-up__tab {
+    position: relative;
+    flex: none;
+    padding-block: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #000;
+    text-decoration: none;
+  }
+
+  .apex-up__tab::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 2px;
+    background: #000;
+    transform: scaleX(0);
+    transition: transform 0.2s ease;
+  }
+
+  .apex-up__tab[aria-current='true']::after,
+  .apex-up__tab:hover::after {
+    transform: scaleX(1);
+  }
+
+  /* Rows */
+  .apex-up__row {
+    max-width: 1440px;
+    margin-inline: auto;
+    padding: 40px 16px 8px;
+    scroll-margin-top: calc(var(--header-height, 0px) + 80px);
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-up__row {
+      padding-inline: 48px;
+    }
+  }
+
+  .apex-up__row + .apex-up__row {
+    border-top: 1px solid #ddd;
+  }
+
+  .apex-up__row-title {
+    margin: 0 0 24px;
+    font-size: 22px;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-up__row-title {
+      font-size: 28px;
+    }
+  }
+
+  .apex-up__grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+    margin: 0;
+  }
+
+  .apex-up__cell,
+  .apex-up__slide {
+    display: flex;
+    flex: 0 0 calc((100% - 16px) / 2);
+  }
+
+  @media screen and (min-width: 750px) {
+    .apex-up__cell {
+      flex-basis: calc((100% - 32px) / 3);
+    }
+  }
+
+  @media screen and (min-width: 1100px) {
+    .apex-up__cell {
+      flex-basis: calc((100% - 48px) / 4);
+      max-width: 300px;
+    }
+  }
+
+  .apex-up__track {
+    display: flex;
+    gap: 16px;
+    margin: 0;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .apex-up__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .apex-up__slide {
+    scroll-snap-align: start;
+  }
+
+  @media screen and (min-width: 750px) {
+    .apex-up__slide {
+      flex-basis: calc((100% - 32px) / 3);
+    }
+  }
+
+  @media screen and (min-width: 1100px) {
+    .apex-up__slide {
+      flex-basis: calc((100% - 48px) / 4);
+    }
+  }
+
+  .apex-up__carousel[data-fits] .apex-up__track {
+    justify-content: center;
+  }
+
+  .apex-up__controls {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-top: 24px;
+  }
+
+  .apex-up__controls .apex-pcarousel__progress {
+    flex: 1;
+  }
+
+  /* Upsell card (snippets/apex-search-card, layout 'upsell') */
+  .apex-sr__card.apex-sr__card--upsell {
+    width: 100%;
+    align-items: center;
+    padding: 20px 16px 24px;
+    background: #fff;
+    text-align: center;
+  }
+
+  .apex-sr__card--upsell .apex-sr__image {
+    width: 70%;
+    max-width: 180px;
+    aspect-ratio: 1;
+    margin: 0 auto 16px;
+    background: none;
+  }
+
+  .apex-sr__card--upsell .apex-sr__image:not(:has(img)) {
+    background: #f4f4f4;
+  }
+
+  .apex-sr__card--upsell .apex-sr__image img {
+    mix-blend-mode: multiply;
+  }
+
+  .apex-sr__card--upsell .apex-sr__name {
+    min-height: calc(2 * 1.33em);
+    margin-bottom: 10px;
+    font-size: 15px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-sr__card--upsell .apex-sr__name {
+      font-size: 16px;
+    }
+  }
+
+  .apex-sr__card--upsell .apex-sr__rating,
+  .apex-sr__card--upsell .apex-sr__chips {
+    justify-content: center;
+  }
+
+  .apex-sr__card--upsell .apex-sr__option-label {
+    width: 100%;
+    text-align: center;
+  }
+
+  .apex-sr__card--upsell .apex-price {
+    justify-content: center;
+  }
+
+  .apex-sr__card--upsell .apex-sr__price .apex-price__now {
+    font-size: 18px;
+  }
+
+  .apex-sr__card--upsell .apex-sr__sku,
+  .apex-sr__card--upsell .apex-sr__cta--learn {
+    display: none;
+  }
+
+  .apex-sr__card--upsell .apex-sr__actions {
+    width: auto;
+    min-width: 120px;
+    margin-top: auto;
+  }
+
+  .apex-sr__card--upsell .apex-sr__cta--buy[data-added] {
+    border-color: #2e7d32;
+    background: #2e7d32;
+    color: #fff;
+  }
+
+  .apex-sr__card--upsell .apex-sr__error {
+    margin: 8px 0 0;
+    font-size: 12px;
+    color: #c00;
+  }
+
+  .apex-up__empty {
+    padding: 40px 16px;
+    text-align: center;
+  }
+
+  .apex-up__footer {
+    display: flex;
+    justify-content: center;
+    padding: 40px 16px 0;
+  }
+
+  .apex-up__continue--large {
+    min-width: 260px;
+    min-height: 48px;
+    font-size: 16px;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Complete your order",
+  "tag": "section",
+  "class": "apex-section apex-upsell-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Complete your kitchen"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Add the extras now and they ship together with your order."
+    },
+    {
+      "type": "collection",
+      "id": "recommended_collection",
+      "label": "Recommended from",
+      "info": "Empty = all products. Items already in the basket are left out."
+    },
+    {
+      "type": "range",
+      "id": "recommended_limit",
+      "label": "Recommended products",
+      "min": 4,
+      "max": 16,
+      "step": 1,
+      "default": 10
+    }
+  ],
+  "blocks": [
+    {
+      "type": "row",
+      "name": "Collection row",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Collection" },
+        { "type": "text", "id": "title", "label": "Title", "info": "Empty = collection name." }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Complete your order" }]
+}
+{% endschema %}

@@ -102,7 +102,7 @@
       "suggestions": "Suggestions",
       "other": "Collections, recipes & pages",
       "from": "From {{ price }}",
-      "results_for": "Results for <strong>\"{{ terms }}\"</strong>",
+      "results_for_html": "Results for <strong>\"{{ terms }}\"</strong>",
       "results_title": "Search",
       "tab_products": "Products",
       "tab_articles": "Recipes",

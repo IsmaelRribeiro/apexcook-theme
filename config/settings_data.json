@@ -88,7 +88,8 @@
     "palette_primary_button_text": "{{ settings.color_palette.background }}",
     "empty_state_collection": "cookware",
     "apex_hero_product": "titanium-pro-frying-pan",
-    "apex_utility_menu": "apexcook-utility"
+    "apex_utility_menu": "apexcook-utility",
+    "apex_popular_searches": "apexcook-popular-searches"
   },
   "presets": {
     "Default": {

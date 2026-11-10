@@ -2145,6 +2145,12 @@
         "info": "Small links above the header (e.g. Recipes, Support) and in the mobile menu."
       },
       {
+        "type": "link_list",
+        "id": "apex_popular_searches",
+        "label": "Popular searches menu",
+        "info": "Shown in the search overlay. Use links like /search?q=frying+pan. Empty = product names."
+      },
+      {
         "type": "header",
         "content": "Company details (shown in footer)"
       },

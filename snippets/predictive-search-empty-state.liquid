@@ -1,5 +1,6 @@
 {% doc %}
-  Renders the predictive search empty state
+  Renders the predictive search empty state.
+  ApexCook: Samsung-style layout — "Popular searches" on the left, "Recommended" products on the right.
 
   @param {number} shadow_opacity - shadow opacity for the empty state container shadow
   @param {string} products_test_id - a playwright test id, used to differentiate empty state from 'real' search results
@@ -17,28 +18,39 @@
   style="--color-shadow: rgb(var(--color-foreground-rgb) / {{ shadow_opacity }});"
 >
   {% if load_empty_state %}
-    <div class="predictive-search-results__inner">
-      {% liquid
+    <div class="predictive-search-results__inner apex-search" data-testid="{{ products_test_id }}">
+      {%- liquid
         assign collection = settings.empty_state_collection | default: collections.all
-        assign default_title = 'content.search_results_resource_products' | t
-        assign title = settings.empty_state_collection.title | default: default_title
-      %}
-      {% paginate collection.products by 4 %}
-        {% assign products = collection.products %}
-        {% comment %} Only show products section if there are products to display {% endcomment %}
-        {% if products.size > 0 %}
-          {% render 'predictive-search-products-list',
-            products_test_id: products_test_id,
-            title: title,
-            products: products,
-            limit: 4
-          %}
-        {% else %}
-          <div class="predictive-search-results__no-results">
-            <p>{{ 'content.no_products_found' | t }}</p>
-          </div>
-        {% endif %}
-      {% endpaginate %}
+        assign popular = settings.apex_popular_searches
+      -%}
+      <div class="apex-search__col apex-search__col--links">
+        <p class="apex-search__label">{{ 'apex.search.popular' | t }}</p>
+        <ul class="apex-search__links predictive-search-results__wrapper-queries list-unstyled" role="list">
+          {%- if popular.links.size > 0 -%}
+            {%- for link in popular.links limit: 8 -%}
+              <li ref="resultsItems[]">
+                <a class="apex-search__link" href="{{ link.url }}">{{ link.title | escape }}</a>
+              </li>
+            {%- endfor -%}
+          {%- else -%}
+            {%- for product in collection.products limit: 4 -%}
+              <li ref="resultsItems[]">
+                <a class="apex-search__link" href="{{ routes.search_url }}?q={{ product.title | url_encode }}">
+                  {{- product.title | escape -}}
+                </a>
+              </li>
+            {%- endfor -%}
+          {%- endif -%}
+        </ul>
+      </div>
+
+      {%- if collection.products.size > 0 -%}
+        {%- assign recommended_title = 'apex.search.recommended' | t -%}
+        {% render 'apex-search-thumbs', title: recommended_title, products: collection.products, limit: 4 %}
+      {%- endif -%}
+
+      {%- comment -%} Horizon's reset script prepends recently viewed products here; kept hidden on purpose. {%- endcomment -%}
+      <div id="predictive-search-products" hidden></div>
     </div>
   {% endif %}
 </div>

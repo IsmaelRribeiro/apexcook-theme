@@ -179,6 +179,21 @@
           const fresh = detail?.html?.querySelector?.('.apex-addons__item--lid');
           const current = document.querySelector('.apex-addons__item--lid');
           if (fresh && current) current.replaceWith(fresh.cloneNode(true));
+
+          // A size without a lid version (e.g. 32 cm) while the lid was added: fall back to "no lid".
+          const lidButton = document.querySelector('[data-apex-lid]');
+          const lidName = lidButton?.dataset.optionName;
+          if (!lidName) return;
+          const checked = detail.html.querySelector(
+            `variant-picker input[type="radio"][data-option-name="${CSS.escape(lidName)}"]:checked`
+          );
+          if (checked && checked.dataset.optionAvailable === 'false') {
+            const live = Array.from(
+              document.querySelectorAll(`variant-picker input[type="radio"][data-option-name="${CSS.escape(lidName)}"]`)
+            );
+            const fallback = live.find((input) => input.value !== checked.value);
+            if (fallback) setTimeout(() => fallback.click(), 0);
+          }
         } catch (error) {
           if (error?.name !== 'AbortError') console.warn('[apex-addons]', error);
           document.querySelectorAll('[data-apex-lid][aria-busy]').forEach((el) => el.removeAttribute('aria-busy'));

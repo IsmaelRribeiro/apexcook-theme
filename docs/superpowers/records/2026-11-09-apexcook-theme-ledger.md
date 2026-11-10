@@ -91,3 +91,7 @@ Deploy note: GitHub sync stalled once (commit 169a6e2 not applied after 6 min); 
 - Utility links (desktop top row + mobile) come from theme setting `apex_utility_menu` (menu `apexcook-utility`).
 - Store menu `apexcook-main` now has "Explore <Category>" / "Discover More" columns per category.
 - Theme Check: 21 warnings (was 7); the new ones are OrphanedSnippet/ValidScopedCSSClass on the now-unused Horizon header-drawer, mega-menu-list and util-mega-menu-img-sizes-attr snippets.
+
+## Search — Samsung clone (2026-11-09)
+- Overlay: Horizon's search modal restyled as a full-width top sheet (snippets/apex-search-styles). Empty state: "Popular searches" (theme setting `apex_popular_searches` → menu `apexcook-popular-searches`) + "Recommended" (empty-state collection, or all products if it has fewer than 4). While typing: suggestions/collections/recipes/pages on the left, product thumbnails on the right. The empty state keeps a hidden #predictive-search-products because Horizon's reset script needs it.
+- Results page: templates/search.json uses only sections/apex-search-results. Tabs = `type` param (product/article/page); other tab counts come from sections/apex-search-count via Section Rendering. Links without `type` are redirected to type=product. Filter controls use form="ApexFiltersForm" so the card "Buy now" forms are not nested. Cards: snippets/apex-search-card (option chips swap variant via <template> price blocks, genuine Was only).

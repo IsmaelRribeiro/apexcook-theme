@@ -1,6 +1,6 @@
 {%- doc -%}
-  One size for every section title across the ApexCook sections: 32px semibold
-  (26px on phones). Page H1s (hero, collection) and banner headlines keep their own sizes.
+  One size for every section title across the ApexCook sections, matched to Samsung UK:
+  25px on phones, 32px on tablets, 40px on desktop; semibold (nothing heavier than 600). Page H1s (hero, collection) and banner headlines keep their own sizes.
 
   @example
   {% render 'apex-section-headings' %}
@@ -25,9 +25,9 @@
     .apex-testimonials__heading,
     .apex-uses__heading
   ) {
-    font-size: 26px;
+    font-size: 25px;
     font-weight: 600;
-    line-height: 1.2;
+    line-height: 1.33;
     letter-spacing: normal;
   }
 
@@ -51,6 +51,29 @@
       .apex-uses__heading
     ) {
       font-size: 32px;
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    body .shopify-section :is(
+      .apex-benefits__heading,
+      .apex-bento__heading,
+      .apex-compare-slider__heading,
+      .apex-compare__heading,
+      .apex-cooked-with__heading,
+      .apex-faq__heading,
+      .apex-highlights__heading,
+      .apex-pcarousel__heading,
+      .apex-press__heading,
+      .apex-recipes__heading,
+      .apex-reviews__heading,
+      .apex-specs__heading,
+      .apex-story__heading,
+      .apex-support__heading,
+      .apex-testimonials__heading,
+      .apex-uses__heading
+    ) {
+      font-size: 40px;
     }
   }
 {% endstylesheet %}

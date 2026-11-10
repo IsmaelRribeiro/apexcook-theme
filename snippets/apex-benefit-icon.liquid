@@ -1,7 +1,7 @@
 {%- doc -%}
   Outline benefit icons (Samsung "Buy direct" style): 1.5px stroke, currentColor.
 
-  @param {string} icon - delivery | returns | guarantee | secure | payment | support | recipes | rewards
+  @param {string} icon - delivery | returns | guarantee | secure | payment | support | recipes | rewards | pan | leaf | flame | dishwasher
 
   @example
   {% render 'apex-benefit-icon', icon: 'delivery' %}
@@ -22,6 +22,14 @@
       <path d="M6 18v-3a10 10 0 0 1 20 0v3"/><rect x="4.5" y="17" width="5" height="8"/><rect x="22.5" y="17" width="5" height="8"/><path d="M25 25c0 2.5-2.5 3.5-6.5 3.5"/>
     {%- when 'recipes' -%}
       <path d="M9.5 19.5a5.5 5.5 0 0 1-.3-11 7 7 0 0 1 13.6 0 5.5 5.5 0 0 1-.3 11"/><path d="M9.5 17.5v10h13v-10M9.5 23h13"/>
+    {%- when 'pan' -%}
+      <ellipse cx="12.5" cy="15" rx="9.5" ry="4"/><path d="M3 15v2.5c0 2.2 4.3 4 9.5 4s9.5-1.8 9.5-4V15"/><path d="M21.6 16.2 29 14"/>
+    {%- when 'leaf' -%}
+      <path d="M26.5 5.5C13 5 6 10.5 6 18.5c0 3.4 2.5 6 6.2 6 8 0 13.3-7.5 14.3-19z"/><path d="M4 28c4-6 9-10.5 15.5-14"/>
+    {%- when 'flame' -%}
+      <path d="M16 3.5c1.2 4.4 6.8 7.5 6.8 14.2A6.8 6.8 0 0 1 9.2 17.7c0-3 1.5-5 3.1-6.6.3 2.3 1.3 3.7 2.6 4.3C15.2 11 14 7.5 16 3.5z"/><path d="M4.5 28.5h23"/>
+    {%- when 'dishwasher' -%}
+      <rect x="6" y="3.5" width="20" height="25"/><path d="M6 9h20"/><circle cx="16" cy="18.5" r="5"/><path d="M10 6.3h2M20 6.3h2"/>
     {%- else -%}
       <circle cx="16" cy="16" r="12"/><path d="M16 8.5c.6 4.3 3.2 6.9 7.5 7.5-4.3.6-6.9 3.2-7.5 7.5-.6-4.3-3.2-6.9-7.5-7.5 4.3-.6 6.9-3.2 7.5-7.5z"/>
   {%- endcase -%}

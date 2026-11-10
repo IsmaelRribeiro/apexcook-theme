@@ -46,11 +46,9 @@
     <apex-carousel class="apex-plp__cats">
       <ul class="apex-plp__cats-track" role="list" data-track tabindex="0" aria-label="{{ 'apex.plp.categories' | t }}">
         {%- for link in category_menu.links -%}
+          {%- if link.type != 'collection_link' -%}{%- continue -%}{%- endif -%}
           {%- liquid
-            assign cat_collection = null
-            if link.type == 'collection_link'
-              assign cat_collection = link.object
-            endif
+            assign cat_collection = link.object
             assign is_current = false
             if cat_collection and cat_collection.id == collection.id
               assign is_current = true

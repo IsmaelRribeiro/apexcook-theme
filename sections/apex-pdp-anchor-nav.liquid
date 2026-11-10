@@ -21,7 +21,31 @@
     <div class="apex-anchor-nav__grid">
       <div class="apex-anchor-nav__info">
         {%- assign promo = product.metafields.apex.promo_line.value -%}
-        {%- if promo != blank -%}<p class="apex-anchor-nav__promo">{{ promo | escape }}</p>{%- endif -%}
+        {%- comment -%}
+          "Viewed in the last 24 hours" uses real numbers only: apex.views_24h / apex.views_updated are
+          written from Shopify Analytics (visitors who landed on this product page). Hidden when the
+          figure is below the minimum or older than 36 hours.
+        {%- endcomment -%}
+        {%- liquid
+          assign views = product.metafields.apex.views_24h.value | default: 0
+          assign views_age = 999999
+          if product.metafields.apex.views_updated.value != blank
+            assign views_at = product.metafields.apex.views_updated.value | date: '%s' | plus: 0
+            assign now = 'now' | date: '%s' | plus: 0
+            assign views_age = now | minus: views_at
+          endif
+          assign show_views = false
+          if section.settings.show_views and views >= section.settings.views_min and views_age < 129600
+            assign show_views = true
+          endif
+        -%}
+        {%- if show_views -%}
+          <p class="apex-anchor-nav__promo apex-anchor-nav__views">
+            <span aria-hidden="true">👁</span> {{ 'apex.nav.views_24h' | t: count: views }}
+          </p>
+        {%- elsif promo != blank -%}
+          <p class="apex-anchor-nav__promo">{{ promo | escape }}</p>
+        {%- endif -%}
         <h1 class="apex-anchor-nav__title">{{ product.title | escape }}</h1>
         {%- if count > 0 -%}
           {%- assign average = sum | times: 10.0 | divided_by: count | round | divided_by: 10.0 -%}
@@ -200,7 +224,9 @@
   "class": "apex-section",
   "enabled_on": { "templates": ["product"] },
   "settings": [
-    { "type": "checkbox", "id": "show_features", "label": "Show 'Features' tab", "default": true }
+    { "type": "checkbox", "id": "show_features", "label": "Show 'Features' tab", "default": true },
+    { "type": "checkbox", "id": "show_views", "label": "Show 'viewed in the last 24 hours' tag", "default": true, "info": "Uses the real visitor count stored on the product (updated from Shopify Analytics)." },
+    { "type": "range", "id": "views_min", "label": "Show the tag from", "min": 1, "max": 50, "step": 1, "default": 5, "unit": "ppl" }
   ],
   "presets": [{ "name": "ApexCook product nav" }]
 }

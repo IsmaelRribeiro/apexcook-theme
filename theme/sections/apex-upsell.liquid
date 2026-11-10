@@ -52,7 +52,7 @@
       <div class="apex-up__bar-item">
         {%- for item in cart.items -%}
           <p class="apex-up__bar-title" data-added-variant="{{ item.variant_id }}"{% unless forloop.first %} hidden{% endunless %}>
-            <span class="apex-up__tick" aria-hidden="true">✓</span>
+            <span class="apex-up__tick" aria-hidden="true">{{ 'ph-check.svg' | inline_asset_content | replace: '<svg ', '<svg width="16" height="16" ' }}</span>
             {{ 'apex.upsell.added_title' | t: title: item.product.title }}
             {%- unless item.product.has_only_default_variant %} · {{ item.variant.title }}{% endunless -%}
           </p>
@@ -125,8 +125,8 @@
         <div class="apex-pcarousel__controls apex-up__controls">
           <div class="apex-pcarousel__progress" aria-hidden="true"><span data-progress></span></div>
           <div class="apex-pcarousel__arrows">
-            <button type="button" class="apex-pcarousel__arrow" data-prev aria-label="{{ 'apex.reviews.previous' | t }}">←</button>
-            <button type="button" class="apex-pcarousel__arrow" data-next aria-label="{{ 'apex.reviews.next' | t }}">→</button>
+            <button type="button" class="apex-pcarousel__arrow" data-prev aria-label="{{ 'apex.reviews.previous' | t }}">{%- render 'apex-mnav-icon', icon: 'left' -%}</button>
+            <button type="button" class="apex-pcarousel__arrow" data-next aria-label="{{ 'apex.reviews.next' | t }}">{%- render 'apex-mnav-icon', icon: 'right' -%}</button>
           </div>
         </div>
       </apex-carousel>

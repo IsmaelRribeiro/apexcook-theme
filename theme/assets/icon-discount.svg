@@ -1,4 +1,1 @@
-<svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M13.25 4.25H11.2759C10.4606 4.25 9.68048 4.58181 9.11496 5.16908L4.86136 9.58629C4.10538 10.3713 4.11713 11.6171 4.88778 12.3878L7.78569 15.2857C8.46001 15.96 9.55008 15.9703 10.237 15.3088L14.9841 10.7375C15.4735 10.2663 15.75 9.61613 15.75 8.93673V6.75C15.75 5.36929 14.6307 4.25 13.25 4.25Z" stroke="currentColor" stroke-width="var(--icon-stroke-width)" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="13" cy="7" r="1" fill="currentColor"/>
-</svg>
+<svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M243.31,136,144,36.69A15.86,15.86,0,0,0,132.69,32H40a8,8,0,0,0-8,8v92.69A15.86,15.86,0,0,0,36.69,144L136,243.31a16,16,0,0,0,22.63,0l84.68-84.68a16,16,0,0,0,0-22.63Zm-96,96L48,132.69V48h84.69L232,147.31ZM96,84A12,12,0,1,1,84,72,12,12,0,0,1,96,84Z"/></svg>

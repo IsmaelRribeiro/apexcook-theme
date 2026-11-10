@@ -58,13 +58,13 @@
           <div class="apex-rpage__share-row">
             <div class="apex-rpage__share">
               <a class="apex-rpage__share-btn apex-rpage__share-btn--fb" href="https://www.facebook.com/sharer/sharer.php?u={{ share_url | url_encode }}" target="_blank" rel="noopener">
-                {{- 'apex.recipe_page.share' | t }}<span class="visually-hidden"> on Facebook</span> <span aria-hidden="true">f</span>
+                {{- 'apex.recipe_page.share' | t }}<span class="visually-hidden"> on Facebook</span> {{ 'ph-facebook-logo.svg' | inline_asset_content | replace: '<svg ', '<svg width="16" height="16" ' }}
               </a>
               <a class="apex-rpage__share-btn apex-rpage__share-btn--pin" href="https://pinterest.com/pin/create/button/?url={{ share_url | url_encode }}&description={{ article.title | url_encode }}" target="_blank" rel="noopener">
-                {{- 'apex.recipe_page.share' | t }}<span class="visually-hidden"> on Pinterest</span> <span aria-hidden="true">P</span>
+                {{- 'apex.recipe_page.share' | t }}<span class="visually-hidden"> on Pinterest</span> {{ 'ph-pinterest-logo.svg' | inline_asset_content | replace: '<svg ', '<svg width="16" height="16" ' }}
               </a>
               <a class="apex-rpage__share-btn apex-rpage__share-btn--mail" href="mailto:?subject={{ article.title | url_encode }}&body={{ share_url | url_encode }}">
-                {{- 'apex.recipe_page.email' | t -}}
+                {{- 'apex.recipe_page.email' | t }} {{ 'ph-envelope-simple.svg' | inline_asset_content | replace: '<svg ', '<svg width="16" height="16" ' -}}
               </a>
             </div>
             <p class="apex-rpage__date">
@@ -76,20 +76,20 @@
             <ul class="apex-rpage__facts list-unstyled" role="list">
               {%- if total > 0 -%}
                 <li class="apex-rpage__fact">
-                  <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M7 3h10M7 21h10M8 3c0 5 8 5 8 9s-8 4-8 9M16 3c0 5-8 5-8 9s8 4 8 9"/></svg>
+                  {{ 'ph-timer-light.svg' | inline_asset_content | replace: '<svg ', '<svg width="28" height="28" ' }}
                   <span class="visually-hidden">{{ 'apex.recipe_page.time' | t }}:</span>
                   <span>{{ hours }}:{% if minutes < 10 %}0{% endif %}{{ minutes }}</span>
                 </li>
               {%- endif -%}
               {%- if servings -%}
                 <li class="apex-rpage__fact">
-                  <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="12" cy="12" r="5.5"/><path d="M4 3v6a2 2 0 0 0 2 2v10M4 3v4M6 3v4M8 3v6a2 2 0 0 1-2 2M20 3c-1.7 1-2 4-2 7h2v11"/></svg>
+                  {{ 'ph-fork-knife-light.svg' | inline_asset_content | replace: '<svg ', '<svg width="28" height="28" ' }}
                   <span>{{ 'apex.recipe_page.makes' | t: count: servings }}</span>
                 </li>
               {%- endif -%}
               {%- if difficulty -%}
                 <li class="apex-rpage__fact">
-                  <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M7 14h10v6H7zM7 14a4 4 0 1 1 1.5-7.7 4 4 0 0 1 7 0A4 4 0 1 1 17 14"/></svg>
+                  {{ 'ph-chef-hat-light.svg' | inline_asset_content | replace: '<svg ', '<svg width="28" height="28" ' }}
                   <span class="visually-hidden">{{ 'apex.recipe_page.difficulty' | t }}:</span>
                   <span>{{ difficulty | escape }}</span>
                 </li>

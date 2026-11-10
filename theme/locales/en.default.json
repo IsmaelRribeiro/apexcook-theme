@@ -104,6 +104,11 @@
       "search_placeholder": "Search",
       "search": "Search"
     },
+    "compare_cols": {
+      "yes": "Yes",
+      "no": "No",
+      "partial": "Partly / varies"
+    },
     "chefs": {
       "more": "View more: {{ title }}",
       "close": "Close",

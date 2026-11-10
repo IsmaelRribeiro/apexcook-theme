@@ -214,15 +214,105 @@
       }
     },
     "apex_compare": {
-      "type": "apex-comparison-table",
+      "type": "apex-compare-columns",
+      "blocks": {
+        "r1": {
+          "type": "row",
+          "settings": {
+            "label": "Cooking surface",
+            "icon": "pan",
+            "ours_mark": "yes",
+            "ours_value": "Titanium cooking surface",
+            "ours_note": "No coating to chip, peel or wear away",
+            "theirs_mark": "no",
+            "theirs_value": "Stainless steel surface",
+            "theirs_note": "Hard-wearing, but no help with sticking"
+          }
+        },
+        "r2": {
+          "type": "row",
+          "settings": {
+            "label": "Body",
+            "icon": "guarantee",
+            "ours_mark": "yes",
+            "ours_value": "Stainless steel body",
+            "ours_note": "Durable, non-reactive and built to last",
+            "theirs_mark": "yes",
+            "theirs_value": "Stainless steel body",
+            "theirs_note": "Durable, non-reactive and long-lasting"
+          }
+        },
+        "r3": {
+          "type": "row",
+          "settings": {
+            "label": "Non-stick performance",
+            "icon": "leaf",
+            "ours_mark": "yes",
+            "ours_value": "Coating-free easy release",
+            "ours_note": "Made without PFAS coatings; a little oil and medium heat is all it needs",
+            "theirs_mark": "partial",
+            "theirs_value": "Needs technique",
+            "theirs_note": "Food can stick without careful heat control or a coating"
+          }
+        },
+        "r4": {
+          "type": "row",
+          "settings": {
+            "label": "Construction",
+            "icon": "rewards",
+            "ours_mark": "yes",
+            "ours_value": "Layered construction",
+            "ours_note": "Even heat across the base for consistent cooking",
+            "theirs_mark": "partial",
+            "theirs_value": "Varies by design",
+            "theirs_note": "Some are single-ply or disc-based, with rivets that can trap food"
+          }
+        },
+        "r5": {
+          "type": "row",
+          "settings": {
+            "label": "Hob compatibility",
+            "icon": "flame",
+            "ours_mark": "yes",
+            "ours_value": "Works on every hob",
+            "ours_note": "Gas, electric, ceramic and induction",
+            "theirs_mark": "partial",
+            "theirs_value": "Varies by design",
+            "theirs_note": "Not every stainless steel pan works on induction"
+          }
+        },
+        "r6": {
+          "type": "row",
+          "settings": {
+            "label": "Ease of care",
+            "icon": "dishwasher",
+            "ours_mark": "yes",
+            "ours_value": "Dishwasher safe",
+            "ours_note": "Quick to clean after everyday cooking",
+            "theirs_mark": "partial",
+            "theirs_value": "Varies",
+            "theirs_note": "Some need hand washing to keep their finish"
+          }
+        }
+      },
+      "block_order": [
+        "r1",
+        "r2",
+        "r3",
+        "r4",
+        "r5",
+        "r6"
+      ],
       "settings": {
-        "heading": "How Titanium Pro compares",
-        "attribute_label": "Feature",
-        "ours_label": "Titanium Pro",
-        "theirs_label": "Coated pan",
-        "background_color": "#000000",
-        "text_color": "#FFFFFF",
-        "enable_animation": true
+        "heading": "Compare Titanium Pro",
+        "specs_heading": "Key specs",
+        "visible_rows": 5,
+        "ours_title": "Titanium Pro",
+        "ours_name": "Titanium Pro Frying Pan",
+        "ours_text": "A titanium cooking surface with no coating to wear away, on a durable stainless steel body.",
+        "theirs_title": "Standard stainless steel",
+        "theirs_name": "Standard stainless steel pan",
+        "theirs_text": "A familiar kitchen workhorse: tough and long-lasting, but food sticks without the right technique."
       }
     },
     "apex_uses": {

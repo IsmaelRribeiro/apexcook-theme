@@ -1,32 +1,20 @@
 {%- comment -%}
   Thin utility row above the main header (Samsung-style "Support · For Business").
-  Desktop only; links are right-aligned, 14px bold.
+  Desktop only; links come from Theme settings → ApexCook → Utility links menu.
 {%- endcomment -%}
 
-<div class="apex-utility-bar">
-  <ul class="apex-utility-bar__list list-unstyled">
-    {%- for block in section.blocks -%}
-      {%- if block.settings.label != blank -%}
-        <li {{ block.shopify_attributes }}>
-          <a
-            class="apex-utility-bar__link"
-            href="{{ block.settings.link | default: '#' }}"
-            {% if block.settings.new_tab %}
-              target="_blank" rel="noopener"
-            {% endif %}
-          >
-            {{- block.settings.label | escape -}}
-            {%- if block.settings.new_tab -%}
-              <svg class="apex-utility-bar__arrow" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
-                <path d="M3 9 9 3M4 3h5v5" fill="none" stroke="currentColor" stroke-width="1.4"/>
-              </svg>
-            {%- endif -%}
-          </a>
+{%- assign utility_menu = settings.apex_utility_menu -%}
+{%- if utility_menu.links.size > 0 -%}
+  <div class="apex-utility-bar">
+    <ul class="apex-utility-bar__list list-unstyled">
+      {%- for link in utility_menu.links -%}
+        <li>
+          <a class="apex-utility-bar__link" href="{{ link.url }}">{{ link.title | escape }}</a>
         </li>
-      {%- endif -%}
-    {%- endfor -%}
-  </ul>
-</div>
+      {%- endfor -%}
+    </ul>
+  </div>
+{%- endif -%}
 
 {% stylesheet %}
   .apex-utility-bar {
@@ -73,39 +61,15 @@
   "enabled_on": {
     "groups": ["header"]
   },
-  "max_blocks": 4,
-  "blocks": [
+  "settings": [
     {
-      "type": "link",
-      "name": "Link",
-      "settings": [
-        {
-          "type": "text",
-          "id": "label",
-          "label": "Label",
-          "default": "Support"
-        },
-        {
-          "type": "url",
-          "id": "link",
-          "label": "Link"
-        },
-        {
-          "type": "checkbox",
-          "id": "new_tab",
-          "label": "Open in new tab",
-          "default": false
-        }
-      ]
+      "type": "paragraph",
+      "content": "Links come from Theme settings → ApexCook → Utility links menu."
     }
   ],
   "presets": [
     {
-      "name": "Utility links",
-      "blocks": [
-        { "type": "link", "settings": { "label": "Recipes" } },
-        { "type": "link", "settings": { "label": "Support" } }
-      ]
+      "name": "Utility links"
     }
   ]
 }

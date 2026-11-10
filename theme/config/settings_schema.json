@@ -2139,6 +2139,12 @@
         "info": "Linked from the empty basket and empty collections."
       },
       {
+        "type": "link_list",
+        "id": "apex_utility_menu",
+        "label": "Utility links menu",
+        "info": "Small links above the header (e.g. Recipes, Support) and in the mobile menu."
+      },
+      {
         "type": "header",
         "content": "Company details (shown in footer)"
       },

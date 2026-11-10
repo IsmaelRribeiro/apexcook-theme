@@ -1,0 +1,488 @@
+{% comment %}
+  Section contract.
+  Samsung Watch Ultra2 "heart health" card carousel, used for chef testimonials.
+  Each card: eyebrow (chef name / role), headline quote and a photo or video. The + button expands
+  the card to the full row: the full testimonial fades in on the left, the media moves right and the
+  + turns into ×. Escape or × closes it. Dots below track the scroll position.
+  Only publish genuine testimonials from chefs who agreed to be quoted.
+  @example
+  <!-- Product template, right after "ApexCook testimonials" -->
+{% endcomment %}
+<div class="apex-chefs">
+  <div class="apex-chefs__head">
+    {%- if section.settings.heading != blank -%}<h2 class="apex-chefs__heading">{{ section.settings.heading | escape }}</h2>{%- endif -%}
+    {%- if section.settings.text != blank -%}<div class="apex-chefs__intro">{{ section.settings.text }}</div>{%- endif -%}
+  </div>
+
+  <apex-chef-cards class="apex-chefs__carousel">
+    <ul class="apex-chefs__track list-unstyled" role="list" data-track>
+      {%- for block in section.blocks -%}
+        {%- assign panel_id = 'ApexChef-' | append: block.id -%}
+        <li class="apex-chefs__card" {{ block.shopify_attributes }}>
+          <div class="apex-chefs__inner">
+            <div class="apex-chefs__textbox">
+              {%- if block.settings.eyebrow != blank -%}<p class="apex-chefs__eyebrow">{{ block.settings.eyebrow | escape }}</p>{%- endif -%}
+              <h3 class="apex-chefs__title">{{ block.settings.title | escape }}</h3>
+              <div class="apex-chefs__desc" id="{{ panel_id }}">
+                {{ block.settings.text }}
+                {%- if block.settings.author != blank -%}
+                  <p class="apex-chefs__author">{{ block.settings.author | escape }}</p>
+                {%- endif -%}
+              </div>
+            </div>
+            <div class="apex-chefs__media">
+              {%- if block.settings.video != blank -%}
+                {{ block.settings.video | video_tag: autoplay: true, loop: true, muted: true, playsinline: true, preload: 'metadata', class: 'apex-chefs__img', image_size: '1200x' }}
+              {%- elsif block.settings.image != blank -%}
+                {{ block.settings.image | image_url: width: 1200 | image_tag: loading: 'lazy', widths: '600, 900, 1200', sizes: '(min-width: 990px) 600px, 85vw', class: 'apex-chefs__img', alt: block.settings.image.alt | default: block.settings.eyebrow }}
+              {%- else -%}
+                {{ 'image' | placeholder_svg_tag: 'apex-chefs__img apex-chefs__img--ph' }}
+              {%- endif -%}
+            </div>
+          </div>
+          {%- if block.settings.text != blank -%}
+            <button
+              type="button"
+              class="apex-chefs__toggle"
+              aria-expanded="false"
+              aria-controls="{{ panel_id }}"
+              aria-label="{{ 'apex.chefs.more' | t: title: block.settings.eyebrow }}"
+              data-label-open="{{ 'apex.chefs.more' | t: title: block.settings.eyebrow | escape }}"
+              data-label-close="{{ 'apex.chefs.close' | t | escape }}"
+            >
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+    {%- if section.blocks.size > 1 -%}
+      <div class="apex-chefs__dots" role="group" aria-label="{{ section.settings.heading | escape }}">
+        {%- for block in section.blocks -%}
+          <button type="button" class="apex-chefs__dot{% if forloop.first %} is-active{% endif %}" data-index="{{ forloop.index0 }}" aria-label="{{ 'apex.chefs.go_to' | t: number: forloop.index }}"></button>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </apex-chef-cards>
+</div>
+
+{% javascript %}
+  if (!customElements.get('apex-chef-cards')) {
+    customElements.define(
+      'apex-chef-cards',
+      class extends HTMLElement {
+        #frame = 0;
+
+        connectedCallback() {
+          this.track = this.querySelector('[data-track]');
+          this.cards = [...this.querySelectorAll('.apex-chefs__card')];
+          this.dots = [...this.querySelectorAll('.apex-chefs__dot')];
+          this.addEventListener('click', this.#onClick);
+          this.addEventListener('keydown', this.#onKey);
+          this.track?.addEventListener('scroll', this.#schedule, { passive: true });
+        }
+
+        disconnectedCallback() {
+          this.removeEventListener('click', this.#onClick);
+          this.removeEventListener('keydown', this.#onKey);
+          this.track?.removeEventListener('scroll', this.#schedule);
+        }
+
+        #onClick = (event) => {
+          const target = event.target instanceof Element ? event.target : null;
+          const toggle = target?.closest('.apex-chefs__toggle');
+          if (toggle) {
+            const card = toggle.closest('.apex-chefs__card');
+            this.#set(card, !card.classList.contains('is-open'));
+            return;
+          }
+          const dot = target?.closest('.apex-chefs__dot');
+          if (dot) this.#scrollTo(this.cards[Number(dot.dataset.index)]);
+        };
+
+        #onKey = (event) => {
+          if (event.key !== 'Escape') return;
+          const open = this.querySelector('.apex-chefs__card.is-open');
+          if (open) {
+            this.#set(open, false);
+            open.querySelector('.apex-chefs__toggle')?.focus();
+          }
+        };
+
+        #set(card, open) {
+          this.cards.forEach((other) => {
+            if (other !== card && other.classList.contains('is-open')) this.#apply(other, false);
+          });
+          this.#apply(card, open);
+          this.toggleAttribute('data-open', open);
+          // Wait for the width transition, then bring the card fully into view.
+          window.setTimeout(() => this.#scrollTo(card), open ? 60 : 0);
+          window.setTimeout(() => this.#scrollTo(card), 520);
+        }
+
+        #apply(card, open) {
+          card.classList.toggle('is-open', open);
+          const toggle = card.querySelector('.apex-chefs__toggle');
+          if (!toggle) return;
+          toggle.setAttribute('aria-expanded', String(open));
+          toggle.setAttribute('aria-label', open ? toggle.dataset.labelClose : toggle.dataset.labelOpen);
+        }
+
+        #scrollTo(card) {
+          if (!card || !this.track) return;
+          const left = card.offsetLeft - this.track.offsetLeft - (this.track.clientWidth - card.offsetWidth) / 2;
+          this.track.scrollTo({ left: Math.max(0, left), behavior: 'smooth' });
+        }
+
+        #schedule = () => {
+          if (this.#frame) return;
+          this.#frame = requestAnimationFrame(() => {
+            this.#frame = 0;
+            const center = this.track.scrollLeft + this.track.clientWidth / 2;
+            let best = 0;
+            let distance = Infinity;
+            this.cards.forEach((card, index) => {
+              const d = Math.abs(card.offsetLeft - this.track.offsetLeft + card.offsetWidth / 2 - center);
+              if (d < distance) {
+                distance = d;
+                best = index;
+              }
+            });
+            const atEnd = this.track.scrollLeft >= this.track.scrollWidth - this.track.clientWidth - 2;
+            if (atEnd) best = this.cards.length - 1;
+            if (this.track.scrollLeft <= 2) best = 0;
+            this.dots.forEach((dot, index) => dot.classList.toggle('is-active', index === best));
+          });
+        };
+      }
+    );
+  }
+{% endjavascript %}
+
+{% stylesheet %}
+  /* Measured from samsung.com/uk Galaxy Watch Ultra2 (heart health cards) at 1440px:
+     cards 612×612 on #f7f6f5, 52px padding, 20px label, 28px title, 20px/30px #555 description,
+     opened card spans the 1224px row. Square corners and weights ≤ 600 for ApexCook. */
+  .apex-chefs {
+    padding-block: 64px;
+    color: #000;
+    overflow: hidden;
+  }
+
+  .apex-chefs__head {
+    display: grid;
+    gap: 16px;
+    max-width: var(--page-width, 1440px);
+    margin: 0 auto 40px;
+    padding-inline: 24px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-chefs__head {
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: 64px;
+      align-items: start;
+    }
+  }
+
+  .apex-chefs__heading {
+    margin: 0;
+  }
+
+  .apex-chefs__intro {
+    font-size: 16px;
+    line-height: 1.4;
+    color: #555;
+  }
+
+  .apex-chefs__intro p {
+    margin: 0;
+  }
+
+  .apex-chefs__carousel {
+    display: block;
+    --apex-chef-card: min(85vw, 612px);
+  }
+
+  .apex-chefs__track {
+    display: flex;
+    gap: 16px;
+    margin: 0;
+    padding: 0 max(24px, calc((100vw - 2 * var(--apex-chef-card) - 16px) / 2));
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    scroll-padding-inline: max(24px, calc((100vw - 2 * var(--apex-chef-card) - 16px) / 2));
+  }
+
+  @media screen and (max-width: 989px) {
+    .apex-chefs__track {
+      padding-inline: 24px;
+      scroll-padding-inline: 24px;
+    }
+  }
+
+  .apex-chefs__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .apex-chefs__card {
+    position: relative;
+    flex: 0 0 var(--apex-chef-card);
+    min-height: min(85vw, 612px);
+    background: #f7f6f5;
+    scroll-snap-align: center;
+    transition: flex-basis 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-chefs__card.is-open {
+      flex-basis: calc(2 * var(--apex-chef-card) + 16px);
+    }
+  }
+
+  .apex-chefs__inner {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    height: 100%;
+    padding: 32px 28px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-chefs__inner {
+      padding: 52px;
+    }
+
+    .apex-chefs__card.is-open .apex-chefs__inner {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      grid-template-rows: 1fr;
+      column-gap: 48px;
+    }
+  }
+
+  .apex-chefs__textbox {
+    padding-right: 48px;
+  }
+
+  .apex-chefs__eyebrow {
+    margin: 0 0 12px;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.15;
+    text-transform: uppercase;
+  }
+
+  .apex-chefs__title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-chefs__eyebrow {
+      font-size: 20px;
+    }
+
+    .apex-chefs__title {
+      font-size: 28px;
+    }
+  }
+
+  /* Description: collapsed to nothing until the card opens, then fades and slides in. */
+  .apex-chefs__desc {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transform: translateY(12px);
+    font-size: 17px;
+    line-height: 1.5;
+    color: #555;
+    transition:
+      grid-template-rows 0.45s ease,
+      opacity 0.3s ease,
+      transform 0.45s ease;
+    overflow: hidden;
+  }
+
+  .apex-chefs__desc > * {
+    min-height: 0;
+  }
+
+  .apex-chefs__card.is-open .apex-chefs__desc {
+    grid-template-rows: 1fr;
+    margin-top: 24px;
+    opacity: 1;
+    transform: none;
+    transition-delay: 0s, 0.2s, 0.2s;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-chefs__desc {
+      font-size: 20px;
+    }
+  }
+
+  .apex-chefs__desc p {
+    margin: 0 0 12px;
+  }
+
+  .apex-chefs__author {
+    color: #000;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .apex-chefs__media {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 240px;
+    margin-top: 24px;
+    animation: none;
+  }
+
+  .apex-chefs__card.is-open .apex-chefs__media {
+    animation: apex-chef-media 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-chefs__card.is-open .apex-chefs__media {
+      margin-top: 0;
+    }
+  }
+
+  @keyframes apex-chef-media {
+    from {
+      opacity: 0.2;
+      transform: scale(0.94);
+    }
+  }
+
+  .apex-chefs__img {
+    display: block;
+    width: 100%;
+    max-width: 420px;
+    aspect-ratio: 1;
+    object-fit: cover;
+  }
+
+  .apex-chefs__card.is-open .apex-chefs__img {
+    max-width: 520px;
+  }
+
+  .apex-chefs__img--ph {
+    background: #ebe9e6;
+    fill: #cfccc8;
+  }
+
+  .apex-chefs__toggle {
+    position: absolute;
+    top: 28px;
+    right: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: #757575;
+    color: #fff;
+    cursor: pointer;
+    transition:
+      background-color 0.2s ease,
+      transform 0.4s ease;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-chefs__toggle {
+      top: 48px;
+      right: 48px;
+    }
+  }
+
+  .apex-chefs__toggle:hover {
+    background: #000;
+  }
+
+  .apex-chefs__card.is-open .apex-chefs__toggle {
+    background: #000;
+    transform: rotate(45deg);
+  }
+
+  .apex-chefs__dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    width: max-content;
+    margin: 32px auto 0;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+  }
+
+  .apex-chefs__dot {
+    width: 8px;
+    height: 4px;
+    padding: 0;
+    border: 0;
+    background: #8f8f8f;
+    cursor: pointer;
+    transition:
+      width 0.3s ease,
+      background-color 0.3s ease;
+  }
+
+  .apex-chefs__dot.is-active {
+    width: 36px;
+    background: #000;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .apex-chefs__card,
+    .apex-chefs__desc,
+    .apex-chefs__toggle,
+    .apex-chefs__dot {
+      transition: none;
+    }
+
+    .apex-chefs__card.is-open .apex-chefs__media {
+      animation: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "ApexCook chef cards",
+  "tag": "section",
+  "class": "apex-section",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Trusted by chefs who cook all day" },
+    { "type": "richtext", "id": "text", "label": "Intro text" },
+    { "type": "paragraph", "content": "Only publish genuine testimonials from chefs who agreed to be quoted, and say if they were paid or given the product." }
+  ],
+  "blocks": [
+    {
+      "type": "chef",
+      "name": "Chef",
+      "settings": [
+        { "type": "text", "id": "eyebrow", "label": "Label", "default": "Chef name" },
+        { "type": "text", "id": "title", "label": "Headline quote", "default": "Add the chef's headline quote" },
+        { "type": "richtext", "id": "text", "label": "Full testimonial (shown after +)", "default": "<p>Add the full testimonial here.</p>" },
+        { "type": "text", "id": "author", "label": "Name, role and restaurant" },
+        { "type": "image_picker", "id": "image", "label": "Photo" },
+        { "type": "video", "id": "video", "label": "Video (overrides photo)" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "ApexCook chef cards",
+      "blocks": [{ "type": "chef" }, { "type": "chef" }, { "type": "chef" }]
+    }
+  ]
+}
+{% endschema %}

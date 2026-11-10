@@ -8,8 +8,13 @@
   <!-- Product template, before "ApexCook testimonials"; anchor "features" -->
 {% endcomment %}
 <script src="{{ 'apex-chef-cards.js' | asset_url }}" type="module" fetchpriority="low"></script>
+{%- if section.settings.section_title != blank -%}
+  <div class="apex-fh__opener" {% if section.settings.anchor != blank %}id="{{ section.settings.anchor | handle }}"{% endif %}>
+    <h2 class="apex-fh__opener-title">{{ section.settings.section_title | escape }}</h2>
+  </div>
+{%- endif -%}
 <div
-  {% if section.settings.anchor != blank %}id="{{ section.settings.anchor | handle }}"{% endif %}
+  {% if section.settings.anchor != blank and section.settings.section_title == blank %}id="{{ section.settings.anchor | handle }}"{% endif %}
   class="apex-fh"
   style="--apex-fh-base: {{ section.settings.base_color }}; --apex-fh-accent: {{ section.settings.accent_color }};"
 >
@@ -98,6 +103,23 @@
 </div>
 
 {% stylesheet %}
+  /* "Features" opener on white above the dark block, like the page sections on samsung.com. */
+  .apex-fh__opener {
+    max-width: var(--page-width, 1440px);
+    margin-inline: auto;
+    padding: var(--apex-space) 24px 24px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-fh__opener {
+      padding-inline: 32px;
+    }
+  }
+
+  .apex-fh__opener-title {
+    margin: 0;
+  }
+
   /* Samsung Watch Ultra2 "Off-grid. On track" at 1440px: photo ~900px tall fading into a dark base,
      56px headline, 16px text in a 470px right column, stats with a large light-green number,
      translucent dark cards (white text, white-outline + button). Square corners, weights ≤ 600. */
@@ -255,6 +277,7 @@
   "class": "apex-section",
   "settings": [
     { "type": "text", "id": "anchor", "label": "Anchor id", "default": "features" },
+    { "type": "text", "id": "section_title", "label": "Section title", "default": "Features" },
     { "type": "image_picker", "id": "image", "label": "Background image", "info": "Wide photo, at least 2400px. The lower part fades into the base colour." },
     { "type": "textarea", "id": "heading", "label": "Heading", "default": "Built for heat.\nMade to last." },
     { "type": "richtext", "id": "text", "label": "Text" },

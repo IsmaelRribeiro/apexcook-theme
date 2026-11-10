@@ -137,67 +137,6 @@
         "enable_animation": true
       }
     },
-    "apex_press": {
-      "type": "apex-press",
-      "blocks": {
-        "c1": {
-          "type": "card",
-          "settings": {
-            "eyebrow": "Chef highlight",
-            "title": "Add a highlight"
-          }
-        },
-        "c2": {
-          "type": "card",
-          "settings": {
-            "eyebrow": "Chef highlight",
-            "title": "Add a highlight"
-          }
-        }
-      },
-      "block_order": [
-        "c1",
-        "c2"
-      ],
-      "settings": {
-        "eyebrow": "Chef highlights",
-        "heading": "Trusted in professional kitchens",
-        "logos_title": "Featured in",
-        "background_color": "#000000",
-        "text_color": "#FFFFFF",
-        "enable_animation": true
-      }
-    },
-    "apex_story": {
-      "type": "apex-sticky-story",
-      "blocks": {
-        "s1": {
-          "type": "step",
-          "settings": {
-            "eyebrow": "Titanium",
-            "heading": "No hidden chemicals",
-            "text": "<p>Coated pans wear out and can end up in your food. Titanium Pro has nothing to break down. Claims must match your supplier's test reports.</p>"
-          }
-        },
-        "s2": {
-          "type": "step",
-          "settings": {
-            "eyebrow": "",
-            "heading": "PFAS-free. Truly.",
-            "text": "<p>Add the verified PFAS-free statement from your supplier here.</p>"
-          }
-        }
-      },
-      "block_order": [
-        "s1",
-        "s2"
-      ],
-      "settings": {
-        "background_color": "#000000",
-        "text_color": "#FFFFFF",
-        "enable_animation": true
-      }
-    },
     "apex_slider": {
       "type": "apex-compare-slider",
       "settings": {
@@ -306,54 +245,13 @@
       "settings": {
         "heading": "Compare Titanium Pro",
         "specs_heading": "Key specs",
-        "visible_rows": 5,
+        "visible_rows": 20,
         "ours_title": "Titanium Pro",
         "ours_name": "Titanium Pro Frying Pan",
         "ours_text": "A titanium cooking surface with no coating to wear away, on a durable stainless steel body.",
         "theirs_title": "Standard stainless steel",
         "theirs_name": "Standard stainless steel pan",
         "theirs_text": "A familiar kitchen workhorse: tough and long-lasting, but food sticks without the right technique."
-      }
-    },
-    "apex_uses": {
-      "type": "apex-use-cards",
-      "blocks": {
-        "u1": {
-          "type": "card",
-          "settings": {
-            "label": "Frying"
-          }
-        },
-        "u2": {
-          "type": "card",
-          "settings": {
-            "label": "Searing"
-          }
-        },
-        "u3": {
-          "type": "card",
-          "settings": {
-            "label": "Sautéing"
-          }
-        },
-        "u4": {
-          "type": "card",
-          "settings": {
-            "label": "Eggs & pancakes"
-          }
-        }
-      },
-      "block_order": [
-        "u1",
-        "u2",
-        "u3",
-        "u4"
-      ],
-      "settings": {
-        "heading": "One pan for everything",
-        "background_color": "#000000",
-        "text_color": "#FFFFFF",
-        "enable_animation": true
       }
     },
     "apex_benefits": {
@@ -565,11 +463,8 @@
     "apex_highlights",
     "apex_testimonials",
     "apex_chefs",
-    "apex_press",
-    "apex_story",
     "apex_slider",
     "apex_compare",
-    "apex_uses",
     "apex_benefits",
     "apex_specs",
     "apex_reviews",

@@ -11,7 +11,9 @@
   "sections": {
     "apex_nav": {
       "type": "apex-pdp-anchor-nav",
-      "settings": {}
+      "settings": {
+        "views_min": 1
+      }
     },
     "main": {
       "type": "product-information",

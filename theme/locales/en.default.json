@@ -85,6 +85,10 @@
     },
     "nav": {
       "label": "Product sections",
+      "views_24h": {
+        "one": "{{ count }} person viewed this in the last 24 hours",
+        "other": "{{ count }} people viewed this in the last 24 hours"
+      },
       "features": "Features",
       "specs": "Specs",
       "reviews": "Reviews",

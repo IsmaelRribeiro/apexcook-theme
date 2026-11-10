@@ -46,7 +46,7 @@
             {%- if img -%}
               {{ img | image_url: width: 600 | image_tag: loading: 'lazy', widths: '300, 450, 600', sizes: '(min-width: 990px) 300px, 45vw', alt: name }}
             {%- else -%}
-              {{ 'product-apparel-1' | placeholder_svg_tag: 'apex-cc__ph' }}
+              {{ 'image' | placeholder_svg_tag: 'apex-cc__ph' }}
             {%- endif -%}
           </div>
           <p class="apex-cc__name">{{ name | escape }}</p>

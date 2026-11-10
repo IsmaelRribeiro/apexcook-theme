@@ -104,6 +104,9 @@
       "search_placeholder": "Search",
       "search": "Search"
     },
+    "testimonials": {
+      "play": "Play {{ name }}'s video"
+    },
     "footer": {
       "navigation": "Footer navigation",
       "copyright": "Copyright © {{ year }} {{ shop }}. All rights reserved.",

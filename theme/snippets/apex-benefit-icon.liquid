@@ -1,0 +1,28 @@
+{%- doc -%}
+  Outline benefit icons (Samsung "Buy direct" style): 1.5px stroke, currentColor.
+
+  @param {string} icon - delivery | returns | guarantee | secure | payment | support | recipes | rewards
+
+  @example
+  {% render 'apex-benefit-icon', icon: 'delivery' %}
+{%- enddoc -%}
+<svg class="apex-benefit-icon" viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  {%- case icon -%}
+    {%- when 'delivery' -%}
+      <path d="M3 8h16v14H3zM19 13h5l4 4.5V22h-9"/><circle cx="8.5" cy="23.5" r="2.5" fill="#fff"/><circle cx="23.5" cy="23.5" r="2.5" fill="#fff"/><path d="M22 13v4.5h6"/>
+    {%- when 'returns' -%}
+      <path d="M6 13a10.5 10.5 0 1 1 .8 8.6"/><path d="M5 6.5V13h6.5"/><path d="M12 16h6.5a3 3 0 0 1 0 6H15"/>
+    {%- when 'guarantee' -%}
+      <path d="M16 3.5 5.5 7.5v7.5c0 6.4 4.4 11.2 10.5 13.5 6.1-2.3 10.5-7.1 10.5-13.5V7.5z"/><path d="m11.5 16 3.2 3.2 6-6.2"/>
+    {%- when 'secure' -%}
+      <rect x="6" y="14" width="20" height="14"/><path d="M10.5 14V9.5a5.5 5.5 0 0 1 11 0V14"/><path d="M16 19.5v3.5"/>
+    {%- when 'payment' -%}
+      <path d="M4.5 8.5h20a2 2 0 0 1 2 2v15h-22z"/><path d="M4.5 8.5 21 4.5v4"/><path d="M26.5 14.5h-6a2.5 2.5 0 0 0 0 5h6z"/>
+    {%- when 'support' -%}
+      <path d="M6 18v-3a10 10 0 0 1 20 0v3"/><rect x="4.5" y="17" width="5" height="8"/><rect x="22.5" y="17" width="5" height="8"/><path d="M25 25c0 2.5-2.5 3.5-6.5 3.5"/>
+    {%- when 'recipes' -%}
+      <path d="M9.5 19.5a5.5 5.5 0 0 1-.3-11 7 7 0 0 1 13.6 0 5.5 5.5 0 0 1-.3 11"/><path d="M9.5 17.5v10h13v-10M9.5 23h13"/>
+    {%- else -%}
+      <circle cx="16" cy="16" r="12"/><path d="M16 8.5c.6 4.3 3.2 6.9 7.5 7.5-4.3.6-6.9 3.2-7.5 7.5-.6-4.3-3.2-6.9-7.5-7.5 4.3-.6 6.9-3.2 7.5-7.5z"/>
+  {%- endcase -%}
+</svg>

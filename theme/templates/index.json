@@ -97,6 +97,7 @@
         "b1": {
           "type": "benefit",
           "settings": {
+            "icon_name": "delivery",
             "title": "Free UK delivery",
             "text": "On orders over £50.",
             "link_label": "Learn more",
@@ -106,6 +107,7 @@
         "b2": {
           "type": "benefit",
           "settings": {
+            "icon_name": "returns",
             "title": "30-day returns",
             "text": "Changed your mind? Send it back within 30 days.",
             "link_label": "Learn more",
@@ -115,6 +117,7 @@
         "b3": {
           "type": "benefit",
           "settings": {
+            "icon_name": "guarantee",
             "title": "10-year guarantee",
             "text": "Built to last, backed for a decade.",
             "link_label": "Learn more",
@@ -124,6 +127,7 @@
         "b4": {
           "type": "benefit",
           "settings": {
+            "icon_name": "secure",
             "title": "Secure checkout",
             "text": "Apple Pay, Google Pay, Shop Pay and cards.",
             "link_label": "",

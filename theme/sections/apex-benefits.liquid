@@ -16,15 +16,26 @@
           class="apex-benefits__card"
           {{ block.shopify_attributes }}
         >
-          {%- if block.settings.icon != blank -%}
-            {{ block.settings.icon | image_url: width: 96 | image_tag: loading: 'lazy', alt: '', class: 'apex-benefits__icon' }}
-          {%- endif -%}
+          <span class="apex-benefits__icon-tile">
+            {%- if block.settings.icon != blank -%}
+              {{ block.settings.icon | image_url: width: 96 | image_tag: loading: 'lazy', alt: '', class: 'apex-benefits__icon' }}
+            {%- else -%}
+              {% render 'apex-benefit-icon', icon: block.settings.icon_name %}
+            {%- endif -%}
+          </span>
           <h3 class="apex-benefits__title">{{ block.settings.title | escape }}</h3>
           {%- if block.settings.text != blank -%}
             <p class="apex-benefits__text">{{ block.settings.text | escape }}</p>
+          {%- else -%}
+            <span aria-hidden="true"></span>
           {%- endif -%}
           {%- if block.settings.link != blank and block.settings.link_label != blank -%}
-            <a class="apex-benefits__link" href="{{ block.settings.link }}">{{ block.settings.link_label | escape }}</a>
+            <a class="apex-benefits__link" href="{{ block.settings.link }}">
+              {{- block.settings.link_label | escape -}}
+              <span class="visually-hidden">: {{ block.settings.title | escape }}</span>
+            </a>
+          {%- else -%}
+            <span aria-hidden="true"></span>
           {%- endif -%}
         </li>
       {%- endfor -%}
@@ -33,68 +44,113 @@
 </div>
 
 {% stylesheet %}
+  /* Samsung "Buy direct. Get more." cards: white, hairline border, blue outline icon on a pale tile,
+     title / text / link rows aligned across cards with subgrid. Square corners for ApexCook. */
   .apex-benefits {
     padding-block: 48px;
   }
 
   .apex-benefits__heading {
-    margin: 0 0 24px;
+    margin: 0 0 32px;
+  }
+
+  .apex-benefits--center .apex-benefits__heading {
+    text-align: center;
   }
 
   .apex-benefits__list {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
+    grid-template-columns: minmax(0, 1fr);
+    grid-auto-rows: auto auto 1fr auto;
+    gap: 0 16px;
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
-  .apex-benefits__card {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 24px;
-    background: rgb(var(--color-foreground-rgb) / 0.04);
-  }
-
-  .apex-benefits__icon {
-    width: 40px;
-    height: 40px;
-    object-fit: contain;
-  }
-
-  .apex-benefits__title {
-    margin: 8px 0 0;
-    font-size: 1.125rem;
-  }
-
-  .apex-benefits__text {
-    margin: 0;
-    font-size: 0.875rem;
-    opacity: 0.8;
-  }
-
-  .apex-benefits__link {
-    margin-top: auto;
-    padding-top: 12px;
-    font-size: 0.875rem;
-    font-weight: 600;
+  @media screen and (min-width: 750px) {
+    .apex-benefits__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 
   @media screen and (min-width: 990px) {
     .apex-benefits__list {
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 16px;
+      gap: 0 24px;
     }
   }
-  .apex-benefits--center .apex-benefits__heading {
-    text-align: center;
+
+  .apex-benefits__card {
+    display: grid;
+    grid-row: span 4;
+    grid-template-rows: subgrid;
+    row-gap: 0;
+    margin-bottom: 16px;
+    padding: 28px 28px 32px;
+    border: 1px solid #ddd;
+    background: #fff;
+    color: #000;
+    text-align: start;
   }
 
-  .apex-benefits--center .apex-benefits__card {
+  .apex-benefits__icon-tile {
+    display: flex;
     align-items: center;
-    text-align: center;
+    justify-content: center;
+    width: 58px;
+    height: 58px;
+    margin-bottom: 22px;
+    background: #f2f6fd;
+    color: #2189ff;
+  }
+
+  .apex-benefit-icon {
+    display: block;
+    width: 32px;
+    height: 32px;
+  }
+
+  .apex-benefits__icon {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+  }
+
+  .apex-benefits__title {
+    margin: 0 0 14px;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.33;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-benefits__title {
+      font-size: 22px;
+    }
+  }
+
+  .apex-benefits__text {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.33;
+    color: #000;
+  }
+
+  .apex-benefits__link {
+    justify-self: start;
+    margin-top: 32px;
+    padding-bottom: 2px;
+    border-bottom: 2px solid currentColor;
+    color: #000;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.33;
+    text-decoration: none;
+  }
+
+  .apex-benefits__link:hover {
+    color: #555;
   }
 {% endstylesheet %}
 
@@ -114,7 +170,23 @@
       "type": "benefit",
       "name": "Benefit",
       "settings": [
-        { "type": "image_picker", "id": "icon", "label": "Icon" },
+        {
+          "type": "select",
+          "id": "icon_name",
+          "label": "Icon",
+          "options": [
+            { "value": "delivery", "label": "Delivery" },
+            { "value": "returns", "label": "Returns" },
+            { "value": "guarantee", "label": "Guarantee" },
+            { "value": "secure", "label": "Secure checkout" },
+            { "value": "payment", "label": "Payment" },
+            { "value": "support", "label": "Support" },
+            { "value": "recipes", "label": "Recipes" },
+            { "value": "rewards", "label": "Rewards" }
+          ],
+          "default": "delivery"
+        },
+        { "type": "image_picker", "id": "icon", "label": "Custom icon", "info": "Overrides the icon above." },
         { "type": "text", "id": "title", "label": "Title", "default": "Free UK delivery" },
         { "type": "text", "id": "text", "label": "Text", "default": "On orders over £50." },
         { "type": "text", "id": "link_label", "label": "Link label", "default": "Learn more" },
@@ -126,10 +198,10 @@
     {
       "name": "ApexCook benefits",
       "blocks": [
-        { "type": "benefit", "settings": { "title": "Free UK delivery", "text": "On orders over £50." } },
-        { "type": "benefit", "settings": { "title": "30-day returns", "text": "Changed your mind? Send it back within 30 days." } },
-        { "type": "benefit", "settings": { "title": "10-year guarantee", "text": "Built to last, backed for a decade." } },
-        { "type": "benefit", "settings": { "title": "Secure checkout", "text": "Apple Pay, Google Pay, Shop Pay and cards." } }
+        { "type": "benefit", "settings": { "icon_name": "delivery", "title": "Free UK delivery", "text": "On orders over £50." } },
+        { "type": "benefit", "settings": { "icon_name": "returns", "title": "30-day returns", "text": "Changed your mind? Send it back within 30 days." } },
+        { "type": "benefit", "settings": { "icon_name": "guarantee", "title": "10-year guarantee", "text": "Built to last, backed for a decade." } },
+        { "type": "benefit", "settings": { "icon_name": "secure", "title": "Secure checkout", "text": "Apple Pay, Google Pay, Shop Pay and cards." } }
       ]
     }
   ]

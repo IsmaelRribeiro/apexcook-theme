@@ -39,6 +39,7 @@
         "b1": {
           "type": "benefit",
           "settings": {
+            "icon_name": "delivery",
             "title": "Free UK delivery",
             "text": "On orders over £50.",
             "link_label": "Learn more",
@@ -48,6 +49,7 @@
         "b2": {
           "type": "benefit",
           "settings": {
+            "icon_name": "returns",
             "title": "30-day returns",
             "text": "Changed your mind? Send it back within 30 days.",
             "link_label": "Learn more",
@@ -57,6 +59,7 @@
         "b3": {
           "type": "benefit",
           "settings": {
+            "icon_name": "recipes",
             "title": "Recipes to get you started",
             "text": "Ideas and tips for cooking without a coating.",
             "link_label": "Learn more",
@@ -66,6 +69,7 @@
         "b4": {
           "type": "benefit",
           "settings": {
+            "icon_name": "support",
             "title": "Real support",
             "text": "Questions about sizes or care? We reply by email.",
             "link_label": "Contact us",

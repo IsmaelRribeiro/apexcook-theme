@@ -105,6 +105,8 @@
         <div class="apex-rpage__photo">
           {%- if article.image -%}
             {{ article.image | image_url: width: 1300 | image_tag: loading: 'lazy', widths: '650, 1000, 1300', sizes: '(min-width: 990px) 650px, 100vw', alt: article.image.alt | default: article.title }}
+          {%- else -%}
+            {{ 'image' | placeholder_svg_tag: 'apex-rpage__placeholder' }}
           {%- endif -%}
         </div>
       </div>
@@ -115,6 +117,8 @@
             {%- assign side_image = image_2 | default: article.image -%}
             {%- if side_image -%}
               {{ side_image | image_url: width: 1300 | image_tag: loading: 'lazy', widths: '650, 1000, 1300', sizes: '(min-width: 990px) 650px, 100vw', alt: '' }}
+            {%- else -%}
+              {{ 'image' | placeholder_svg_tag: 'apex-rpage__placeholder' }}
             {%- endif -%}
           </div>
           <div class="apex-rpage__ingredients">
@@ -314,8 +318,16 @@
     object-fit: cover;
   }
 
-  .apex-rpage__photo:empty {
-    display: none;
+  .apex-rpage__photo {
+    min-height: 280px;
+    background: #e9e9e9;
+  }
+
+  .apex-rpage__placeholder {
+    display: block;
+    width: 100%;
+    height: 100%;
+    fill: #c8c8c8;
   }
 
   .apex-rpage__share-row {

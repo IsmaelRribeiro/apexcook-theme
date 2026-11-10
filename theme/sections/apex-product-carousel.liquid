@@ -229,14 +229,17 @@
     justify-content: center;
   }
   .apex-pcarousel__item--deal {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-row: span 6;
+    grid-template-rows: subgrid;
+    row-gap: 0;
   }
 
-  /* Deal cards: 395px columns with 16px gaps, as on Samsung's offer pages */
+  /* Deal cards: 395px columns with 16px gaps, as on Samsung's offer pages; six shared rows. */
   .apex-pcarousel__track:has(.apex-pcarousel__item--deal) {
+    grid-template-rows: repeat(5, auto) 1fr;
     grid-auto-columns: min(85%, 395px);
-    gap: 16px;
+    gap: 0 16px;
   }
 
   @media screen and (min-width: 990px) {

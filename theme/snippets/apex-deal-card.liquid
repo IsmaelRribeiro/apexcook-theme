@@ -47,7 +47,10 @@
     {%- endif -%}
   </a>
 
-  {% render 'apex-views-line', product: product, min: views_min, class: 'apex-deal__views' %}
+  {%- comment -%} Every row is always present (even empty) so cards line up row by row in the grid. {%- endcomment -%}
+  <div class="apex-deal__views-slot">
+    {%- render 'apex-views-line', product: product, min: views_min, class: 'apex-deal__views' -%}
+  </div>
   <a class="apex-deal__title" href="{{ product.url }}">{{ product.title | escape }}</a>
 
   <div class="apex-deal__price">
@@ -130,6 +133,8 @@
         </form>
       </div>
     </details>
+  {%- else -%}
+    <div class="apex-deal__pair-slot" aria-hidden="true"></div>
   {%- endif -%}
 </div>
 
@@ -137,12 +142,21 @@
   /* Sizes measured from samsung.com/uk/offer/black-friday (1440px): 395px cards, 20px padding,
      13/15/18/14px type. Weights capped at semibold and corners square, as in the rest of ApexCook. */
   .apex-deal {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: auto auto auto auto auto 1fr;
+    align-content: start;
     height: 100%;
-    padding: 20px 20px 0;
+    padding: 20px;
     background: #f7f7f7;
     color: #000;
+  }
+
+  /* Inside the carousel the six rows (image, views, title, price, buttons, pairs well) are shared
+     by all cards through subgrid, so every row starts at the same height in every card. */
+  .apex-pcarousel__item--deal > .apex-deal {
+    grid-row: span 6;
+    grid-template-rows: subgrid;
+    row-gap: 0;
   }
 
   .apex-deal__media {
@@ -158,6 +172,10 @@
     height: 100%;
     object-fit: contain;
     mix-blend-mode: multiply;
+  }
+
+  .apex-deal__views-slot {
+    min-height: 0;
   }
 
   .apex-deal .apex-views {
@@ -203,13 +221,8 @@
 
   .apex-deal__actions {
     display: grid;
+    align-content: start;
     gap: 8px;
-    margin-top: auto;
-    padding-bottom: 20px;
-  }
-
-  .apex-deal:has(.apex-deal__pair) .apex-deal__actions {
-    padding-bottom: 0;
   }
 
   .apex-deal__btn {
@@ -267,7 +280,8 @@
 
   /* Pairs well box: 8px wider than the card content, white, light blue-grey header */
   .apex-deal__pair {
-    margin: 8px -8px 12px;
+    align-self: start;
+    margin: 20px -8px -8px;
     border: 1px solid #e8ebf3;
     background: #fff;
   }

@@ -11,7 +11,7 @@
   assign products = collection.products
 -%}
 <script src="{{ 'apex-carousel.js' | asset_url }}" type="module" fetchpriority="low"></script>
-<div class="apex-pcarousel section section--page-width">
+<div class="apex-pcarousel apex-pcarousel--{{ section.settings.alignment | default: 'left' }} section section--page-width">
   <apex-carousel class="apex-pcarousel__inner">
     {%- if section.settings.heading != blank -%}
       <h2 class="apex-pcarousel__heading">{{ section.settings.heading | escape }}</h2>
@@ -212,6 +212,9 @@
       transition: none;
     }
   }
+  .apex-pcarousel--center .apex-pcarousel__heading {
+    text-align: center;
+  }
 {% endstylesheet %}
 
 {% schema %}
@@ -220,6 +223,7 @@
   "tag": "section",
   "class": "apex-section",
   "settings": [
+    { "type": "select", "id": "alignment", "label": "Alignment", "options": [ { "value": "left", "label": "Left" }, { "value": "center", "label": "Center" } ], "default": "left" },
     { "type": "text", "id": "heading", "label": "Heading", "default": "Recommended for you" },
     { "type": "collection", "id": "collection", "label": "Collection" },
     { "type": "range", "id": "limit", "label": "Products shown", "min": 4, "max": 16, "step": 1, "default": 8 },

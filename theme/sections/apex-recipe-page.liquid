@@ -378,8 +378,7 @@
 
   .apex-rpage__facts {
     display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
+    gap: 10px;
     margin: 0 0 32px;
   }
 
@@ -389,11 +388,18 @@
     align-items: center;
     justify-content: center;
     gap: 10px;
-    width: 120px;
+    flex: 0 1 120px;
+    min-width: 0;
     height: 100px;
     border: 1px solid #ddd;
     font-size: 13px;
     text-align: center;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-rpage__facts {
+      gap: 20px;
+    }
   }
 
   .apex-rpage__title {

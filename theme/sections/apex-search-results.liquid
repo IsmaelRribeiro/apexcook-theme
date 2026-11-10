@@ -75,10 +75,13 @@
   {%- if search.performed -%}
     {%- paginate search.results by per_page -%}
       {%- if active_type == 'product' -%}
-        <form class="apex-sr__form" action="{{ routes.search_url }}" method="get" data-filters-form>
+        {%- comment -%} Filter controls point at this form with form="ApexFiltersForm", so the cards' own Buy now forms are never nested. {%- endcomment -%}
+        <form id="ApexFiltersForm" class="apex-sr__form" action="{{ routes.search_url }}" method="get" data-filters-form>
           <input type="hidden" name="q" value="{{ terms }}">
           <input type="hidden" name="type" value="product">
           <input type="hidden" name="options[prefix]" value="last">
+        </form>
+        <div class="apex-sr__results">
 
           <div class="apex-sr__bar">
             <button type="button" class="apex-sr__filters-btn" data-open-filters aria-controls="ApexSearchFilters">
@@ -88,7 +91,7 @@
             <span class="apex-sr__count">{{ 'apex.search.results' | t: count: search.results_count }}</span>
             <label class="apex-sr__sort">
               <span class="apex-sr__sort-label">{{ 'apex.search.sort' | t }}</span>
-              <select name="sort_by" data-autosubmit>
+              <select name="sort_by" form="ApexFiltersForm" data-autosubmit>
                 {%- for option in search.sort_options -%}
                   <option value="{{ option.value }}"{% if option.value == search.sort_by %} selected{% endif %}>
                     {{- option.name -}}
@@ -137,6 +140,7 @@
                           max="{{ max_price }}"
                           step="0.01"
                           name="{{ filter.min_value.param_name }}"
+                          form="ApexFiltersForm"
                           value="{% if filter.min_value.value != blank %}{{ min_value }}{% endif %}"
                           placeholder="{{ cart.currency.symbol }}0"
                         >
@@ -151,11 +155,12 @@
                           max="{{ max_price }}"
                           step="0.01"
                           name="{{ filter.max_value.param_name }}"
+                          form="ApexFiltersForm"
                           value="{% if filter.max_value.value != blank %}{{ max_value }}{% endif %}"
                           placeholder="{{ cart.currency.symbol }}{{ max_price }}"
                         >
                       </div>
-                      <button type="submit" class="apex-sr__confirm">{{ 'apex.search.confirm' | t }}</button>
+                      <button type="submit" form="ApexFiltersForm" class="apex-sr__confirm">{{ 'apex.search.confirm' | t }}</button>
                     {%- else -%}
                       <ul class="apex-sr__checks list-unstyled" role="list" data-collapsible>
                         {%- for value in filter.values -%}
@@ -164,6 +169,7 @@
                               <input
                                 type="checkbox"
                                 name="{{ value.param_name }}"
+                                form="ApexFiltersForm"
                                 value="{{ value.value }}"
                                 data-autosubmit
                                 {% if value.active %}checked{% endif %}
@@ -214,7 +220,7 @@
               {%- endif -%}
             </div>
           </div>
-        </form>
+        </div>
       {%- else -%}
         <div class="apex-sr__bar apex-sr__bar--plain">
           <span class="apex-sr__count apex-sr__count--plain">{{ 'apex.search.results' | t: count: search.results_count }}</span>
@@ -380,6 +386,17 @@
     position: static;
   }
 
+  .apex-sr__filters-btn,
+  .apex-sr__count {
+    white-space: nowrap;
+  }
+
+  @media screen and (max-width: 749px) {
+    .apex-sr__sort-label {
+      display: none;
+    }
+  }
+
   .apex-sr__filters-btn {
     padding: 0;
     border: 0;
@@ -433,7 +450,7 @@
     font-size: 16px;
   }
 
-  .apex-sr__sort-label {
+  .apex-sr .apex-sr__sort-label {
     font-weight: 700;
   }
 

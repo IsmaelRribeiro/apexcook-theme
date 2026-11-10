@@ -69,10 +69,12 @@ class ApexSearchResults extends HTMLElement {
 
   /** Drop empty price fields so the URL stays clean. */
   cleanForm() {
-    this.form?.querySelectorAll('input[type="number"]').forEach((input) => {
-      const field = /** @type {HTMLInputElement} */ (input);
-      field.disabled = field.value === '';
-    });
+    if (!this.form) return;
+    for (const element of Array.from(this.form.elements)) {
+      if (element instanceof HTMLInputElement && element.type === 'number') {
+        element.disabled = element.value === '';
+      }
+    }
   }
 
   async loadCounts() {

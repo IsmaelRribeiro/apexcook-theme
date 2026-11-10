@@ -33,7 +33,11 @@
       "add": "Add",
       "added": "Added",
       "see_more": "View more",
-      "sold_out": "Sold out"
+      "sold_out": "Sold out",
+      "unavailable": "Not available",
+      "lid_title": "Tempered glass lid – {{ size }}",
+      "lid_fit": "Made to fit the {{ size }} pan",
+      "lid_ships": "Ships together with your pan"
     },
     "size_guide": {
       "link": "Which size should I buy?",

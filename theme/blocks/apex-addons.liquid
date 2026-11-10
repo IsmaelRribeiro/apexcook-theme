@@ -2,17 +2,121 @@
   Add-ons from the product's apex.addons metafield. Each "Add" toggles the item into the buy box
   (event `apex:addon-toggle`); nothing is added to the basket until "Add to basket".
   Sold-out add-ons are disabled.
+
+  ApexCook: when the product has a lid option (setting "Lid option name", default "Glass lid"),
+  the lid is shown here as the first add-on. "Add" switches the pan to its with-lid variant,
+  so the order still carries the supplier's correct SKU. The lid option is hidden in the variant picker.
 {% enddoc %}
-{%- assign addons = closest.product.metafields.apex.addons.value -%}
-{%- if addons != blank -%}
+{%- liquid
+  assign product = closest.product
+  assign addons = product.metafields.apex.addons.value
+  assign lid_option_name = block.settings.lid_option_name | default: 'Glass lid'
+  assign lid_option = product.options_by_name[lid_option_name]
+  assign current = product.selected_or_first_available_variant
+
+  if lid_option
+    assign lid_index = lid_option.position | minus: 1
+    assign no_lid_value = lid_option.values | first
+    assign with_lid_value = lid_option.values | last
+    assign current_key = ''
+    for value in current.options
+      unless forloop.index0 == lid_index
+        assign current_key = current_key | append: value | append: '|'
+      endunless
+    endfor
+    assign no_lid_variant = null
+    assign with_lid_variant = null
+    for v in product.variants
+      assign key = ''
+      for value in v.options
+        unless forloop.index0 == lid_index
+          assign key = key | append: value | append: '|'
+        endunless
+      endfor
+      if key == current_key
+        if v.options[lid_index] == with_lid_value
+          assign with_lid_variant = v
+        else
+          assign no_lid_variant = v
+        endif
+      endif
+    endfor
+    assign lid_selected = false
+    if current.options[lid_index] == with_lid_value
+      assign lid_selected = true
+    endif
+    assign size_label = current_key | split: '|' | join: ' / '
+  endif
+-%}
+{%- if addons != blank or lid_option -%}
   <div class="apex-addons" data-apex-addons {{ block.shopify_attributes }}>
     <h2 class="apex-addons__title">{{ 'apex.addons.title' | t }}</h2>
     <ul class="apex-addons__list" role="list">
+      {%- if lid_option -%}
+        {%- liquid
+          assign lid_price = 0
+          if with_lid_variant and no_lid_variant
+            assign lid_price = with_lid_variant.price | minus: no_lid_variant.price
+            if lid_price < 0
+              assign lid_price = 0
+            endif
+          endif
+          assign lid_available = false
+          if with_lid_variant and with_lid_variant.available
+            assign lid_available = true
+          endif
+          assign lid_image = with_lid_variant.featured_image | default: block.settings.lid_image
+          assign lid_title = 'apex.addons.lid_title' | t: size: size_label
+        -%}
+        <li class="apex-addons__item apex-addons__item--lid">
+          {%- if lid_image -%}
+            {{ lid_image | image_url: width: 240 | image_tag: loading: 'lazy', class: 'apex-addons__image', alt: '' }}
+          {%- else -%}
+            <span class="apex-addons__image" aria-hidden="true"></span>
+          {%- endif -%}
+          <div class="apex-addons__info">
+            <p class="apex-addons__name">{{ lid_title }}</p>
+            <ul class="apex-addons__bullets">
+              <li>{{ 'apex.addons.lid_fit' | t: size: size_label }}</li>
+              <li>{{ 'apex.addons.lid_ships' | t }}</li>
+            </ul>
+            {%- if with_lid_variant -%}
+              <div class="apex-price apex-price--compact">
+                <span class="apex-price__now">+{{ lid_price | money }}</span>
+              </div>
+            {%- endif -%}
+          </div>
+          <button
+            type="button"
+            class="apex-addons__btn"
+            data-apex-lid
+            {% if lid_selected %}
+              data-target-value="{{ no_lid_value | escape }}"
+            {% else %}
+              data-target-value="{{ with_lid_value | escape }}"
+            {% endif %}
+            data-option-name="{{ lid_option_name | escape }}"
+            aria-pressed="{{ lid_selected }}"
+            aria-label="{% if lid_selected %}{{ 'apex.addons.added' | t }}{% else %}{{ 'apex.addons.add' | t }}{% endif %}: {{ lid_title }}"
+            {% unless lid_available or lid_selected %}disabled{% endunless %}
+          >
+            {%- if lid_selected -%}
+              {{- 'apex.addons.added' | t -}}
+            {%- elsif lid_available -%}
+              {{- 'apex.addons.add' | t -}}
+            {%- elsif with_lid_variant -%}
+              {{- 'apex.addons.sold_out' | t -}}
+            {%- else -%}
+              {{- 'apex.addons.unavailable' | t -}}
+            {%- endif -%}
+          </button>
+        </li>
+      {%- endif -%}
       {%- for addon in addons -%}
         {%- assign v = addon.selected_or_first_available_variant -%}
         <li class="apex-addons__item{% if forloop.index > block.settings.visible_count %} apex-addons__item--extra{% endif %}" {% if forloop.index > block.settings.visible_count %}hidden{% endif %}>
           {%- if addon.featured_image -%}
-            {{ addon.featured_image | image_url: width: 160 | image_tag: loading: 'lazy', class: 'apex-addons__image', alt: '' }}
+            {{ addon.featured_image | image_url: width: 240 | image_tag: loading: 'lazy', class: 'apex-addons__image', alt: '' }}
           {%- else -%}
             <span class="apex-addons__image" aria-hidden="true"></span>
           {%- endif -%}
@@ -22,7 +126,7 @@
           </div>
           <button
             type="button"
-            class="apex-addons__toggle"
+            class="apex-addons__toggle apex-addons__btn"
             aria-pressed="false"
             data-variant-id="{{ v.id }}"
             data-price="{{ v.price }}"
@@ -44,15 +148,37 @@
   </div>
 {%- endif -%}
 
+{% javascript %}
+  document.addEventListener('click', (event) => {
+    const button = event.target instanceof Element ? event.target.closest('[data-apex-lid]') : null;
+    if (!button || button.disabled) return;
+    const scope = button.closest('.shopify-section') || document;
+    const inputs = scope.querySelectorAll('variant-picker input[type="radio"]');
+    const target = Array.from(inputs).find(
+      (input) => input.dataset.optionName === button.dataset.optionName && input.value === button.dataset.targetValue
+    );
+    if (target) {
+      button.setAttribute('aria-busy', 'true');
+      target.click();
+    }
+  });
+{% endjavascript %}
+
 {% stylesheet %}
+  .apex-addons {
+    margin-block: 8px;
+  }
+
   .apex-addons__title {
-    margin: 0 0 8px;
-    font-size: 1rem;
+    margin: 0 0 20px;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.33;
   }
 
   .apex-addons__list {
     display: grid;
-    gap: 8px;
+    gap: 24px;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -60,47 +186,104 @@
 
   .apex-addons__item {
     display: grid;
-    grid-template-columns: 56px 1fr auto;
-    align-items: center;
-    gap: 12px;
-    padding: 8px;
-    border: 1px solid rgb(var(--color-foreground-rgb) / 0.12);
+    grid-template-columns: 88px minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 16px;
   }
 
   .apex-addons__image {
     display: block;
-    width: 56px;
-    height: 56px;
-    object-fit: cover;
-    background: rgb(var(--color-foreground-rgb) / 0.06);
+    width: 88px;
+    height: 88px;
+    border-radius: 8px;
+    object-fit: contain;
+    background: #f4f4f4;
   }
 
   .apex-addons__name {
-    margin: 0 0 2px;
-    font-size: 0.875rem;
-    font-weight: 500;
+    margin: 0 0 8px;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.33;
   }
 
-  .apex-addons__toggle {
-    min-width: 88px;
-    padding: 8px 12px;
-    border: 1px solid currentColor;
-    background: transparent;
-    color: inherit;
+  .apex-addons__bullets {
+    margin: 0 0 10px;
+    padding-inline-start: 18px;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  .apex-addons__info .apex-price--compact .apex-price__now {
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .apex-addons__info .apex-price__was {
+    font-size: 16px;
+    opacity: 0.6;
+  }
+
+  .apex-addons__info .apex-price__save {
+    font-size: 16px;
+    font-weight: 700;
+    color: #2189ff;
+  }
+
+  .apex-addons__btn {
+    min-width: 136px;
+    min-height: 40px;
+    padding: 8px 20px;
+    border: 1px solid #000;
+    border-radius: 999px;
+    background: #fff;
+    color: #000;
     font: inherit;
-    font-size: 0.8125rem;
+    font-size: 14px;
+    font-weight: 700;
     cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 
-  .apex-addons__toggle[aria-pressed='true'] {
-    border-color: var(--color-primary-button-background);
-    background: var(--color-primary-button-background);
-    color: var(--color-primary-button-text);
+  .apex-addons__btn:hover:not(:disabled) {
+    background: #f4f4f4;
   }
 
-  .apex-addons__toggle:disabled {
-    opacity: 0.5;
+  .apex-addons__btn[aria-pressed='true'],
+  .apex-addons__btn[aria-pressed='true']:hover {
+    background: #000;
+    color: #fff;
+  }
+
+  .apex-addons__btn[aria-busy='true'] {
+    opacity: 0.6;
+  }
+
+  .apex-addons__btn:disabled {
+    border-color: #ddd;
+    color: #757575;
     cursor: not-allowed;
+  }
+
+  @media screen and (max-width: 749px) {
+    .apex-addons__item {
+      grid-template-columns: 72px minmax(0, 1fr);
+    }
+
+    .apex-addons__image {
+      width: 72px;
+      height: 72px;
+    }
+
+    .apex-addons__btn {
+      grid-column: 2;
+      justify-self: start;
+    }
+  }
+
+  /* The lid is chosen through the add-on above, so hide its option row in the variant picker. */
+  .product-details:has([data-apex-lid]) variant-picker fieldset:has(input[data-option-name='Glass lid']) {
+    display: none;
   }
 
   .apex-addons__more {
@@ -110,7 +293,8 @@
     background: none;
     color: inherit;
     font: inherit;
-    font-size: 0.8125rem;
+    font-size: 14px;
+    font-weight: 700;
     text-decoration: underline;
     cursor: pointer;
   }
@@ -121,7 +305,9 @@
   "name": "ApexCook add-ons",
   "settings": [
     { "type": "paragraph", "content": "Pick the add-ons in the product's 'Add-ons' metafield." },
-    { "type": "range", "id": "visible_count", "label": "Visible before 'See more'", "min": 1, "max": 6, "step": 1, "default": 3 }
+    { "type": "range", "id": "visible_count", "label": "Visible before 'See more'", "min": 1, "max": 6, "step": 1, "default": 3 },
+    { "type": "text", "id": "lid_option_name", "label": "Lid option name", "default": "Glass lid", "info": "If the product has this option, the lid shows here as an add-on." },
+    { "type": "image_picker", "id": "lid_image", "label": "Lid image" }
   ]
 }
 {% endschema %}

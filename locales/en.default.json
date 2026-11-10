@@ -104,6 +104,11 @@
       "search_placeholder": "Search",
       "search": "Search"
     },
+    "footer": {
+      "navigation": "Footer navigation",
+      "copyright": "Copyright © {{ year }} {{ shop }}. All rights reserved.",
+      "payment_methods": "Payment methods"
+    },
     "recipe_page": {
       "breadcrumb": "Breadcrumb",
       "home": "Home",

@@ -368,6 +368,11 @@
   }
 
   .apex-deal__pair-title {
+    display: -webkit-box;
+    min-height: calc(2 * 1.3em);
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
     font-size: 13px;
     font-weight: 600;
     line-height: 1.3;
@@ -378,6 +383,7 @@
   .apex-deal__pair-price {
     display: flex;
     flex-direction: column;
+    min-height: calc(2 * 1.3em);
     margin: 2px 0 0;
     font-size: 13px;
     line-height: 1.3;
@@ -402,6 +408,8 @@
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+    justify-content: center;
+    min-height: calc(16px * 1.3 + 13px * 1.3);
   }
 
   .apex-deal__total-price strong {

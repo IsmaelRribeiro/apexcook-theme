@@ -16,7 +16,7 @@
     {%- if section.settings.image -%}
       {{ section.settings.image | image_url: width: 2800 | image_tag: loading: 'lazy', widths: '750, 1200, 1800, 2400, 2800', sizes: '100vw', alt: '', class: 'apex-fs__img' }}
     {%- else -%}
-      {{ 'lifestyle-1' | placeholder_svg_tag: 'apex-fs__img apex-fs__img--ph' }}
+      <span class="apex-fs__img apex-fs__img--ph"></span>
     {%- endif -%}
   </div>
 
@@ -123,8 +123,7 @@
   }
 
   .apex-fs__img--ph {
-    background: #5b4c40;
-    fill: #7a6a5c;
+    background: radial-gradient(120% 90% at 65% 30%, #8a7461 0%, #5b4c40 45%, var(--apex-fs-bg) 100%);
   }
 
   .apex-fs__head {

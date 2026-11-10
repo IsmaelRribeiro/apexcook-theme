@@ -31,7 +31,7 @@
 <apex-search-results class="apex-sr" data-terms="{{ terms }}" data-active-type="{{ active_type }}">
   {%- if search.performed -%}
     <div class="apex-sr__head">
-      <p class="apex-sr__for">{{ 'apex.search.results_for' | t: terms: terms }}</p>
+      <p class="apex-sr__for">{{ 'apex.search.results_for_html' | t: terms: terms }}</p>
       <nav class="apex-sr__tabs" aria-label="{{ 'apex.search.results_title' | t }}">
         {%- assign tab_types = 'product,article,page' | split: ',' -%}
         {%- for tab_type in tab_types -%}
@@ -496,8 +496,8 @@
       scrollbar-width: thin;
     }
 
-    .apex-sr__aside-head,
-    .apex-sr__aside-foot {
+    .apex-sr__aside .apex-sr__aside-head,
+    .apex-sr__aside .apex-sr__aside-foot {
       display: none;
     }
   }
@@ -589,7 +589,7 @@
     margin-top: 24px;
   }
 
-  .apex-sr__price-input {
+  .apex-sr .apex-sr__price-input {
     width: 100%;
     min-width: 0;
     height: 40px;

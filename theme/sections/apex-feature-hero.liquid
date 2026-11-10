@@ -17,7 +17,7 @@
     {%- if section.settings.image -%}
       {{ section.settings.image | image_url: width: 2400 | image_tag: loading: 'lazy', widths: '750, 1200, 1800, 2400', sizes: '100vw', alt: '' }}
     {%- else -%}
-      {{ 'lifestyle-1' | placeholder_svg_tag: 'apex-fh__ph' }}
+      <span class="apex-fh__ph"></span>
     {%- endif -%}
   </div>
 
@@ -126,8 +126,7 @@
   }
 
   .apex-fh__ph {
-    background: #6b5d4f;
-    fill: #8a7a69;
+    background: radial-gradient(120% 90% at 70% 30%, #7a6a58 0%, #4a3f35 55%, var(--apex-fh-base) 100%);
   }
 
   /* Dark at the top for the text, clear in the middle, then fades into the base colour. */

@@ -131,7 +131,7 @@
         "section_title": "Features",
         "eyebrow": "Customer stories",
         "heading": "See what people are saying",
-        "limit": 4,
+        "limit": 8,
         "background_color": "#000000",
         "text_color": "#FFFFFF",
         "enable_animation": true

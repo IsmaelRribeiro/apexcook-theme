@@ -1,6 +1,6 @@
 {% doc %}
-  Price with an optional previous price ("Was"/"RRP" from the product's apex.was_label metafield)
-  and "Save £X". The previous price only shows when compare_at_price is above price.
+  Price with an optional struck-through previous price (labelled "Was"/"RRP" for screen readers,
+  from the product's apex.was_label metafield) and "Save £X" beside it. The previous price only shows when compare_at_price is above price.
 
   @param {object} product - Product (for the label metafield)
   @param {object} variant - Variant whose prices are shown
@@ -25,11 +25,13 @@
 <div class="apex-price{% if compact %} apex-price--compact{% endif %}" data-apex-price>
   <span class="apex-price__now">{{ variant.price | money }}</span>
   {%- if has_was -%}
-    <span class="apex-price__was">
-      <span>{{ label_text }}</span>
-      <s>{{ variant.compare_at_price | money }}</s>
+    <span class="apex-price__deal">
+      <span class="apex-price__was">
+        <span class="visually-hidden">{{ label_text }}</span>
+        <s>{{ variant.compare_at_price | money }}</s>
+      </span>
+      <span class="apex-price__save">{{ 'apex.buy_box.save' | t: amount: saving }}</span>
     </span>
-    <span class="apex-price__save">{{ 'apex.buy_box.save' | t: amount: saving }}</span>
   {%- endif -%}
 </div>
 
@@ -44,6 +46,14 @@
   .apex-price__now {
     font-size: 1.75rem;
     font-weight: 600;
+  }
+
+  /* Previous price and saving sit side by side on one line. */
+  .apex-price__deal {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 8px;
   }
 
   .apex-price__was {

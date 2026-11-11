@@ -1,0 +1,770 @@
+{% comment %}
+  Section contract.
+  Samsung UK basket (shop.samsung.com/uk/cart), measured at 1440px and 375px:
+  - Filled: "You have N items in your basket", item rows (234px image, 18px name, variant, SKU, stock,
+    price on the right, bin button, quantity stepper), free-delivery box; right-hand summary card
+    (vouchers field + Apply, "Summary", subtotal / delivery / discounts, 24px Total "VAT inclusive",
+    Checkout now, terms line, perks with icons), then accepted payment icons and help links.
+  - Phones: one column with Total + Checkout now fixed to the bottom of the screen.
+  - Empty: bag icon, "Your basket is empty", Continue shopping + Sign in.
+  Quantity and remove use /cart/change.js and re-render this section (links still work without JS).
+  @example
+  <!-- templates/cart.json main section -->
+{% endcomment %}
+{%- liquid
+  assign threshold = settings.apex_free_delivery_threshold | default: 50 | times: 100
+  assign free_delivery = false
+  if threshold <= 0 or cart.total_price >= threshold
+    assign free_delivery = true
+  endif
+  assign continue_url = section.settings.continue_link | default: routes.all_products_collection_url
+-%}
+<script src="{{ 'apex-cart.js' | asset_url }}" type="module" fetchpriority="low"></script>
+
+<apex-cart class="apex-cart{% if cart.item_count == 0 %} apex-cart--empty{% endif %}" data-section-id="{{ section.id }}">
+  <h1 class="visually-hidden">{{ 'apex.cart.title' | t }}</h1>
+
+  {%- if cart.item_count == 0 -%}
+    <div class="apex-cart__empty">
+      {{ 'ph-shopping-cart-simple.svg' | inline_asset_content | replace: '<svg ', '<svg class="apex-cart__empty-icon" width="40" height="40" ' }}
+      <h2 class="apex-cart__empty-title">{{ 'apex.cart.empty_title' | t }}</h2>
+      <p class="apex-cart__empty-text">
+        {%- if shop.customer_accounts_enabled and customer == nil -%}
+          {{ 'apex.cart.empty_text_signin' | t }}
+        {%- else -%}
+          {{ 'apex.cart.empty_text' | t }}
+        {%- endif -%}
+      </p>
+      <div class="apex-cart__empty-actions">
+        <a class="apex-cart__btn apex-cart__btn--outline" href="{{ continue_url }}">{{ 'apex.cart.continue' | t }}</a>
+        {%- if shop.customer_accounts_enabled and customer == nil -%}
+          <a class="apex-cart__btn apex-cart__btn--primary" href="{{ routes.account_login_url }}">{{ 'apex.cart.sign_in' | t }}</a>
+        {%- endif -%}
+      </div>
+    </div>
+  {%- else -%}
+    <form id="ApexCartForm" action="{{ routes.cart_url }}" method="post" novalidate></form>
+    <div class="apex-cart__layout">
+      <div class="apex-cart__main">
+        <p class="apex-cart__count" role="status">{{ 'apex.cart.count' | t: count: cart.item_count }}</p>
+
+        <ul class="apex-cart__items list-unstyled" role="list">
+          {%- for item in cart.items -%}
+            {%- assign line = forloop.index -%}
+            <li class="apex-cart__item" data-line="{{ line }}">
+              <a class="apex-cart__media" href="{{ item.url }}" tabindex="-1" aria-hidden="true">
+                {%- if item.image -%}
+                  {{ item.image | image_url: width: 480 | image_tag: loading: 'lazy', widths: '240, 480', sizes: '(min-width: 990px) 234px, 120px', alt: '' }}
+                {%- else -%}
+                  {{ 'product-1' | placeholder_svg_tag: 'apex-cart__ph' }}
+                {%- endif -%}
+              </a>
+              <div class="apex-cart__info">
+                <h2 class="apex-cart__name"><a href="{{ item.url }}">{{ item.product.title | escape }}</a></h2>
+                {%- unless item.product.has_only_default_variant -%}
+                  <p class="apex-cart__meta">{{ item.variant.title | escape }}</p>
+                {%- endunless -%}
+                {%- for property in item.properties -%}
+                  {%- assign first_char = property.first | slice: 0 -%}
+                  {%- if property.last != blank and first_char != '_' -%}
+                    <p class="apex-cart__meta">{{ property.first | escape }}: {{ property.last | escape }}</p>
+                  {%- endif -%}
+                {%- endfor -%}
+                {%- if item.sku != blank -%}<p class="apex-cart__meta">{{ item.sku | escape }}</p>{%- endif -%}
+                <p class="apex-cart__meta">
+                  {%- if item.variant.available -%}{{ 'apex.cart.in_stock' | t }}{%- else -%}{{ 'apex.search.sold_out' | t }}{%- endif -%}
+                </p>
+                {%- for discount in item.line_level_discount_allocations -%}
+                  <p class="apex-cart__meta apex-cart__meta--discount">{{ discount.discount_application.title | escape }} (−{{ discount.amount | money }})</p>
+                {%- endfor -%}
+              </div>
+              <div class="apex-cart__side">
+                <p class="apex-cart__price">
+                  {%- if item.original_line_price > item.final_line_price -%}
+                    <s><span class="visually-hidden">{{ 'apex.deal.was' | t }} </span>{{ item.original_line_price | money }}</s>
+                  {%- endif -%}
+                  <span>{{ item.final_line_price | money }}</span>
+                </p>
+                <a
+                  class="apex-cart__remove"
+                  href="{{ routes.cart_change_url }}?line={{ line }}&quantity=0"
+                  data-change="0"
+                  aria-label="{{ 'apex.cart.remove' | t: title: item.product.title }}"
+                >
+                  {{- 'ph-trash.svg' | inline_asset_content | replace: '<svg ', '<svg width="20" height="20" ' -}}
+                </a>
+                <div class="apex-cart__qty" role="group" aria-label="{{ 'apex.cart.quantity' | t: title: item.product.title }}">
+                  <a
+                    class="apex-cart__qty-btn{% if item.quantity <= 1 %} is-disabled{% endif %}"
+                    href="{{ routes.cart_change_url }}?line={{ line }}&quantity={{ item.quantity | minus: 1 }}"
+                    data-change="{{ item.quantity | minus: 1 }}"
+                    aria-label="{{ 'apex.cart.decrease' | t }}"
+                    {% if item.quantity <= 1 %}aria-disabled="true" tabindex="-1"{% endif %}
+                  >
+                    {{- 'ph-minus.svg' | inline_asset_content | replace: '<svg ', '<svg width="14" height="14" ' -}}
+                  </a>
+                  <span class="apex-cart__qty-value" aria-live="polite">{{ item.quantity }}</span>
+                  <a
+                    class="apex-cart__qty-btn"
+                    href="{{ routes.cart_change_url }}?line={{ line }}&quantity={{ item.quantity | plus: 1 }}"
+                    data-change="{{ item.quantity | plus: 1 }}"
+                    aria-label="{{ 'apex.cart.increase' | t }}"
+                  >
+                    {{- 'ph-plus.svg' | inline_asset_content | replace: '<svg ', '<svg width="14" height="14" ' -}}
+                  </a>
+                </div>
+              </div>
+            </li>
+          {%- endfor -%}
+        </ul>
+
+        <div class="apex-cart__notice">
+          {{ 'ph-truck-light.svg' | inline_asset_content | replace: '<svg ', '<svg class="apex-cart__notice-icon" width="28" height="28" ' }}
+          <div class="apex-cart__notice-body">
+            {%- if free_delivery -%}
+              <p class="apex-cart__notice-title">{{ 'apex.cart.free_delivery_done' | t }}</p>
+            {%- else -%}
+              {%- assign remaining = threshold | minus: cart.total_price | money -%}
+              <p class="apex-cart__notice-title">{{ 'apex.free_delivery.remaining' | t: amount: remaining }}</p>
+            {%- endif -%}
+            {%- assign percent = 100 -%}
+            {%- unless free_delivery -%}{%- assign percent = cart.total_price | times: 100 | divided_by: threshold -%}{%- endunless -%}
+            <div class="apex-cart__notice-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ percent }}" aria-label="{{ 'apex.free_delivery.progress' | t }}">
+              <span style="width: {{ percent }}%;"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="apex-cart__summary" aria-labelledby="ApexCartSummary">
+        <div class="apex-cart__voucher">
+          <label class="apex-cart__voucher-label" for="ApexVoucher">{{ 'apex.cart.voucher_label' | t }}</label>
+          <div class="apex-cart__voucher-row">
+            <input id="ApexVoucher" class="apex-cart__voucher-input" type="text" autocomplete="off" placeholder="{{ 'apex.cart.voucher_placeholder' | t }}">
+            <button type="button" class="apex-cart__btn apex-cart__btn--dark apex-cart__voucher-apply" data-voucher-apply>{{ 'apex.cart.apply' | t }}</button>
+          </div>
+          {%- for discount in cart.cart_level_discount_applications -%}
+            <p class="apex-cart__voucher-applied">{{ discount.title | escape }} · −{{ discount.total_allocated_amount | money }}</p>
+          {%- endfor -%}
+        </div>
+
+        <h2 class="apex-cart__summary-title" id="ApexCartSummary">{{ 'apex.cart.summary' | t }}</h2>
+        <dl class="apex-cart__rows">
+          <div class="apex-cart__row"><dt>{{ 'apex.cart.subtotal' | t }}</dt><dd>{{ cart.items_subtotal_price | money }}</dd></div>
+          {%- for discount in cart.cart_level_discount_applications -%}
+            <div class="apex-cart__row apex-cart__row--discount"><dt>{{ discount.title | escape }}</dt><dd>−{{ discount.total_allocated_amount | money }}</dd></div>
+          {%- endfor -%}
+          <div class="apex-cart__row">
+            <dt>{{ 'apex.cart.delivery' | t }}</dt>
+            <dd>{% if free_delivery %}{{ 'apex.cart.free' | t }}{% else %}{{ 'apex.cart.at_checkout' | t }}{% endif %}</dd>
+          </div>
+        </dl>
+        <div class="apex-cart__total">
+          <span>{{ 'apex.buy_box.total' | t }}</span>
+          <span>{{ cart.total_price | money }}</span>
+        </div>
+        <p class="apex-cart__vat">{{ 'apex.buy_box.vat_inclusive' | t }}</p>
+
+        <button type="submit" form="ApexCartForm" name="checkout" class="apex-cart__btn apex-cart__btn--primary apex-cart__checkout">
+          {{- 'apex.cart.checkout' | t -}}
+        </button>
+        <p class="apex-cart__terms">
+          {{ 'apex.cart.terms_html' | t: terms: shop.terms_of_service.url, privacy: shop.privacy_policy.url }}
+        </p>
+
+        <ul class="apex-cart__perks list-unstyled" role="list">
+          <li>
+            {{ 'ph-arrow-counter-clockwise-light.svg' | inline_asset_content | replace: '<svg ', '<svg width="22" height="22" ' }}
+            <div><strong>{{ 'apex.cart.perk_returns_title' | t }}</strong><p>{{ 'apex.cart.perk_returns_text' | t }}</p></div>
+          </li>
+          <li>
+            {{ 'ph-truck-light.svg' | inline_asset_content | replace: '<svg ', '<svg width="22" height="22" ' }}
+            <div><strong>{{ 'apex.cart.perk_delivery_title' | t }}</strong><p>{{ 'apex.cart.perk_delivery_text' | t: amount: settings.apex_free_delivery_threshold | default: 50 }}</p></div>
+          </li>
+          <li>
+            {{ 'ph-lock-simple-light.svg' | inline_asset_content | replace: '<svg ', '<svg width="22" height="22" ' }}
+            <div><strong>{{ 'apex.cart.perk_secure_title' | t }}</strong><p>{{ 'apex.cart.perk_secure_text' | t }}</p></div>
+          </li>
+        </ul>
+      </aside>
+    </div>
+
+    {%- comment -%} Phones: Total + Checkout now pinned to the bottom of the screen. {%- endcomment -%}
+    <div class="apex-cart__bar">
+      <div class="apex-cart__bar-total">
+        <span>{{ 'apex.buy_box.total' | t }}</span>
+        <span>{{ cart.total_price | money }}</span>
+      </div>
+      <button type="submit" form="ApexCartForm" name="checkout" class="apex-cart__btn apex-cart__btn--primary">{{ 'apex.cart.checkout' | t }}</button>
+    </div>
+  {%- endif -%}
+
+  <div class="apex-cart__foot">
+    {%- if cart.item_count > 0 -%}
+      <a class="apex-cart__btn apex-cart__btn--outline apex-cart__continue" href="{{ continue_url }}">{{ 'apex.cart.continue' | t }}</a>
+    {%- endif -%}
+    {%- if shop.enabled_payment_types.size > 0 -%}
+      <p class="apex-cart__foot-label">{{ 'apex.cart.payment_types' | t }}</p>
+      <ul class="apex-cart__payments list-unstyled" role="list">
+        {%- for type in shop.enabled_payment_types -%}
+          <li>{{ type | payment_type_svg_tag }}</li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+    {%- if section.settings.help_menu.links.size > 0 -%}
+      <ul class="apex-cart__help list-unstyled" role="list">
+        {%- for link in section.settings.help_menu.links -%}
+          <li><a href="{{ link.url }}">{{ link.title | escape }}</a></li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+</apex-cart>
+
+{% stylesheet %}
+  /* shop.samsung.com/uk/cart at 1440px: 1155px content, 684px item column, 406px summary card
+     (1px #ddd border, 24px padding), 65px between; 18px names, 12px meta, 24px total. */
+  .apex-cart {
+    display: block;
+    max-width: 1203px;
+    margin-inline: auto;
+    padding: 40px 24px 64px;
+    color: #000;
+  }
+
+  .apex-cart__layout {
+    display: grid;
+    gap: 32px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-cart__layout {
+      grid-template-columns: minmax(0, 684fr) minmax(0, 406fr);
+      gap: 65px;
+      align-items: start;
+    }
+  }
+
+  .apex-cart__count {
+    margin: 0 0 24px;
+    font-size: 16px;
+  }
+
+  .apex-cart__items {
+    margin: 0;
+  }
+
+  .apex-cart__item {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    grid-template-areas: 'media info' 'media side';
+    gap: 12px 16px;
+    padding-block: 24px;
+    border-top: 1px solid #ddd;
+  }
+
+  .apex-cart__item:first-child {
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  @media screen and (min-width: 750px) {
+    .apex-cart__item {
+      grid-template-columns: 234px minmax(0, 1fr) auto;
+      grid-template-areas: 'media info side';
+      gap: 24px;
+    }
+  }
+
+  .apex-cart__media {
+    grid-area: media;
+    display: block;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: 16px;
+    background: #f7f7f7;
+  }
+
+  .apex-cart__media img,
+  .apex-cart__ph {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .apex-cart__info {
+    grid-area: info;
+    min-width: 0;
+  }
+
+  .apex-cart__name {
+    margin: 0 0 12px;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.33;
+  }
+
+  @media screen and (min-width: 750px) {
+    .apex-cart__name {
+      font-size: 18px;
+    }
+  }
+
+  .apex-cart__name a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .apex-cart__name a:hover {
+    text-decoration: underline;
+  }
+
+  .apex-cart__meta {
+    margin: 0;
+    font-size: 12px;
+    line-height: 2;
+  }
+
+  .apex-cart__meta--discount {
+    color: #c00;
+  }
+
+  .apex-cart__side {
+    grid-area: side;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas: 'price remove' 'qty qty';
+    align-items: center;
+    gap: 12px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .apex-cart__side {
+      grid-template-columns: auto;
+      grid-template-areas: 'price' 'remove' 'qty';
+      justify-items: end;
+      align-content: start;
+      min-width: 152px;
+    }
+  }
+
+  .apex-cart__price {
+    grid-area: price;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 8px;
+    align-items: baseline;
+    margin: 0;
+    font-size: 18px;
+  }
+
+  .apex-cart__price s {
+    color: #757575;
+    font-size: 14px;
+  }
+
+  .apex-cart__remove {
+    grid-area: remove;
+    display: inline-flex;
+    padding: 8px;
+    margin: -8px;
+    color: #000;
+  }
+
+  .apex-cart__qty {
+    grid-area: qty;
+    display: inline-flex;
+    align-items: center;
+    justify-self: end;
+    width: 134px;
+    height: 33px;
+    border: 1px solid #ddd;
+    border-radius: 16px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .apex-cart__qty {
+      margin-top: 40px;
+    }
+  }
+
+  .apex-cart__qty-btn {
+    display: flex;
+    flex: 0 0 36px;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #000;
+  }
+
+  .apex-cart__qty-btn.is-disabled {
+    color: #d3d6db;
+    pointer-events: none;
+  }
+
+  .apex-cart__qty-value {
+    flex: 1;
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-inline: 1px solid #ddd;
+    font-size: 14px;
+  }
+
+  .apex-cart.is-busy .apex-cart__items {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  /* Light blue-grey service box (Samsung's Trade In / Care+ style), used for free delivery. */
+  .apex-cart__notice {
+    display: flex;
+    gap: 16px;
+    margin-top: 24px;
+    padding: 16px;
+    border-radius: 16px;
+    background: #f5f7fe;
+  }
+
+  .apex-cart__notice-icon {
+    flex: none;
+    color: #2189ff;
+  }
+
+  .apex-cart__notice-body {
+    flex: 1;
+  }
+
+  .apex-cart__notice-title {
+    margin: 0 0 10px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .apex-cart__notice-track {
+    height: 4px;
+    border-radius: 4px;
+    background: #dfe5f5;
+    overflow: hidden;
+  }
+
+  .apex-cart__notice-track span {
+    display: block;
+    height: 100%;
+    background: #2189ff;
+  }
+
+  /* Summary card */
+  .apex-cart__summary {
+    padding: 24px;
+    border: 1px solid #ddd;
+    border-radius: 16px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .apex-cart__summary {
+      position: sticky;
+      top: calc(var(--header-height, 60px) + 24px);
+    }
+  }
+
+  .apex-cart__voucher-label {
+    display: block;
+    color: #555;
+    font-size: 14px;
+  }
+
+  .apex-cart__voucher-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+  }
+
+  .apex-cart__voucher-input {
+    flex: 1;
+    min-width: 0;
+    padding: 6px 0;
+    border: 0;
+    border-bottom: 1px solid #000;
+    border-radius: 0;
+    background: transparent;
+    font: inherit;
+    font-size: 16px;
+  }
+
+  .apex-cart__voucher-input:focus-visible {
+    outline: none;
+    border-bottom-width: 2px;
+  }
+
+  .apex-cart__voucher-applied {
+    margin: 10px 0 0;
+    color: #2e7d32;
+    font-size: 13px;
+  }
+
+  .apex-cart__summary-title {
+    margin: 40px 0 16px;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .apex-cart__rows {
+    margin: 0 0 16px;
+  }
+
+  .apex-cart__row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding-block: 6px;
+    font-size: 14px;
+  }
+
+  .apex-cart__row dt,
+  .apex-cart__row dd {
+    margin: 0;
+  }
+
+  .apex-cart__row--discount dd {
+    color: #c00;
+  }
+
+  .apex-cart__total {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #ddd;
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  .apex-cart__vat {
+    margin: 4px 0 32px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .apex-cart__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 0 24px;
+    border: 1px solid transparent;
+    border-radius: 20px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .apex-cart__btn--primary {
+    background: var(--color-primary-button-background, #c00);
+    color: var(--color-primary-button-text, #fff);
+  }
+
+  .apex-cart__btn--primary:hover {
+    background: var(--color-primary-button-hover-background, #a00);
+  }
+
+  .apex-cart__btn--dark {
+    background: #000;
+    color: #fff;
+  }
+
+  .apex-cart__btn--outline {
+    border-color: #000;
+    background: #fff;
+    color: #000;
+  }
+
+  .apex-cart__btn--outline:hover {
+    background: #000;
+    color: #fff;
+  }
+
+  .apex-cart__voucher-apply {
+    min-height: 38px;
+    padding-inline: 22px;
+  }
+
+  .apex-cart__checkout {
+    width: 100%;
+  }
+
+  .apex-cart__terms {
+    margin: 12px 0 0;
+    font-size: 12px;
+    line-height: 1.35;
+    text-align: center;
+  }
+
+  .apex-cart__terms a {
+    color: #006bea;
+  }
+
+  .apex-cart__perks {
+    display: grid;
+    gap: 16px;
+    margin: 32px 0 0;
+    padding-top: 24px;
+    border-top: 1px solid #ddd;
+  }
+
+  .apex-cart__perks li {
+    display: flex;
+    gap: 12px;
+    font-size: 12px;
+    line-height: 1.35;
+  }
+
+  .apex-cart__perks svg {
+    flex: none;
+  }
+
+  .apex-cart__perks p {
+    margin: 2px 0 0;
+  }
+
+  /* Foot: continue shopping, payment icons, help links */
+  .apex-cart__foot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin-top: 48px;
+    text-align: center;
+  }
+
+  .apex-cart__foot-label {
+    margin: 16px 0 0;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .apex-cart__payments {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin: 0;
+  }
+
+  .apex-cart__payments svg {
+    display: block;
+    width: 38px;
+    height: 24px;
+  }
+
+  .apex-cart__help {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 24px;
+    margin: 0;
+    font-size: 14px;
+  }
+
+  .apex-cart__help a {
+    color: inherit;
+  }
+
+  /* Empty basket */
+  .apex-cart__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-block: 32px 16px;
+    text-align: center;
+  }
+
+  .apex-cart__empty-icon {
+    margin-bottom: 16px;
+  }
+
+  .apex-cart__empty-title {
+    margin: 0 0 16px;
+    font-size: 28px;
+    font-weight: 600;
+  }
+
+  @media screen and (min-width: 750px) {
+    .apex-cart__empty-title {
+      font-size: 38px;
+    }
+  }
+
+  .apex-cart__empty-text {
+    margin: 0 0 32px;
+    font-size: 16px;
+  }
+
+  .apex-cart__empty-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .apex-cart__empty-actions .apex-cart__btn {
+    min-width: 212px;
+  }
+
+  /* Phones: fixed Total + Checkout bar */
+  .apex-cart__bar {
+    display: none;
+  }
+
+  @media screen and (max-width: 989px) {
+    .apex-cart__bar {
+      position: fixed;
+      inset-inline: 0;
+      bottom: 0;
+      z-index: 6;
+      display: grid;
+      gap: 12px;
+      padding: 16px 24px calc(16px + env(safe-area-inset-bottom));
+      background: #fff;
+      box-shadow: 0 -4px 16px rgb(0 0 0 / 0.08);
+    }
+
+    .apex-cart__bar-total {
+      display: flex;
+      justify-content: space-between;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .apex-cart__bar .apex-cart__btn {
+      width: 100%;
+      min-height: 44px;
+    }
+
+    .apex-cart:not(.apex-cart--empty) {
+      padding-bottom: 150px;
+    }
+
+    .apex-cart__summary .apex-cart__checkout {
+      display: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "ApexCook basket",
+  "tag": "section",
+  "class": "apex-section",
+  "settings": [
+    { "type": "url", "id": "continue_link", "label": "Continue shopping link" },
+    { "type": "link_list", "id": "help_menu", "label": "Help links", "info": "E.g. delivery and returns questions." }
+  ],
+  "presets": [{ "name": "ApexCook basket" }]
+}
+{% endschema %}

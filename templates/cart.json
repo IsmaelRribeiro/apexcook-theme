@@ -10,82 +10,11 @@
 {
   "sections": {
     "cart-section": {
-      "type": "main-cart",
-      "blocks": {
-        "cart-page-title": {
-          "type": "_cart-title",
-          "static": true,
-          "settings": {
-            "title": "Basket",
-            "show_count": true,
-            "type_preset": "h4",
-            "alignment": "left",
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        },
-        "cart-page-items": {
-          "type": "_cart-products",
-          "static": true,
-          "settings": {
-            "gap": 24,
-            "image_ratio": "portrait",
-            "dividers": true,
-            "vendor": false,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        },
-        "cart-page-summary": {
-          "type": "_cart-summary",
-          "static": true,
-          "settings": {
-            "extend_summary": true,
-            "border": "none",
-            "border_width": 1,
-            "border_opacity": 100,
-            "border_radius": 0
-          },
-          "blocks": {}
-        },
-        "apex_free_delivery": {
-          "type": "apex-free-delivery-bar",
-          "settings": {}
-        },
-        "apex_empty_cta": {
-          "type": "apex-empty-cta",
-          "settings": {}
-        },
-        "apex_trust": {
-          "type": "apex-trust-badges",
-          "settings": {
-            "show_secure": true,
-            "delivery_link": "/policies/shipping-policy",
-            "returns_link": "/policies/refund-policy"
-          }
-        },
-        "apex_mobile_bar": {
-          "type": "apex-mobile-checkout-bar",
-          "settings": {}
-        }
-      },
+      "type": "apex-cart",
       "settings": {
-        "section_width": "page-width",
-        "padding-block-start": 24,
-        "padding-block-end": 0
-      },
-      "block_order": [
-        "apex_free_delivery",
-        "apex_empty_cta",
-        "apex_trust",
-        "apex_mobile_bar"
-      ]
+        "continue_link": "",
+        "help_menu": ""
+      }
     },
     "product_list_NNFgcy": {
       "type": "product-list",
@@ -126,7 +55,7 @@
               "type": "_product-list-text",
               "name": "t:names.collection_title",
               "settings": {
-                "text": "<h2>Complete your kitchen</h2>",
+                "text": "<h2>You may also like</h2>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
@@ -269,4 +198,3 @@
     "product_list_NNFgcy"
   ]
 }
-

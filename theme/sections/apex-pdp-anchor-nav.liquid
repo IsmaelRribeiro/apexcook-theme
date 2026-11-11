@@ -51,11 +51,19 @@
         {%- if section.settings.show_features -%}
           <li><a href="#features">{{ 'apex.nav.features' | t }}</a></li>
         {%- endif -%}
-        {%- if product.metafields.apex.specs != blank -%}
+        {%- if section.settings.show_specs and product.metafields.apex.specs != blank -%}
           <li><a href="#specs">{{ 'apex.nav.specs' | t }}</a></li>
         {%- endif -%}
+        {%- if section.settings.show_benefits -%}
+          <li><a href="#benefits">{{ 'apex.nav.benefits' | t }}</a></li>
+        {%- endif -%}
+        {%- if section.settings.show_faq -%}
+          <li><a href="#faq">{{ 'apex.nav.faq' | t }}</a></li>
+        {%- endif -%}
         <li><a href="#reviews">{{ 'apex.nav.reviews' | t }}</a></li>
-        <li><a href="#support">{{ 'apex.nav.support' | t }}</a></li>
+        {%- if section.settings.show_support -%}
+          <li><a href="#support">{{ 'apex.nav.support' | t }}</a></li>
+        {%- endif -%}
       </ul>
     </div>
   </div>
@@ -293,6 +301,10 @@
   "enabled_on": { "templates": ["product"] },
   "settings": [
     { "type": "checkbox", "id": "show_features", "label": "Show 'Features' tab", "default": true },
+    { "type": "checkbox", "id": "show_specs", "label": "Show 'Specs' tab", "default": true },
+    { "type": "checkbox", "id": "show_benefits", "label": "Show 'Benefits' tab", "default": false },
+    { "type": "checkbox", "id": "show_faq", "label": "Show 'FAQ' tab", "default": false },
+    { "type": "checkbox", "id": "show_support", "label": "Show 'Support' tab", "default": true },
     { "type": "checkbox", "id": "show_views", "label": "Show 'viewed in the last 24 hours' tag", "default": true, "info": "Uses the real visitor count stored on the product (updated from Shopify Analytics)." },
     { "type": "range", "id": "views_min", "label": "Show the tag from", "min": 1, "max": 50, "step": 1, "default": 5, "unit": "ppl" }
   ],

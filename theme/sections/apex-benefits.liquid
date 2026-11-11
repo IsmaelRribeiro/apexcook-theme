@@ -5,7 +5,7 @@
   <!-- Add "ApexCook benefits" and add up to 4 benefit blocks -->
 {% endcomment %}
 {%- if section.settings.enable_animation -%}{% render 'apex-motion-styles' %}{%- endif -%}
-<div class="apex-benefits apex-benefits--{{ section.settings.alignment | default: 'left' }} section section--page-width">
+<div id="benefits" class="apex-benefits apex-benefits--{{ section.settings.alignment | default: 'left' }} section section--page-width">
   <div>
     {%- if section.settings.heading != blank -%}
       <h2 class="apex-benefits__heading">{{ section.settings.heading | escape }}</h2>

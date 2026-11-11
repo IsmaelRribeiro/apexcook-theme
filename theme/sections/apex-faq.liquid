@@ -5,7 +5,7 @@
   <!-- Add "ApexCook FAQ" and add question blocks -->
 {% endcomment %}
 {% render 'apex-accordion-styles' %}
-<div class="apex-faq apex-faq--{{ section.settings.alignment | default: 'left' }} section section--page-width">
+<div id="faq" class="apex-faq apex-faq--{{ section.settings.alignment | default: 'left' }} section section--page-width">
   <apex-expand-all>
     <div class="apex-accordion__header">
       <h2 class="apex-faq__heading">{{ section.settings.heading | escape }}</h2>

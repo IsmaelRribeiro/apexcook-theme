@@ -259,6 +259,53 @@
 {% render 'swatch-styles' %}
 
 {% stylesheet %}
+  /* ApexCook buy pages (template product.buy), as on samsung.com/uk/.../buy: a bold option heading
+     and full-width option cards stacked one per row, text left-aligned, black border when selected. */
+  .apex-template-product-buy .variant-option--buttons:not(.variant-option--apex-colors, .variant-option--swatches) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .apex-template-product-buy .variant-option--buttons:not(.variant-option--apex-colors, .variant-option--swatches) legend {
+    margin-bottom: 14px;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .apex-template-product-buy .variant-option--buttons:not(.variant-option--apex-colors, .variant-option--swatches) .variant-option__button-label {
+    justify-content: flex-start;
+    width: 100%;
+    min-height: 56px;
+    padding: 14px 20px;
+    border: 1px solid #dddddd;
+    border-radius: 8px !important;
+    background: #fff;
+    text-align: start;
+  }
+
+  .apex-template-product-buy .variant-option--buttons:not(.variant-option--apex-colors, .variant-option--swatches) .variant-option__button-label:has(input:checked) {
+    border: 2px solid #222222;
+    padding: 13px 19px;
+    background: #fff;
+    color: #222222;
+  }
+
+  .apex-template-product-buy .variant-option--buttons:not(.variant-option--apex-colors, .variant-option--swatches) .variant-option__button-label__pill {
+    display: none;
+  }
+
+  .apex-template-product-buy .variant-option--buttons:not(.variant-option--apex-colors, .variant-option--swatches) .variant-option__button-label__text {
+    color: #222222;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .apex-template-product-buy .variant-option--apex-colors legend {
+    font-size: 20px;
+    font-weight: 600;
+  }
+
   /* ApexCook colour swatches (samsung.com/uk "Colour: Cobalt Violet"): 40px circles 16px apart,
      grey hairline, selected circle wrapped in a black ring with a white gap. */
   .variant-option--apex-colors {

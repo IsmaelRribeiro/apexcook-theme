@@ -92,7 +92,7 @@
               aria-pressed="{% if value == option.selected_value %}true{% else %}false{% endif %}"
               {% if is_colour %}
                 aria-label="{{ value | escape }}"
-                style="--swatch: {{ value.swatch.color | default: '#ddd' }};"
+                style="--swatch: {{ value.swatch.color | default: '#DDDDDD' }};"
               {% endif %}
             >
               {%- unless is_colour -%}{{ value | escape }}{%- endunless -%}

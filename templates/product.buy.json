@@ -4,7 +4,7 @@
       "type": "apex-promo-strip",
       "settings": {
         "text": "Free UK delivery on orders over £50",
-        "background_color": "#000000",
+        "background_color": "#222222",
         "text_color": "#FFFFFF"
       }
     },

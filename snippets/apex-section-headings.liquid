@@ -134,6 +134,51 @@
     border-radius: 999px !important;
   }
 
+  /* Airbnb palette (airbnb.co.uk): Hof #222222 text, Foggy #6A6A6A secondary, Deco #DDDDDD and
+     Bebe #EBEBEB lines, Faint #F7F7F7 surfaces, Rausch #FF385C accent. Primary buttons use the Rausch
+     gradient (#E61E4D → #E31C5F → #D70466) and its radial hover. */
+  :root {
+    --apex-rausch: #ff385c;
+    --apex-rausch-gradient: linear-gradient(to right, #e61e4d 0%, #e31c5f 50%, #d70466 100%);
+    --apex-rausch-gradient-hover: radial-gradient(circle at center, #ff385c 0%, #e61e4d 27.5%, #e31c5f 40%, #d70466 57.5%, #bd1e59 75%, #bd1e59 100%);
+  }
+
+  .apex-buy-box__submit,
+  .apex-anchor-nav__cta,
+  .apex-cart__btn--primary,
+  .apex-deal__btn--primary,
+  .apex-sr__cta--buy,
+  .apex-card-cta__button,
+  .apex-mobile-checkout__button,
+  .apex-empty-cta__button,
+  .apex-media-banner__button,
+  .button:not(.button-secondary, .button-unstyled, .slideshow-control, .button--tertiary) {
+    border-color: transparent !important;
+    background: var(--apex-rausch-gradient) !important;
+    color: #fff !important;
+  }
+
+  .apex-buy-box__submit:hover:not(:disabled),
+  .apex-anchor-nav__cta:hover,
+  .apex-cart__btn--primary:hover,
+  .apex-deal__btn--primary:hover,
+  .apex-sr__cta--buy:hover,
+  .apex-card-cta__button:hover,
+  .apex-mobile-checkout__button:hover,
+  .apex-empty-cta__button:hover,
+  .apex-media-banner__button:hover,
+  .button:not(.button-secondary, .button-unstyled, .slideshow-control, .button--tertiary):hover {
+    background: var(--apex-rausch-gradient-hover) !important;
+    color: #fff !important;
+  }
+
+  .apex-buy-box__submit:disabled,
+  .apex-sr__cta--buy:disabled,
+  .apex-deal__btn--primary:disabled {
+    background: #dddddd !important;
+    color: #6a6a6a !important;
+  }
+
   /* Keep off-screen carousel content (and its visually-hidden labels) from widening the page. */
   html,
   body {

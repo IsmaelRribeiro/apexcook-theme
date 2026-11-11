@@ -494,7 +494,7 @@
 
   /* ApexCook – Samsung buy-page gallery (measured on samsung.com/uk Q7F5 page at 1440px):
      677px column, 677×456 main image, 103×103 thumbnails 12px apart and 24px below,
-     #f7f7f7 tiles with a #ddd hairline (black when selected), "+N more" as the sixth tile.
+     #F7F7F7 tiles with a #DDDDDD hairline (black when selected), "+N more" as the sixth tile.
      Square corners for ApexCook. */
   @media screen and (min-width: 990px) {
     .product-information media-gallery:has(.apex-thumbs) {
@@ -535,9 +535,9 @@
       height: auto;
       aspect-ratio: 1;
       padding: 0;
-      border: 1px solid #ddd;
+      border: 1px solid #DDDDDD;
       border-radius: 8px;
-      background: #f7f7f7;
+      background: #F7F7F7;
       outline: none;
       transition: border-color 0.2s ease;
     }
@@ -551,7 +551,7 @@
 
     .apex-thumbs .slideshow-control.slideshow-controls__thumbnail:hover,
     .apex-thumbs .slideshow-control.slideshow-controls__thumbnail[aria-selected='true'] {
-      border: 1px solid #000;
+      border: 1px solid #222222;
       outline: none;
     }
 
@@ -565,14 +565,14 @@
       justify-content: center;
       min-height: 0;
       background: #fff;
-      color: #000;
+      color: #222222;
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
     }
 
     .apex-thumbs .apex-thumbs__more:hover {
-      border-color: #000;
+      border-color: #222222;
     }
 
     .apex-thumbs.is-expanded .apex-thumbs__more {
@@ -584,7 +584,7 @@
   }
 
   /* ApexCook – Samsung mobile product gallery: image framed in white with 24px sides and a thin
-     progress bar under it (2px #ddd track, black segment for the current image) instead of dots. */
+     progress bar under it (2px #DDDDDD track, black segment for the current image) instead of dots. */
   @media screen and (max-width: 749px) {
     media-gallery slideshow-slide .product-media {
       padding: 24px 24px 8px;
@@ -596,7 +596,7 @@
       width: 100%;
       padding: 16px 24px 8px;
       mix-blend-mode: normal;
-      --color-foreground: #000;
+      --color-foreground: #222222;
       --color-foreground-rgb: 0 0 0;
     }
 
@@ -606,7 +606,7 @@
       gap: 0;
       padding: 0;
       border-radius: 0;
-      background: #ddd;
+      background: #DDDDDD;
       overflow: visible;
     }
 
@@ -632,7 +632,7 @@
     }
 
     media-gallery .media-gallery__mobile-controls .slideshow-controls__dots button[aria-selected='true']::after {
-      background-color: #000;
+      background-color: #222222;
     }
   }
 {% endstylesheet %}

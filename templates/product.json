@@ -132,7 +132,7 @@
         "eyebrow": "Customer stories",
         "heading": "See what people are saying",
         "limit": 8,
-        "background_color": "#000000",
+        "background_color": "#222222",
         "text_color": "#FFFFFF",
         "enable_animation": true
       }
@@ -146,10 +146,10 @@
         "start_position": 50,
         "left_label": "Pure titanium",
         "left_stat": "Safe",
-        "left_stat_color": "#7f9c6e",
+        "left_stat_color": "#FF385C",
         "right_label": "Non-stick coating",
         "right_stat": "Toxic",
-        "right_stat_color": "#9a9a9a"
+        "right_stat_color": "#6A6A6A"
       }
     },
     "apex_compare": {
@@ -359,7 +359,7 @@
       "type": "apex-promo-strip",
       "settings": {
         "text": "Free UK delivery on orders over £50",
-        "background_color": "#000000",
+        "background_color": "#222222",
         "text_color": "#FFFFFF"
       }
     },
@@ -498,8 +498,8 @@
         "stat2_value": "Every hob",
         "stat2_suffix": "",
         "stat2_note": "Gas, electric, ceramic and induction",
-        "base_color": "#2b2520",
-        "accent_color": "#d4e6a5",
+        "base_color": "#222222",
+        "accent_color": "#FF385C",
         "section_title": "Features"
       }
     }

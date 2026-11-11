@@ -204,6 +204,36 @@
   .apex-buy-box__error:empty {
     display: none;
   }
+
+  /* Samsung mobile buy page (375px): 18px sub-headings, 16px item names, ~22px price, 48px button. */
+  @media screen and (max-width: 749px) {
+    .apex-anchor-nav__title {
+      font-size: 16px;
+    }
+
+    .product-details .variant-option legend {
+      margin-bottom: 12px;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .apex-addons__title {
+      margin-bottom: 16px;
+      font-size: 18px;
+    }
+
+    .apex-addons__name {
+      font-size: 16px;
+    }
+
+    .apex-buy-box .apex-price__now {
+      font-size: 22px;
+    }
+
+    .apex-buy-box__submit {
+      padding: 13px 16px;
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}

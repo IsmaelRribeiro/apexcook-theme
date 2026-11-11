@@ -84,6 +84,29 @@
     font-size: 16px;
     line-height: 1.33;
   }
+
+  /* Phones: swipeable row of cards that runs to the screen edges, the next card peeking in. */
+  @media screen and (max-width: 749px) {
+    .apex-highlights__list {
+      display: flex;
+      gap: 12px;
+      margin-inline: calc(-1 * var(--page-margin, 16px));
+      padding-inline: var(--page-margin, 16px);
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: var(--page-margin, 16px);
+      scrollbar-width: none;
+    }
+
+    .apex-highlights__list::-webkit-scrollbar {
+      display: none;
+    }
+
+    .apex-highlights__list > li {
+      flex: 0 0 72%;
+      scroll-snap-align: start;
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}

@@ -11,7 +11,11 @@
     "apex_nav": {
       "type": "apex-pdp-anchor-nav",
       "settings": {
-        "show_features": false
+        "show_features": false,
+        "show_specs": false,
+        "show_benefits": true,
+        "show_faq": true,
+        "show_support": false
       }
     },
     "main": {
@@ -117,17 +121,10 @@
         "content_width": "content-center-aligned",
         "desktop_media_position": "left",
         "equal_columns": false,
-        "limit_details_width": false,
+        "limit_details_width": true,
         "gap": 48,
         "padding-block-start": 0,
         "padding-block-end": 0
-      }
-    },
-    "apex_specs": {
-      "type": "apex-specs",
-      "settings": {
-        "heading": "Specifications",
-        "default_group": "General"
       }
     },
     "apex_reviews": {
@@ -136,47 +133,95 @@
         "per_page": 10
       }
     },
-    "apex_also": {
-      "type": "apex-product-carousel",
-      "settings": {
-        "heading": "You may also like",
-        "collection": "accessories",
-        "limit": 8,
-        "show_button": false,
-        "alignment": "left"
-      }
-    },
-    "apex_support": {
-      "type": "apex-support",
+    "apex_benefits": {
+      "type": "apex-benefits",
       "blocks": {
-        "l1": {
-          "type": "link",
+        "b1": {
+          "type": "benefit",
           "settings": {
-            "icon": "support",
-            "title": "Product support",
-            "text": "Care tips, size guides and answers to common questions about your ApexCook pan.",
+            "icon_name": "delivery",
+            "title": "Free UK delivery",
+            "text": "On orders over £50.",
             "link_label": "Learn more",
-            "link": "/pages/contact"
+            "link": "/policies/shipping-policy"
           }
         },
-        "l2": {
-          "type": "link",
+        "b2": {
+          "type": "benefit",
           "settings": {
-            "icon": "chat",
-            "title": "Contact us",
-            "text": "Questions before you buy? Message us and we reply within one working day.",
+            "icon_name": "returns",
+            "title": "30-day returns",
+            "text": "Changed your mind? Send it back within 30 days.",
             "link_label": "Learn more",
-            "link": "/pages/contact"
+            "link": "/policies/refund-policy"
+          }
+        },
+        "b3": {
+          "type": "benefit",
+          "settings": {
+            "icon_name": "guarantee",
+            "title": "10-year guarantee",
+            "text": "Built to last, backed for a decade.",
+            "link_label": "Learn more",
+            "link": ""
+          }
+        },
+        "b4": {
+          "type": "benefit",
+          "settings": {
+            "icon_name": "secure",
+            "title": "Secure checkout",
+            "text": "Apple Pay, Google Pay, Shop Pay and cards.",
+            "link_label": "",
+            "link": ""
           }
         }
       },
       "block_order": [
-        "l1",
-        "l2"
+        "b1",
+        "b2",
+        "b3",
+        "b4"
       ],
       "settings": {
-        "heading": "Product support",
-        "text": "<p>Find answers to your questions about our products.</p>"
+        "alignment": "center",
+        "heading": "Join ApexCook. Enjoy the benefits",
+        "enable_animation": true
+      }
+    },
+    "apex_faq": {
+      "type": "apex-faq",
+      "blocks": {
+        "q1": {
+          "type": "question",
+          "settings": {
+            "question": "Is the pan safe on induction hobs?",
+            "answer": "<p>Add your answer here.</p>"
+          }
+        },
+        "q2": {
+          "type": "question",
+          "settings": {
+            "question": "How long does delivery take?",
+            "answer": "<p>Add your answer here.</p>"
+          }
+        },
+        "q3": {
+          "type": "question",
+          "settings": {
+            "question": "How do I return an item?",
+            "answer": "<p>Add your answer here.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "q1",
+        "q2",
+        "q3"
+      ],
+      "settings": {
+        "alignment": "center",
+        "heading": "Frequently asked questions"
       }
     }
   },
@@ -184,9 +229,8 @@
     "apex_promo_strip",
     "apex_nav",
     "main",
-    "apex_specs",
-    "apex_reviews",
-    "apex_also",
-    "apex_support"
+    "apex_benefits",
+    "apex_faq",
+    "apex_reviews"
   ]
 }

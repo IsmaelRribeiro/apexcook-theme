@@ -84,11 +84,11 @@
       endif
       assign was_total = was_a | plus: was_b
     -%}
-    <details class="apex-deal__pair" open>
-      <summary class="apex-deal__pair-head">
+    <div class="apex-deal__pair">
+      <p class="apex-deal__pair-head">
         <span class="apex-deal__pair-icon" aria-hidden="true"></span>
         {{ 'apex.deal.pairs_well' | t }}
-      </summary>
+      </p>
       <div class="apex-deal__pair-body">
         <div class="apex-deal__pair-item">
           <a class="apex-deal__pair-media" href="{{ pair.url }}" tabindex="-1" aria-hidden="true">
@@ -132,7 +132,7 @@
           </button>
         </form>
       </div>
-    </details>
+    </div>
   {%- else -%}
     <div class="apex-deal__pair-slot" aria-hidden="true"></div>
   {%- endif -%}
@@ -295,12 +295,7 @@
     font-size: 15px;
     font-weight: 600;
     line-height: 1.3;
-    list-style: none;
-    cursor: pointer;
-  }
-
-  .apex-deal__pair-head::-webkit-details-marker {
-    display: none;
+    margin: 0;
   }
 
   .apex-deal__pair-icon {
@@ -327,11 +322,6 @@
 
   .apex-deal__pair-icon::after {
     transform: translate(-50%, -50%) rotate(90deg);
-    transition: transform 0.2s ease;
-  }
-
-  .apex-deal__pair[open] .apex-deal__pair-icon::after {
-    transform: translate(-50%, -50%) rotate(0deg);
   }
 
   .apex-deal__pair-body {

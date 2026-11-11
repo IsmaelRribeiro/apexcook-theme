@@ -109,6 +109,9 @@
       "no": "No",
       "partial": "Partly / varies"
     },
+    "variant": {
+      "colour": "Colour:"
+    },
     "cart": {
       "title": "Basket",
       "count": {

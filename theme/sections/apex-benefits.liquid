@@ -152,6 +152,33 @@
   .apex-benefits__link:hover {
     color: #555;
   }
+
+  /* Phones: swipeable row running to the screen edges (rows stay aligned through the subgrid). */
+  @media screen and (max-width: 749px) {
+    .apex-benefits__list {
+      grid-template-columns: none;
+      grid-auto-flow: column;
+      grid-auto-columns: 72%;
+      grid-template-rows: auto auto 1fr auto;
+      gap: 0 12px;
+      margin-inline: calc(-1 * var(--page-margin, 16px));
+      padding-inline: var(--page-margin, 16px);
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: var(--page-margin, 16px);
+      scrollbar-width: none;
+    }
+
+    .apex-benefits__list::-webkit-scrollbar {
+      display: none;
+    }
+
+    .apex-benefits__card {
+      grid-row: 1 / span 4;
+      margin-bottom: 0;
+      scroll-snap-align: start;
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}

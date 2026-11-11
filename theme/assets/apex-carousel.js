@@ -11,10 +11,6 @@ class ApexCarousel extends HTMLElement {
     this.addEventListener('click', this.#onClick, { signal });
     this.#track?.addEventListener('scroll', this.#schedule, { passive: true, signal });
     window.addEventListener('resize', this.#schedule, { passive: true, signal });
-    // Phones: start "Pairs well" boxes closed so deal cards stay compact (Samsung mobile).
-    if (window.matchMedia('(max-width: 749px)').matches) {
-      this.querySelectorAll('details.apex-deal__pair[open]').forEach((d) => d.removeAttribute('open'));
-    }
     this.#update();
   }
 

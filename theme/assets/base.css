@@ -278,8 +278,7 @@ p:empty {
 .page-width-normal,
 .page-width-narrow,
 .page-width-content {
-  /* ApexCook: 24px phone margins, as on samsung.com/uk at 375px. */
-  --page-margin: max(24px, var(--safe-area-inset-left, 0px), var(--safe-area-inset-right, 0px));
+  --page-margin: max(16px, var(--safe-area-inset-left, 0px), var(--safe-area-inset-right, 0px));
 }
 
 @media screen and (min-width: 750px) {

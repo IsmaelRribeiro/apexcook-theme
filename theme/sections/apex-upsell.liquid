@@ -721,6 +721,34 @@
     color: #6a6a6a !important;
   }
 
+  /* Left-aligned card content (image stays centred in its box). */
+  .apex-sr__card.apex-sr__card--upsell {
+    align-items: stretch;
+    text-align: left;
+  }
+
+  .apex-sr__card--upsell .apex-sr__image {
+    align-self: center;
+  }
+
+  .apex-sr__card--upsell .apex-sr__rating,
+  .apex-sr__card--upsell .apex-sr__chips,
+  .apex-sr__card--upsell .apex-price {
+    justify-content: flex-start;
+  }
+
+  .apex-sr__card--upsell .apex-sr__option-label {
+    text-align: left;
+  }
+
+  .apex-sr__card--upsell .apex-sr__actions {
+    align-self: flex-start;
+  }
+
+  .apex-sr__card--upsell .apex-sr__bullets {
+    padding-inline-start: 16px;
+  }
+
   .apex-sr__card--upsell .apex-sr__error {
     margin: 8px 0 0;
     font-size: 12px;

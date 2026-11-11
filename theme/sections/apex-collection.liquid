@@ -731,8 +731,34 @@
   /* Samsung PLP at 375px: no category arrows, 2-up grey cards with 13px padding, image across the
      card, 14px names, 15px price, 34px buttons. */
   @media screen and (max-width: 749px) {
-    .apex-plp__cats-controls {
+    .apex-plp .apex-pcarousel__controls.apex-plp__cats-controls {
       display: none;
+    }
+
+    .apex-plp__cats {
+      margin-bottom: 8px;
+    }
+
+    .apex-plp__cat {
+      flex-basis: 130px;
+    }
+
+    .apex-plp__cat.is-current {
+      flex-basis: 225px;
+    }
+
+    .apex-plp__cat-link {
+      height: 104px;
+    }
+
+    .apex-plp__cat-image {
+      width: 56px;
+      height: 56px;
+    }
+
+    .apex-plp__cat.is-current .apex-plp__cat-image {
+      width: 76px;
+      height: 76px;
     }
 
     .apex-plp__grid {

@@ -582,4 +582,57 @@
       font-size: 14px;
     }
   }
+
+  /* ApexCook – Samsung mobile product gallery: image framed in white with 24px sides and a thin
+     progress bar under it (2px #ddd track, black segment for the current image) instead of dots. */
+  @media screen and (max-width: 749px) {
+    media-gallery slideshow-slide .product-media {
+      padding: 24px 24px 8px;
+    }
+
+    media-gallery slideshow-controls.media-gallery__mobile-controls {
+      position: static;
+      inset: auto;
+      width: 100%;
+      padding: 16px 24px 8px;
+      mix-blend-mode: normal;
+      --color-foreground: #000;
+      --color-foreground-rgb: 0 0 0;
+    }
+
+    media-gallery .media-gallery__mobile-controls .slideshow-controls__dots {
+      display: flex;
+      width: 100%;
+      gap: 0;
+      padding: 0;
+      border-radius: 0;
+      background: #ddd;
+      overflow: visible;
+    }
+
+    media-gallery .media-gallery__mobile-controls .slideshow-controls__dots li {
+      flex: 1 1 0;
+      min-width: 0;
+    }
+
+    media-gallery .media-gallery__mobile-controls .slideshow-controls__dots button {
+      width: 100%;
+      height: 12px;
+      margin: -5px 0;
+      border-radius: 0;
+    }
+
+    media-gallery .media-gallery__mobile-controls .slideshow-controls__dots button::after {
+      width: 100%;
+      height: 2px;
+      border-radius: 0;
+      box-shadow: none;
+      background-color: transparent;
+      animation: none;
+    }
+
+    media-gallery .media-gallery__mobile-controls .slideshow-controls__dots button[aria-selected='true']::after {
+      background-color: #000;
+    }
+  }
 {% endstylesheet %}

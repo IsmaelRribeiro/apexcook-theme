@@ -14,7 +14,7 @@
       "settings": {
         "eyebrow": "ApexCook",
         "heading": "ApexCook deals, all in one place",
-        "background_color": "#E00000",
+        "background_color": "#FF385C",
         "text_color": "#FFFFFF",
         "enable_animation": true
       }
@@ -86,7 +86,7 @@
       "settings": {
         "heading": "",
         "min_height": 480,
-        "background_color": "#000000",
+        "background_color": "#222222",
         "text_color": "#FFFFFF",
         "enable_animation": true
       }

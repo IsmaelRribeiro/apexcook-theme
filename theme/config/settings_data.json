@@ -78,10 +78,10 @@
     "palette_variant_border": "{{ settings.color_palette.color3 }}",
     "color_palette": {
       "background": "#ffffff",
-      "foreground": "#111111",
-      "color1": "#e00000",
-      "color2": "#f4f4f4",
-      "color3": "#dfdfdf"
+      "foreground": "#222222",
+      "color1": "#ff385c",
+      "color2": "#f7f7f7",
+      "color3": "#dddddd"
     },
     "palette_primary_button_background": "{{ settings.color_palette.color1 }}",
     "palette_primary_button_border": "{{ settings.color_palette.color1 }}",

@@ -69,11 +69,11 @@
 
 {% stylesheet %}
   /* Measured from samsung.com/uk Galaxy Watch Ultra2 (heart health cards) at 1440px:
-     cards 612×612 on #f7f6f5, 52px padding, 20px label, 28px title, 20px/30px #555 description,
+     cards 612×612 on #F7F7F7, 52px padding, 20px label, 28px title, 20px/30px #6A6A6A description,
      opened card spans the 1224px row. Square corners and weights ≤ 600 for ApexCook. */
   .apex-chefs {
     padding-block: var(--apex-space);
-    color: #000;
+    color: #222222;
     overflow: hidden;
   }
 
@@ -100,7 +100,7 @@
   .apex-chefs__intro {
     font-size: 16px;
     line-height: 1.4;
-    color: #555;
+    color: #6A6A6A;
   }
 
   .apex-chefs__intro p {
@@ -138,7 +138,7 @@
     position: relative;
     flex: 0 0 var(--apex-chef-card);
     min-height: min(85vw, 612px);
-    background: #f7f6f5;
+    background: #F7F7F7;
     scroll-snap-align: center;
     transition: flex-basis 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   }
@@ -205,7 +205,7 @@
     transform: translateY(12px);
     font-size: 17px;
     line-height: 1.5;
-    color: #555;
+    color: #6A6A6A;
     transition:
       grid-template-rows 0.45s ease,
       opacity 0.3s ease,
@@ -236,7 +236,7 @@
   }
 
   .apex-chefs__author {
-    color: #000;
+    color: #222222;
     font-size: 16px;
     font-weight: 600;
   }
@@ -281,8 +281,8 @@
   }
 
   .apex-chefs__img--ph {
-    background: #ebe9e6;
-    fill: #cfccc8;
+    background: #EBEBEB;
+    fill: #DDDDDD;
   }
 
   .apex-chefs__toggle {
@@ -297,7 +297,7 @@
     padding: 0;
     border: 0;
     border-radius: 50%;
-    background: #757575;
+    background: #6A6A6A;
     color: #fff;
     cursor: pointer;
     transition:
@@ -313,11 +313,11 @@
   }
 
   .apex-chefs__toggle:hover {
-    background: #000;
+    background: #222222;
   }
 
   .apex-chefs__card.is-open .apex-chefs__toggle {
-    background: #000;
+    background: #222222;
     transform: rotate(45deg);
   }
 
@@ -328,7 +328,7 @@
     width: max-content;
     margin: 32px auto 0;
     padding: 8px 12px;
-    border: 1px solid #ddd;
+    border: 1px solid #DDDDDD;
   }
 
   .apex-chefs__dot {
@@ -336,7 +336,7 @@
     height: 4px;
     padding: 0;
     border: 0;
-    background: #8f8f8f;
+    background: #B0B0B0;
     cursor: pointer;
     transition:
       width 0.3s ease,
@@ -345,7 +345,7 @@
 
   .apex-chefs__dot.is-active {
     width: 36px;
-    background: #000;
+    background: #222222;
   }
 
   @media (prefers-reduced-motion: reduce) {

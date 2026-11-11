@@ -505,6 +505,12 @@
     }
 
     /* Samsung mobile: tabs stick to the top, the added item and Continue sit in a bar at the bottom. */
+    /* Like Samsung: the site header scrolls away so the tabs can take the top. */
+    .apex-template-page-upsell .header-section {
+      position: relative !important;
+      top: auto !important;
+    }
+
     .apex-up__tabs-wrap {
       position: sticky;
       top: 0;

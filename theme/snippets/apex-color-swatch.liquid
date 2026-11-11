@@ -1,0 +1,53 @@
+{%- doc -%}
+  Round colour swatch for a "Color"/"Colour" option value that has no Shopify swatch set.
+  Known names map to tuned colours; two-tone names ("Black Red") split the circle; anything else
+  falls back to the first word as a CSS colour name, then to light grey.
+
+  @param {string} name - Option value name, e.g. "Lake blue"
+
+  @example
+  {% render 'apex-color-swatch', name: 'Nordic Green' %}
+{%- enddoc -%}
+{%- liquid
+  assign key = name | downcase | strip
+  assign fill = ''
+  case key
+    when 'black'
+      assign fill = '#222222'
+    when 'white'
+      assign fill = '#f7f7f7'
+    when 'grey', 'gray'
+      assign fill = '#9a9a9a'
+    when 'dark grey', 'dark gray'
+      assign fill = '#4a4a4a'
+    when 'lake blue'
+      assign fill = '#4f8fb3'
+    when 'blue'
+      assign fill = '#3a5f9a'
+    when 'nordic green'
+      assign fill = '#6f927d'
+    when 'green'
+      assign fill = '#4f8a5b'
+    when 'red'
+      assign fill = '#c83a3a'
+    when 'red brown'
+      assign fill = '#8a4b38'
+    when 'purple'
+      assign fill = '#7b5ea7'
+    when 'pink'
+      assign fill = '#f2a7b8'
+    when 'orange'
+      assign fill = '#ee8a2f'
+    when 'yellow'
+      assign fill = '#f2c94c'
+    when 'khaki'
+      assign fill = '#b8a77e'
+    when 'black red', 'black with red'
+      assign fill = 'linear-gradient(135deg, #222222 50%, #c83a3a 50%)'
+  endcase
+  if fill == ''
+    assign first_word = key | split: ' ' | first
+    assign fill = first_word | default: '#dddddd'
+  endif
+-%}
+<span class="apex-color-swatch" style="--apex-swatch: {{ fill }};" aria-hidden="true"></span>

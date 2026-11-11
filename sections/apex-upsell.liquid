@@ -157,7 +157,7 @@
   /* Sticky bar */
   .apex-up__bar {
     position: relative;
-    top: var(--header-height, 0px);
+    top: auto;
     z-index: 3;
     background: #fff;
     border-bottom: 1px solid #DDDDDD;
@@ -166,6 +166,7 @@
   @media screen and (min-width: 750px) {
     .apex-up__bar {
       position: sticky;
+      top: var(--header-height, 0px);
     }
   }
 
@@ -483,6 +484,40 @@
     border-color: #008A05;
     background: #008A05;
     color: #fff;
+  }
+
+  /* Mobile: every row scrolls sideways like Samsung's, one card and a peek of the next. */
+  @media screen and (max-width: 749px) {
+    .apex-up__grid {
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      margin-inline: -16px;
+      padding-inline: 16px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: 16px;
+      scrollbar-width: none;
+    }
+
+    .apex-up__grid::-webkit-scrollbar {
+      display: none;
+    }
+
+    .apex-up__cell,
+    .apex-up__slide {
+      flex: 0 0 78%;
+      min-width: 0;
+      scroll-snap-align: start;
+    }
+
+    .apex-up__grid:has(> .apex-up__cell:only-child) {
+      justify-content: center;
+    }
+  }
+
+  .apex-up__cell,
+  .apex-up__slide {
+    min-width: 0;
   }
 
   .apex-sr__card.apex-sr__card--upsell {

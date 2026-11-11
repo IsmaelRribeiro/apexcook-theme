@@ -273,7 +273,7 @@
 {% stylesheet %}
   .apex-plp {
     display: block;
-    padding-inline: 16px;
+    padding-inline: 24px;
   }
 
   @media screen and (min-width: 990px) {
@@ -285,7 +285,7 @@
   .apex-plp__title {
     margin: 0;
     padding: 32px 0 16px;
-    font-size: 28px;
+    font-size: 25px;
     font-weight: 600;
     line-height: 1.15;
   }
@@ -725,6 +725,49 @@
     .apex-sr__card--plp .apex-sr__cta {
       padding-inline: 8px;
       font-size: 13px;
+    }
+  }
+
+  /* Samsung PLP at 375px: no category arrows, 2-up grey cards with 13px padding, image across the
+     card, 14px names, 15px price, 34px buttons. */
+  @media screen and (max-width: 749px) {
+    .apex-plp__cats-controls {
+      display: none;
+    }
+
+    .apex-plp__grid {
+      gap: 16px;
+    }
+
+    .apex-sr__card.apex-sr__card--plp {
+      padding: 13px;
+    }
+
+    .apex-sr__card--plp .apex-sr__image {
+      width: 100%;
+      margin: 0 0 12px;
+    }
+
+    .apex-sr__card--plp .apex-sr__name {
+      font-size: 14px;
+    }
+
+    .apex-sr__card--plp .apex-sr__rating {
+      font-size: 12px;
+    }
+
+    .apex-sr__card--plp .apex-sr__price .apex-price__now {
+      font-size: 15px;
+    }
+
+    .apex-sr__card--plp .apex-sr__price .apex-price__was,
+    .apex-sr__card--plp .apex-sr__price .apex-price__save {
+      font-size: 13px;
+    }
+
+    .apex-sr__card--plp .apex-sr__cta {
+      min-height: 34px;
+      font-size: 12px;
     }
   }
 {% endstylesheet %}

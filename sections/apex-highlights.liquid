@@ -39,8 +39,8 @@
 
   .apex-highlights__list {
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 16px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -60,17 +60,32 @@
   }
 
   .apex-highlights__card {
-    padding: 28px 28px 32px;
+    padding: 16px 16px 20px;
     border: 1px solid #ddd;
     background: #fff;
     color: #000;
   }
 
   .apex-highlights__title {
-    margin: 0 0 10px;
-    font-size: 20px;
+    margin: 0 0 6px;
+    font-size: 16px;
     font-weight: 600;
     line-height: 1.33;
+  }
+
+  @media screen and (min-width: 750px) {
+    .apex-highlights__card {
+      padding: 28px 28px 32px;
+    }
+
+    .apex-highlights__title {
+      margin-bottom: 10px;
+      font-size: 20px;
+    }
+
+    .apex-highlights__text {
+      font-size: 16px;
+    }
   }
 
   @media screen and (min-width: 990px) {
@@ -81,7 +96,7 @@
 
   .apex-highlights__text {
     margin: 0;
-    font-size: 16px;
+    font-size: 14px;
     line-height: 1.33;
   }
 {% endstylesheet %}

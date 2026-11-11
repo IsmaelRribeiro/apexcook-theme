@@ -7,6 +7,25 @@
 {%- enddoc -%}
 
 {% stylesheet %}
+  /* Keep off-screen carousel content (and its visually-hidden labels) from widening the page. */
+  html,
+  body {
+    overflow-x: clip;
+  }
+
+  [data-track] > li,
+  .apex-pcarousel__item {
+    position: relative;
+  }
+
+  /* Samsung mobile header: 64px bar, 24px side margin for the logo. */
+  @media screen and (max-width: 749px) {
+    .header__row--top .header__columns {
+      min-height: 64px;
+      padding-inline-start: 24px;
+    }
+  }
+
   /* One vertical rhythm for ApexCook sections: 48px top/bottom on phones, 64px from 990px. */
   :root {
     --apex-space: 48px;

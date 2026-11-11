@@ -34,7 +34,8 @@ function update() {
   const links = nav.querySelector('.apex-anchor-nav__links');
   if (section && links) {
     const header = document.querySelector('#header-component');
-    const stickyHeader = header && (header.getAttribute('sticky') === 'always' || header.dataset.stickyState === 'active');
+    const headerSection = header?.closest('.header-section');
+    const stickyHeader = headerSection && getComputedStyle(headerSection).position === 'sticky';
     const headerBottom = stickyHeader ? Math.max(0, Math.round(header.getBoundingClientRect().bottom) - 1) : 0;
     section.style.setProperty('--apex-nav-sticky-top', `${headerBottom}px`);
     section.style.setProperty('--apex-nav-links-top', `${links.offsetTop}px`);

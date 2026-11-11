@@ -2,7 +2,8 @@
  * Sticky product bar behaviour:
  * - keeps the bar's price in step with the selected size (copies it from the re-rendered page);
  * - adds `is-compact` once the content scrolls under the bar (hides promo + rating);
- * - publishes the bar's bottom edge as --apex-nav-bottom so the gallery can stick beneath it.
+ * - publishes the bar's bottom edge as --apex-nav-bottom so the gallery can stick beneath it;
+ * - on phones, sets the offsets that keep only the tab row pinned under the header.
  */
 const SELECT = 'shopify:product:select';
 const PRICE = '[data-apex-nav-price]';
@@ -28,6 +29,16 @@ function update() {
   const next = nav?.closest('.shopify-section')?.nextElementSibling;
   if (!nav || !next) return;
   // Hysteresis (60px) so the bar does not flicker when it shrinks.
+  // Phones: pin only the tab row. The section sticks at (header bottom − height above the tabs).
+  const section = nav.closest('.shopify-section');
+  const links = nav.querySelector('.apex-anchor-nav__links');
+  if (section && links) {
+    const header = document.querySelector('#header-component');
+    const stickyHeader = header && (header.getAttribute('sticky') === 'always' || header.dataset.stickyState === 'active');
+    const headerBottom = stickyHeader ? Math.max(0, Math.round(header.getBoundingClientRect().bottom) - 1) : 0;
+    section.style.setProperty('--apex-nav-sticky-top', `${headerBottom}px`);
+    section.style.setProperty('--apex-nav-links-top', `${links.offsetTop}px`);
+  }
   const gap = next.getBoundingClientRect().top - nav.getBoundingClientRect().bottom;
   if (gap < -60) nav.classList.add('is-compact');
   else if (gap >= -1) nav.classList.remove('is-compact');

@@ -152,35 +152,31 @@
         "l1": {
           "type": "link",
           "settings": {
-            "title": "Delivery",
-            "text": "3–7 working days. Free over £50.",
-            "link": "/policies/shipping-policy"
+            "icon": "support",
+            "title": "Product support",
+            "text": "Care tips, size guides and answers to common questions about your ApexCook pan.",
+            "link_label": "Learn more",
+            "link": "/pages/contact"
           }
         },
         "l2": {
           "type": "link",
           "settings": {
-            "title": "Returns",
-            "text": "30 days to change your mind.",
-            "link": "/policies/refund-policy"
-          }
-        },
-        "l3": {
-          "type": "link",
-          "settings": {
+            "icon": "chat",
             "title": "Contact us",
-            "text": "We reply within one working day.",
+            "text": "Questions before you buy? Message us and we reply within one working day.",
+            "link_label": "Learn more",
             "link": "/pages/contact"
           }
         }
       },
       "block_order": [
         "l1",
-        "l2",
-        "l3"
+        "l2"
       ],
       "settings": {
-        "heading": "Care & support"
+        "heading": "Product support",
+        "text": "<p>Find answers to your questions about our products.</p>"
       }
     }
   },

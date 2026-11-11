@@ -1,7 +1,7 @@
 {%- doc -%}
   Feature / benefit icons from Phosphor Icons (light weight, MIT licence – phosphoricons.com).
 
-  @param {string} icon - delivery | returns | guarantee | secure | payment | support | recipes | rewards | pan | leaf | flame | dishwasher
+  @param {string} icon - delivery | returns | guarantee | secure | payment | support | recipes | rewards | pan | leaf | flame | dishwasher | chat
 
   @example
   {% render 'apex-benefit-icon', icon: 'delivery' %}
@@ -20,6 +20,8 @@
       assign file = 'ph-wallet-light.svg'
     when 'support'
       assign file = 'ph-headset-light.svg'
+    when 'chat'
+      assign file = 'ph-chat-dots-light.svg'
     when 'recipes'
       assign file = 'ph-chef-hat-light.svg'
     when 'pan'

@@ -693,9 +693,41 @@
 
   .apex-sr__grid {
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 40px 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px 12px;
     margin: 0;
+  }
+
+  /* Phones: two compact results per row, like Samsung's mobile listings. */
+  @media screen and (max-width: 749px) {
+    .apex-sr__grid .apex-sr__name {
+      font-size: 14px;
+    }
+
+    .apex-sr__grid .apex-sr__chips {
+      gap: 6px;
+    }
+
+    .apex-sr__grid .apex-sr__chip {
+      min-width: 0;
+      padding: 0 6px;
+      font-size: 12px;
+    }
+
+    .apex-sr__grid .apex-price__now {
+      font-size: 15px;
+    }
+
+    .apex-sr__grid .apex-price__was,
+    .apex-sr__grid .apex-price__save {
+      font-size: 12px;
+    }
+
+    .apex-sr__grid .apex-sr__cta {
+      min-height: 34px;
+      padding-inline: 8px;
+      font-size: 12px;
+    }
   }
 
   @media screen and (min-width: 750px) {

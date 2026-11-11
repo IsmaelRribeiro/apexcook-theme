@@ -93,7 +93,7 @@
         {%- assign is_colour = true -%}
       {%- endif -%}
       {%- comment -%} The lid is sold as an add-on on the product page, so its option stays hidden on cards. {%- endcomment -%}
-      <fieldset class="apex-sr__option" data-option-index="{{ forloop.index0 }}"{% if option.name == 'Glass lid' %} hidden{% endif %}>
+      <fieldset class="apex-sr__option" data-option-index="{{ forloop.index0 }}"{% if option.name == 'Glass lid' or layout == 'upsell' and is_colour == false and option.values.size < 2 %} hidden{% endif %}>
         {%- if is_colour -%}
           <legend class="apex-sr__option-label">
             {{ 'apex.search.colour' | t }} : <span data-colour-name>{{ option.selected_value }}</span>

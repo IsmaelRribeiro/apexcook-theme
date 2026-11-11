@@ -182,15 +182,28 @@
     margin-top: 40px;
   }
 
+  /* Both product columns share rows (title / image / name / description) so a title that wraps
+     in one column never pushes that column's image lower than the other. */
+  .apex-cc__products {
+    grid-template-rows: repeat(4, auto);
+  }
+
   .apex-cc__product {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: grid;
+    grid-row: span 4;
+    grid-template-rows: subgrid;
+    justify-items: center;
+    align-content: start;
+    row-gap: 0;
     text-align: center;
   }
 
   .apex-cc__col-title {
-    align-self: stretch;
+    align-self: end;
+    justify-self: stretch;
+  }
+
+  .apex-cc__col-title {
     margin: 0 0 32px;
     padding-bottom: 14px;
     border-bottom: 3px solid #000;

@@ -13,6 +13,21 @@ class ApexUpsell extends HTMLElement {
     this.#showAdded();
     this.addEventListener('submit', this.#onSubmit, { signal });
     this.#watchTabs();
+    this.#tabsArrow(signal);
+  }
+
+  /** Right-hand arrow that scrolls the tab strip when it overflows (mobile). @param {AbortSignal} signal */
+  #tabsArrow(signal) {
+    const nav = /** @type {HTMLElement | null} */ (this.querySelector('[data-tabs]'));
+    const next = /** @type {HTMLButtonElement | null} */ (this.querySelector('[data-tabs-next]'));
+    if (!nav || !next) return;
+    const update = () => {
+      next.hidden = nav.scrollLeft + nav.clientWidth >= nav.scrollWidth - 4;
+    };
+    next.addEventListener('click', () => nav.scrollBy({ left: nav.clientWidth * 0.6, behavior: 'smooth' }), { signal });
+    nav.addEventListener('scroll', update, { passive: true, signal });
+    window.addEventListener('resize', update, { passive: true, signal });
+    update();
   }
 
   disconnectedCallback() {

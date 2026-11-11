@@ -143,11 +143,16 @@ class ApexSearchCard extends HTMLElement {
       if (colourName) colourName.textContent = chip.dataset.value || '';
       this.update();
     });
+    this.addEventListener('change', (event) => {
+      if (/** @type {HTMLElement} */ (event.target).matches('[data-option-select]')) this.update();
+    });
   }
 
   update() {
     const selected = Array.from(this.querySelectorAll('fieldset[data-option-index]')).map(
-      (fieldset) => /** @type {HTMLElement | null} */ (fieldset.querySelector('[aria-pressed="true"]'))?.dataset.value
+      (fieldset) =>
+        /** @type {HTMLElement | null} */ (fieldset.querySelector('[aria-pressed="true"]'))?.dataset.value ??
+        /** @type {HTMLSelectElement | null} */ (fieldset.querySelector('[data-option-select]'))?.value
     );
     const key = selected.join('|');
     const template = Array.from(this.querySelectorAll('template[data-variant]')).find(

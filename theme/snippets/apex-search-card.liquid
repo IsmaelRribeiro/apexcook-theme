@@ -50,7 +50,25 @@
     {%- endif -%}
   </a>
 
+  {%- if layout == 'upsell' and variant.compare_at_price > variant.price -%}
+    {%- assign off = variant.compare_at_price | minus: variant.price | times: 100 | divided_by: variant.compare_at_price -%}
+    {%- if off > 0 -%}
+      <p class="apex-sr__badge">{{ 'apex.upsell.percent_off' | t: percent: off }}</p>
+    {%- endif -%}
+  {%- endif -%}
+
   <a class="apex-sr__name" href="{{ product.url }}">{{ product.title | escape }}</a>
+
+  {%- if layout == 'upsell' -%}
+    {%- assign kf = product.metafields.apex.key_features.value -%}
+    {%- if kf != blank and kf.size > 0 -%}
+      <ul class="apex-sr__bullets">
+        {%- for f in kf limit: 3 -%}
+          <li>{{ f.text | default: f.title | escape }}</li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  {%- endif -%}
 
   {%- if review_count > 0 -%}
     {%- assign average = review_sum | times: 10.0 | divided_by: review_count | round | divided_by: 10.0 -%}
@@ -83,6 +101,14 @@
         {%- else -%}
           <legend class="visually-hidden">{{ option.name | escape }}</legend>
         {%- endif -%}
+        {%- if layout == 'upsell' and is_colour == false -%}
+          <label class="visually-hidden" for="ApexSrSelect-{{ product.id }}-{{ forloop.index0 }}">{{ option.name | escape }}</label>
+          <select class="apex-sr__select" id="ApexSrSelect-{{ product.id }}-{{ forloop.index0 }}" data-option-select>
+            {%- for value in option.values -%}
+              <option value="{{ value | escape }}"{% if value == option.selected_value %} selected{% endif %}>{{ value | escape }}</option>
+            {%- endfor -%}
+          </select>
+        {%- else -%}
         <div class="apex-sr__chips{% if is_colour %} apex-sr__chips--swatch{% endif %}">
           {%- for value in option.values -%}
             <button
@@ -95,10 +121,15 @@
                 style="--swatch: {{ value.swatch.color | default: '#DDDDDD' }};"
               {% endif %}
             >
-              {%- unless is_colour -%}{{ value | escape }}{%- endunless -%}
+              {%- if is_colour -%}
+                {%- if value.swatch.color == blank -%}{% render 'apex-color-swatch', name: value %}{%- endif -%}
+              {%- else -%}
+                {{- value | escape -}}
+              {%- endif -%}
             </button>
           {%- endfor -%}
         </div>
+        {%- endif -%}
       </fieldset>
     {%- endfor -%}
   {%- endunless -%}

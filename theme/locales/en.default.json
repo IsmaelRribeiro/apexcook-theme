@@ -214,7 +214,8 @@
         "one": "{{ count }} item",
         "other": "{{ count }} items"
       },
-      "continue": "Continue to basket",
+      "continue": "Continue",
+      "percent_off": "{{ percent }}% off!",
       "sections": "Sections",
       "recommended": "Recommended",
       "nothing_more": "You've got everything. Head to your basket to check out."

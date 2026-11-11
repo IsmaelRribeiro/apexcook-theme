@@ -479,6 +479,105 @@
     color: #fff;
   }
 
+  .apex-sr__card.apex-sr__card--upsell {
+    position: relative;
+    border-radius: 8px;
+  }
+
+  .apex-sr__card--upsell .apex-sr__badge {
+    position: absolute;
+    top: 14px;
+    left: 16px;
+    margin: 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: #ff385c;
+  }
+
+  .apex-sr__card--upsell .apex-sr__image {
+    width: 100%;
+    max-width: 200px;
+    margin-top: 16px;
+  }
+
+  .apex-sr__card--upsell .apex-sr__bullets {
+    align-self: stretch;
+    margin: 0 0 14px;
+    padding-inline-start: 18px;
+    text-align: left;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #222222;
+  }
+
+  .apex-sr__card--upsell .apex-sr__bullets li + li {
+    margin-top: 2px;
+  }
+
+  .apex-sr__card--upsell .apex-sr__option {
+    margin-bottom: 12px;
+  }
+
+  .apex-sr__card--upsell .apex-sr__option-label {
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .apex-sr__card--upsell .apex-sr__option-label span {
+    font-weight: 400;
+  }
+
+  .apex-sr__card--upsell .apex-sr__chip--swatch {
+    width: 20px;
+    min-width: 20px;
+    height: 20px;
+    min-height: 20px;
+    overflow: hidden;
+  }
+
+  .apex-sr__chip--swatch .apex-color-swatch {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    border-radius: 50%;
+    background: var(--apex-swatch);
+  }
+
+  .apex-sr__card--upsell .apex-sr__select {
+    max-width: 100%;
+    min-height: 36px;
+    padding: 6px 32px 6px 14px;
+    border: 1px solid #b0b0b0;
+    border-radius: 8px;
+    background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 256 256'%3E%3Cpath fill='%23222' d='M213.66 101.66l-80 80a8 8 0 0 1-11.32 0l-80-80a8 8 0 0 1 11.32-11.32L128 164.69l74.34-74.35a8 8 0 0 1 11.32 11.32Z'/%3E%3C/svg%3E") no-repeat right 12px center;
+    appearance: none;
+    font: inherit;
+    font-size: 13px;
+    color: #222222;
+  }
+
+  .apex-sr__card--upsell .apex-sr__cta--buy.apex-sr__cta--buy {
+    min-width: 128px;
+    min-height: 40px;
+    background: #222222 !important;
+    color: #fff !important;
+  }
+
+  .apex-sr__card--upsell .apex-sr__cta--buy.apex-sr__cta--buy:hover:not(:disabled) {
+    background: #000 !important;
+  }
+
+  .apex-sr__card--upsell .apex-sr__cta--buy.apex-sr__cta--buy[data-added] {
+    background: #008a05 !important;
+  }
+
+  .apex-sr__card--upsell .apex-sr__cta--buy.apex-sr__cta--buy:disabled {
+    background: #dddddd !important;
+    color: #6a6a6a !important;
+  }
+
   .apex-sr__card--upsell .apex-sr__error {
     margin: 8px 0 0;
     font-size: 12px;

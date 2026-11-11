@@ -263,7 +263,7 @@
      and full-width option cards stacked one per row, text left-aligned, black border when selected. */
   .apex-template-product-buy .variant-option--buttons:not(.variant-option--apex-colors, .variant-option--swatches) {
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 12px;
   }
 
@@ -274,19 +274,19 @@
   }
 
   .apex-template-product-buy .variant-option--buttons:not(.variant-option--apex-colors, .variant-option--swatches) .variant-option__button-label {
-    justify-content: flex-start;
+    justify-content: center;
     width: 100%;
     min-height: 56px;
-    padding: 14px 20px;
-    border: 1px solid #dddddd;
+    padding: 12px 10px;
+    border: 1px solid #b0b0b0;
     border-radius: 8px !important;
     background: #fff;
-    text-align: start;
+    text-align: center;
   }
 
   .apex-template-product-buy .variant-option--buttons:not(.variant-option--apex-colors, .variant-option--swatches) .variant-option__button-label:has(input:checked) {
     border: 2px solid #222222;
-    padding: 13px 19px;
+    padding: 11px 9px;
     background: #fff;
     color: #222222;
   }

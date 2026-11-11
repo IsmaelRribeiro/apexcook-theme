@@ -106,6 +106,13 @@
       "search_placeholder": "Search",
       "search": "Search"
     },
+    "buy_info": {
+      "option": "Option",
+      "price": "Price",
+      "availability": "Availability",
+      "in_stock": "In stock",
+      "out_of_stock": "Out of stock"
+    },
     "compare_cols": {
       "yes": "Yes",
       "no": "No",

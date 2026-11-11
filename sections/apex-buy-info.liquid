@@ -1,0 +1,299 @@
+{% comment %}
+  Section contract.
+  Samsung "buy page" style info panels for simple product pages: title and short description,
+  then collapsible panels for Key features (product metafield apex.key_features, images from
+  product media 2–4), Compare options (built from the variants) and FAQ (question blocks).
+  @example
+  <!-- Add "ApexCook buy page info" to the product.buy template -->
+{% endcomment %}
+{%- assign kf = product.metafields.apex.key_features.value -%}
+{%- assign show_compare = false -%}
+{%- if section.settings.show_compare and product.has_only_default_variant == false and product.variants.size > 1 -%}
+  {%- assign show_compare = true -%}
+{%- endif -%}
+{%- assign faq_count = section.blocks | where: 'type', 'question' | size -%}
+
+<div class="apex-bi section section--page-width">
+  <div class="apex-bi__intro">
+    <h2 class="apex-bi__title">{{ product.title | escape }}</h2>
+    {%- assign desc = product.description | strip_html | strip -%}
+    {%- if desc != blank -%}
+      <p class="apex-bi__desc">{{ desc | truncatewords: 40 }}</p>
+    {%- endif -%}
+  </div>
+
+  {%- if kf != blank and kf.size > 0 -%}
+    <details id="features" class="apex-bi__panel" open>
+      <summary class="apex-bi__summary">
+        <span>{{ section.settings.features_heading | escape }}</span>
+        {{ 'ph-caret-down.svg' | inline_asset_content | replace: '<svg ', '<svg class="apex-bi__chev" aria-hidden="true" ' }}
+      </summary>
+      <ul class="apex-bi__features" role="list">
+        {%- for f in kf limit: 3 -%}
+          {%- assign idx = forloop.index -%}
+          {%- assign m = product.media[idx] | default: product.featured_media -%}
+          <li class="apex-bi__feature">
+            <div class="apex-bi__feature-media">
+              {%- if m -%}
+                {{ m.preview_image | image_url: width: 800 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 33vw, 100vw', alt: f.title }}
+              {%- endif -%}
+            </div>
+            <h3 class="apex-bi__feature-title">{{ f.title | escape }}</h3>
+            <p class="apex-bi__feature-text">{{ f.text | escape }}</p>
+          </li>
+        {%- endfor -%}
+      </ul>
+    </details>
+  {%- endif -%}
+
+  {%- if show_compare -%}
+    <details id="compare" class="apex-bi__panel" open>
+      <summary class="apex-bi__summary">
+        <span>{{ section.settings.compare_heading | escape }}</span>
+        {{ 'ph-caret-down.svg' | inline_asset_content | replace: '<svg ', '<svg class="apex-bi__chev" aria-hidden="true" ' }}
+      </summary>
+      <div class="apex-bi__table-wrap">
+        <table class="apex-bi__table">
+          <thead>
+            <tr>
+              <th scope="col">{{ 'apex.buy_info.option' | t }}</th>
+              <th scope="col">{{ 'apex.buy_info.price' | t }}</th>
+              <th scope="col">{{ 'apex.buy_info.availability' | t }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {%- for v in product.variants limit: 20 -%}
+              <tr>
+                <th scope="row">{{ v.title | escape }}</th>
+                <td>{{ v.price | money }}</td>
+                <td class="{% if v.available %}apex-bi__in{% else %}apex-bi__out{% endif %}">
+                  {%- if v.available -%}{{ 'apex.buy_info.in_stock' | t }}{%- else -%}{{ 'apex.buy_info.out_of_stock' | t }}{%- endif -%}
+                </td>
+              </tr>
+            {%- endfor -%}
+          </tbody>
+        </table>
+      </div>
+    </details>
+  {%- endif -%}
+
+  {%- if faq_count > 0 -%}
+    <details id="faq" class="apex-bi__panel" open>
+      <summary class="apex-bi__summary">
+        <span>{{ section.settings.faq_heading | escape }}</span>
+        {{ 'ph-caret-down.svg' | inline_asset_content | replace: '<svg ', '<svg class="apex-bi__chev" aria-hidden="true" ' }}
+      </summary>
+      <div class="apex-bi__faq">
+        {%- for block in section.blocks -%}
+          <details class="apex-bi__q" {{ block.shopify_attributes }}>
+            <summary>
+              <span>{{ block.settings.question | escape }}</span>
+              {{ 'ph-plus.svg' | inline_asset_content | replace: '<svg ', '<svg class="apex-bi__plus" aria-hidden="true" ' }}
+            </summary>
+            <div class="apex-bi__a rte">{{ block.settings.answer }}</div>
+          </details>
+        {%- endfor -%}
+      </div>
+    </details>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {%- for block in section.blocks -%}
+            { "@type": "Question", "name": {{ block.settings.question | json }}, "acceptedAnswer": { "@type": "Answer", "text": {{ block.settings.answer | strip_html | json }} } }{% unless forloop.last %},{% endunless %}
+          {%- endfor -%}
+        ]
+      }
+    </script>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .apex-bi {
+    padding-block: var(--apex-space, 48px);
+  }
+  .apex-bi__intro {
+    text-align: center;
+    max-width: 880px;
+    margin: 0 auto 32px;
+  }
+  .apex-bi__title {
+    margin: 0 0 12px;
+    font-size: clamp(28px, 3vw, 40px);
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  .apex-bi__desc {
+    margin: 0;
+    color: #6a6a6a;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  .apex-bi__panel {
+    border-top: 1px solid #dddddd;
+  }
+  .apex-bi__panel:last-child {
+    border-bottom: 1px solid #dddddd;
+  }
+  .apex-bi__summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 24px 0;
+    cursor: pointer;
+    list-style: none;
+    font-size: clamp(20px, 2vw, 24px);
+    font-weight: 600;
+    color: #222222;
+  }
+  .apex-bi__summary::-webkit-details-marker,
+  .apex-bi__q summary::-webkit-details-marker {
+    display: none;
+  }
+  .apex-bi__chev {
+    width: 24px;
+    height: 24px;
+    flex: none;
+    transition: transform 0.2s ease;
+  }
+  .apex-bi__panel[open] > .apex-bi__summary .apex-bi__chev {
+    transform: rotate(180deg);
+  }
+  .apex-bi__features {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 32px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+  }
+  .apex-bi__feature-media {
+    aspect-ratio: 4 / 3;
+    background: #f7f7f7;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .apex-bi__feature-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  .apex-bi__feature-title {
+    margin: 0 0 6px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .apex-bi__feature-text {
+    margin: 0;
+    color: #6a6a6a;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .apex-bi__table-wrap {
+    overflow-x: auto;
+    padding-bottom: 32px;
+  }
+  .apex-bi__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .apex-bi__table th,
+  .apex-bi__table td {
+    text-align: left;
+    padding: 14px 16px;
+    border-bottom: 1px solid #ebebeb;
+  }
+  .apex-bi__table thead th {
+    background: #f7f7f7;
+    font-weight: 600;
+  }
+  .apex-bi__table thead th:first-child {
+    border-radius: 8px 0 0 8px;
+  }
+  .apex-bi__table thead th:last-child {
+    border-radius: 0 8px 8px 0;
+  }
+  .apex-bi__table tbody th {
+    font-weight: 600;
+  }
+  .apex-bi__in {
+    color: #008a05;
+  }
+  .apex-bi__out {
+    color: #6a6a6a;
+  }
+  .apex-bi__faq {
+    padding-bottom: 24px;
+  }
+  .apex-bi__q {
+    border-bottom: 1px solid #ebebeb;
+  }
+  .apex-bi__q summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 0;
+    cursor: pointer;
+    list-style: none;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .apex-bi__plus {
+    width: 20px;
+    height: 20px;
+    flex: none;
+    transition: transform 0.2s ease;
+  }
+  .apex-bi__q[open] .apex-bi__plus {
+    transform: rotate(45deg);
+  }
+  .apex-bi__a {
+    padding: 0 0 18px;
+    color: #6a6a6a;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .apex-bi__a > :first-child {
+    margin-top: 0;
+  }
+  @media (max-width: 749px) {
+    .apex-bi__features {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+    .apex-bi__summary {
+      padding: 20px 0;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "ApexCook buy page info",
+  "tag": "section",
+  "class": "apex-section",
+  "settings": [
+    { "type": "text", "id": "features_heading", "label": "Key features heading", "default": "Key features" },
+    { "type": "checkbox", "id": "show_compare", "label": "Show compare options table", "default": true },
+    { "type": "text", "id": "compare_heading", "label": "Compare heading", "default": "Compare the options" },
+    { "type": "text", "id": "faq_heading", "label": "FAQ heading", "default": "FAQ" }
+  ],
+  "blocks": [
+    {
+      "type": "question",
+      "name": "Question",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question", "default": "How long does delivery take?" },
+        { "type": "richtext", "id": "answer", "label": "Answer", "default": "<p>Add your answer here.</p>" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "ApexCook buy page info" }]
+}
+{% endschema %}

@@ -11,7 +11,7 @@
     "apex_nav": {
       "type": "apex-pdp-anchor-nav",
       "settings": {
-        "show_features": false,
+        "show_features": true,
         "show_specs": false,
         "show_benefits": true,
         "show_faq": true,
@@ -189,39 +189,49 @@
         "enable_animation": true
       }
     },
-    "apex_faq": {
-      "type": "apex-faq",
+    "apex_buy_info": {
+      "type": "apex-buy-info",
       "blocks": {
         "q1": {
           "type": "question",
           "settings": {
-            "question": "Is the pan safe on induction hobs?",
-            "answer": "<p>Add your answer here.</p>"
+            "question": "How much is delivery?",
+            "answer": "<p>UK delivery is free on orders over £50. Costs and times for your address are shown at checkout. See our <a href=\"/policies/shipping-policy\">shipping policy</a>.</p>"
           }
         },
         "q2": {
           "type": "question",
           "settings": {
-            "question": "How long does delivery take?",
-            "answer": "<p>Add your answer here.</p>"
+            "question": "Can I return an item?",
+            "answer": "<p>Yes, you can return items within 30 days. See our <a href=\"/policies/refund-policy\">refund policy</a> for how it works.</p>"
           }
         },
         "q3": {
           "type": "question",
           "settings": {
-            "question": "How do I return an item?",
-            "answer": "<p>Add your answer here.</p>"
+            "question": "How can I pay?",
+            "answer": "<p>All payment options available for your order are shown at checkout.</p>"
+          }
+        },
+        "q4": {
+          "type": "question",
+          "settings": {
+            "question": "How do I contact you?",
+            "answer": "<p>Send us a message through our <a href=\"/pages/contact\">contact page</a> and we will get back to you.</p>"
           }
         }
       },
       "block_order": [
         "q1",
         "q2",
-        "q3"
+        "q3",
+        "q4"
       ],
       "settings": {
-        "alignment": "center",
-        "heading": "Frequently asked questions"
+        "features_heading": "Key features",
+        "show_compare": true,
+        "compare_heading": "Compare the options",
+        "faq_heading": "FAQ"
       }
     }
   },
@@ -229,8 +239,8 @@
     "apex_promo_strip",
     "apex_nav",
     "main",
+    "apex_buy_info",
     "apex_benefits",
-    "apex_faq",
     "apex_reviews"
   ]
 }

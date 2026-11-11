@@ -7,7 +7,7 @@
 {%- enddoc -%}
 
 {% stylesheet %}
-  /* 16px corners on ApexCook cards, buttons, fields, chips and the images inside them. Full-width
+  /* 8px corners on ApexCook cards, buttons, fields, chips and the images inside them. Full-width
      bands, bars, progress tracks and round icon buttons keep their own shape. */
   .apex-benefits__card,
   .apex-benefits__icon-tile,
@@ -73,7 +73,7 @@
   .apex-free-delivery__track,
   .apex-free-delivery__fill,
   .apex-accordion__expand {
-    border-radius: 16px;
+    border-radius: 8px;
   }
 
   .apex-chefs__img,
@@ -93,6 +93,45 @@
   .apex-rpage__photo,
   .apex-cmp__stage {
     overflow: hidden;
+  }
+
+  /* Buttons, chips, steppers, tabs and search fields are fully rounded (pills). !important so the
+     pill wins over component rules that set an 8px corner with a more specific selector. */
+  .apex-deal__btn,
+  .apex-card-cta__button,
+  .apex-cc__more,
+  .apex-buy-box__submit,
+  .apex-buy-box__clear,
+  .apex-addons__btn,
+  .apex-addons__more,
+  .apex-anchor-nav__cta,
+  .apex-tool__btn,
+  .apex-rpage__share-btn,
+  .apex-pantry__button,
+  .apex-pantry__arrow,
+  .apex-pantry__tab,
+  .apex-pantry__search input[type='search'],
+  .apex-pantry__search button,
+  .apex-recipes__tags a,
+  .apex-support__links a,
+  .apex-sr__chip,
+  .apex-sr__cta,
+  .apex-sr__more,
+  .apex-sr__filters-btn,
+  .apex-sr__confirm,
+  .apex-sr__search input[type='search'],
+  .apex-up__continue,
+  .apex-empty-cta__button,
+  .apex-media-banner__button,
+  .apex-split-hero__button,
+  .apex-mobile-checkout__button,
+  .apex-cart__btn,
+  .apex-cart__qty,
+  .apex-pcarousel__arrow,
+  .apex-plp__pill,
+  .apex-mnav__search-input,
+  .apex-accordion__expand {
+    border-radius: 999px !important;
   }
 
   /* Keep off-screen carousel content (and its visually-hidden labels) from widening the page. */

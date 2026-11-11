@@ -7,6 +7,94 @@
 {%- enddoc -%}
 
 {% stylesheet %}
+  /* 4px corners on ApexCook cards, buttons, fields, chips and the images inside them. Full-width
+     bands, bars, progress tracks and round icon buttons keep their own shape. */
+  .apex-benefits__card,
+  .apex-benefits__icon-tile,
+  .apex-highlights__card,
+  .apex-chefs__card,
+  .apex-chefs__img,
+  .apex-testimonials__frame,
+  .apex-deal,
+  .apex-deal__pair,
+  .apex-deal__btn,
+  .apex-deal__pair-media,
+  .apex-pcarousel__media,
+  .apex-card-cta__button,
+  .apex-cc__img img,
+  .apex-cc__ph,
+  .apex-cc__more,
+  .apex-cmp__stage,
+  .apex-buy-box,
+  .apex-buy-box__submit,
+  .apex-buy-box__clear,
+  .apex-addons__more,
+  .apex-anchor-nav__cta,
+  .apex-precheck__card,
+  .apex-precheck__link,
+  .apex-size-guide__panel,
+  .apex-size-guide__link,
+  .apex-tool__btn,
+  .apex-tool__media,
+  .apex-rpage__fact,
+  .apex-rpage__share-btn,
+  .apex-rpage__other,
+  .apex-rpage__other-media,
+  .apex-rpage__photo,
+  .apex-pcard,
+  .apex-pcard__media,
+  .apex-pantry__button,
+  .apex-pantry__arrow,
+  .apex-pantry__tab,
+  .apex-pantry__search input[type='search'],
+  .apex-pantry__search button,
+  .apex-recipes__tags a,
+  .apex-support__links a,
+  .apex-sr__card,
+  .apex-sr__image,
+  .apex-sr__chip,
+  .apex-sr__cta,
+  .apex-sr__more,
+  .apex-sr__filters-btn,
+  .apex-sr__confirm,
+  .apex-sr__option,
+  .apex-sr__search input[type='search'],
+  .apex-sr__sort select,
+  .apex-search__thumb-image,
+  .apex-plp__cat-link,
+  .apex-plp__promo,
+  .apex-up__continue,
+  .apex-empty-cta__button,
+  .apex-media-banner__button,
+  .apex-split-hero__button,
+  .apex-mobile-checkout__button,
+  .apex-mnav__search-input,
+  .apex-trust__item,
+  .apex-free-delivery__track,
+  .apex-free-delivery__fill,
+  .apex-accordion__expand {
+    border-radius: 4px;
+  }
+
+  .apex-chefs__img,
+  .apex-tool__media img,
+  .apex-pcard__media img,
+  .apex-rpage__other-media img,
+  .apex-rpage__photo img,
+  .apex-pcarousel__media img,
+  .apex-testimonials__media {
+    border-radius: inherit;
+  }
+
+  .apex-testimonials__frame,
+  .apex-tool__media,
+  .apex-pcard__media,
+  .apex-rpage__other,
+  .apex-rpage__photo,
+  .apex-cmp__stage {
+    overflow: hidden;
+  }
+
   /* Keep off-screen carousel content (and its visually-hidden labels) from widening the page. */
   html,
   body {

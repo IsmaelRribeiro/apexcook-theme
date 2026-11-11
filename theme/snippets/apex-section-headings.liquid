@@ -138,8 +138,9 @@
      gradient (#E61E4D → #E31C5F → #D70466) and its radial hover. */
   :root {
     --apex-rausch: #ff385c;
-    --apex-rausch-gradient: linear-gradient(to right, #e61e4d 0%, #e31c5f 50%, #d70466 100%);
-    --apex-rausch-gradient-hover: radial-gradient(circle at center, #ff385c 0%, #e61e4d 27.5%, #e31c5f 40%, #d70466 57.5%, #bd1e59 75%, #bd1e59 100%);
+    /* Solid Rausch fill (no gradient); hover darkens to Airbnb's pressed red. */
+    --apex-rausch-gradient: #ff385c;
+    --apex-rausch-gradient-hover: #e00b41;
   }
 
   .apex-buy-box__submit,

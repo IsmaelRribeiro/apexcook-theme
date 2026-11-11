@@ -521,9 +521,9 @@
     }
 
     .slideshow-controls__thumbnails.apex-thumbs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 103px));
+      gap: 12px 11.8px;
       width: 100%;
       padding: 24px 0 0;
       margin: 0;
@@ -531,9 +531,9 @@
 
     .apex-thumbs .slideshow-control.slideshow-controls__thumbnail,
     .apex-thumbs .apex-thumbs__more {
-      flex: 0 0 103px;
-      width: 103px;
-      height: 103px;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1;
       padding: 0;
       border: 1px solid #ddd;
       border-radius: 0;
@@ -576,8 +576,8 @@
     }
 
     .apex-thumbs.is-expanded .apex-thumbs__more {
-      flex-basis: 100%;
-      width: 100%;
+      grid-column: 1 / -1;
+      aspect-ratio: auto;
       height: 44px;
       font-size: 14px;
     }

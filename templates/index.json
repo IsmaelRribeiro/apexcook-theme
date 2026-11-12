@@ -23,44 +23,13 @@
     "mosaic": {
       "type": "apex-bento-mosaic",
       "blocks": {
-        "t1": {
-          "type": "tile",
-          "settings": {
-            "product": "pure-titanium-frying-pan-non-coated-non-stick-pan"
-          }
-        },
-        "t2": {
-          "type": "tile",
-          "settings": {
-            "product": "titanium-saucepan-hammered"
-          }
-        },
-        "t3": {
-          "type": "tile",
-          "settings": {
-            "product": "induction-cookware-set-12-pcs"
-          }
-        },
-        "t4": {
-          "type": "tile",
-          "settings": {
-            "product": "damascus-steel-kitchen-knife-chef-cutting-knife-universal-knife-household-slice"
-          }
-        },
-        "t5": {
-          "type": "tile",
-          "settings": {
-            "product": "pure-titanium-cutting-board-household-thickened-cutting-board-with-groove"
-          }
-        }
+        "t1": {"type": "tile", "settings": {"product": "pure-titanium-frying-pan-non-coated-non-stick-pan"}},
+        "t2": {"type": "tile", "settings": {"product": "titanium-saucepan-hammered"}},
+        "t3": {"type": "tile", "settings": {"product": "titanium-cookware-gold-handle"}},
+        "t4": {"type": "tile", "settings": {"product": "damascus-steel-kitchen-knife-chef-cutting-knife-universal-knife-household-slice"}},
+        "t5": {"type": "tile", "settings": {"product": "pure-titanium-cutting-board-household-thickened-cutting-board-with-groove"}}
       },
-      "block_order": [
-        "t1",
-        "t2",
-        "t3",
-        "t4",
-        "t5"
-      ],
+      "block_order": ["t1", "t2", "t3", "t4", "t5"],
       "settings": {
         "heading": "Black Shop: ApexCook deals in one place",
         "enable_animation": true
@@ -100,58 +69,18 @@
         "background_color": "#222222",
         "text_color": "#FFFFFF",
         "enable_animation": true
-      }
+      },
+      "disabled": true
     },
     "benefits": {
       "type": "apex-benefits",
       "blocks": {
-        "b1": {
-          "type": "benefit",
-          "settings": {
-            "icon_name": "delivery",
-            "title": "Free UK delivery",
-            "text": "On orders over £50.",
-            "link_label": "Learn more",
-            "link": "/policies/shipping-policy"
-          }
-        },
-        "b2": {
-          "type": "benefit",
-          "settings": {
-            "icon_name": "returns",
-            "title": "30-day returns",
-            "text": "Changed your mind? Send it back within 30 days.",
-            "link_label": "Learn more",
-            "link": "/policies/refund-policy"
-          }
-        },
-        "b3": {
-          "type": "benefit",
-          "settings": {
-            "icon_name": "guarantee",
-            "title": "10-year guarantee",
-            "text": "Built to last, backed for a decade.",
-            "link_label": "Learn more",
-            "link": ""
-          }
-        },
-        "b4": {
-          "type": "benefit",
-          "settings": {
-            "icon_name": "secure",
-            "title": "Secure checkout",
-            "text": "Apple Pay, Google Pay, Shop Pay and cards.",
-            "link_label": "",
-            "link": ""
-          }
-        }
+        "b1": {"type": "benefit", "settings": {"icon_name": "delivery", "title": "Free UK delivery", "text": "On orders over £50.", "link_label": "Learn more", "link": "/policies/shipping-policy"}},
+        "b2": {"type": "benefit", "settings": {"icon_name": "returns", "title": "30-day returns", "text": "Changed your mind? Send it back within 30 days.", "link_label": "Learn more", "link": "/policies/refund-policy"}},
+        "b3": {"type": "benefit", "settings": {"icon_name": "guarantee", "title": "10-year guarantee", "text": "Built to last, backed for a decade.", "link_label": "Learn more", "link": ""}},
+        "b4": {"type": "benefit", "settings": {"icon_name": "secure", "title": "Secure checkout", "text": "Apple Pay, Google Pay, Shop Pay and cards.", "link_label": "", "link": ""}}
       },
-      "block_order": [
-        "b1",
-        "b2",
-        "b3",
-        "b4"
-      ],
+      "block_order": ["b1", "b2", "b3", "b4"],
       "settings": {
         "alignment": "center",
         "heading": "Join ApexCook. Enjoy the benefits",
@@ -161,46 +90,19 @@
     "faq": {
       "type": "apex-faq",
       "blocks": {
-        "q1": {
-          "type": "question",
-          "settings": {
-            "question": "Is the pan safe on induction hobs?",
-            "answer": "<p>Add your answer here.</p>"
-          }
-        },
-        "q2": {
-          "type": "question",
-          "settings": {
-            "question": "How long does delivery take?",
-            "answer": "<p>Add your answer here.</p>"
-          }
-        },
-        "q3": {
-          "type": "question",
-          "settings": {
-            "question": "How do I return an item?",
-            "answer": "<p>Add your answer here.</p>"
-          }
-        }
+        "q1": {"type": "question", "settings": {"question": "Can I use ApexCook pans on an induction hob?", "answer": "<p>Yes. Our titanium frying pans work on gas, electric, ceramic and induction hobs. Each product page lists the hobs it suits.</p>"}},
+        "q4": {"type": "question", "settings": {"question": "How do I stop food sticking to an uncoated pan?", "answer": "<p>Preheat the pan on a medium heat for one to two minutes, add a little oil and wait until it shimmers. Then add your food and let it sear before you move it. It will release on its own when it is ready.</p>"}},
+        "q5": {"type": "question", "settings": {"question": "Can I use metal utensils?", "answer": "<p>Yes. There is no coating on the cooking surface, so there is nothing to chip or peel.</p>"}},
+        "q6": {"type": "question", "settings": {"question": "How do I clean my pan?", "answer": "<p>Let the pan cool, then wash it in warm soapy water with a sponge and dry it thoroughly. For stuck-on food, soak it in warm water for a few minutes first.</p>"}},
+        "q2": {"type": "question", "settings": {"question": "How much is delivery and how long does it take?", "answer": "<p>UK delivery is free on orders over £50. The cost and estimated delivery time for your address are shown at checkout. See our <a href=\"/policies/shipping-policy\">delivery policy</a> for details.</p>"}},
+        "q3": {"type": "question", "settings": {"question": "Can I return an item?", "answer": "<p>Yes. You can return unused items within 30 days of delivery for a refund. If an item is faulty, your statutory rights apply in addition. See our <a href=\"/policies/refund-policy\">returns policy</a> for how it works.</p>"}}
       },
-      "block_order": [
-        "q1",
-        "q2",
-        "q3"
-      ],
+      "block_order": ["q1", "q4", "q5", "q6", "q2", "q3"],
       "settings": {
         "alignment": "center",
         "heading": "Frequently asked questions"
       }
     }
   },
-  "order": [
-    "hero",
-    "mosaic",
-    "list_kitchen",
-    "list_life",
-    "banner",
-    "benefits",
-    "faq"
-  ]
+  "order": ["hero", "mosaic", "list_kitchen", "list_life", "banner", "benefits", "faq"]
 }

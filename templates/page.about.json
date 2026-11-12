@@ -47,16 +47,9 @@
           },
           "blocks": {}
         },
-        "page-content": {
-          "type": "page-content",
-          "settings": {},
-          "blocks": {}
-        }
+        "page-content": {"type": "page-content", "settings": {}, "blocks": {}}
       },
-      "block_order": [
-        "heading",
-        "page-content"
-      ],
+      "block_order": ["heading", "page-content"],
       "settings": {
         "content_direction": "column",
         "gap": 32,
@@ -67,53 +60,12 @@
     "benefits": {
       "type": "apex-benefits",
       "blocks": {
-        "b1": {
-          "type": "benefit",
-          "settings": {
-            "icon_name": "delivery",
-            "title": "Free UK delivery",
-            "text": "On orders over £50.",
-            "link_label": "",
-            "link": ""
-          }
-        },
-        "b2": {
-          "type": "benefit",
-          "settings": {
-            "icon_name": "returns",
-            "title": "30-day returns",
-            "text": "Changed your mind? Send it back within 30 days.",
-            "link_label": "",
-            "link": ""
-          }
-        },
-        "b3": {
-          "type": "benefit",
-          "settings": {
-            "icon_name": "guarantee",
-            "title": "10-year guarantee",
-            "text": "Built to last, backed for a decade.",
-            "link_label": "",
-            "link": ""
-          }
-        },
-        "b4": {
-          "type": "benefit",
-          "settings": {
-            "icon_name": "secure",
-            "title": "Secure checkout",
-            "text": "Apple Pay, Google Pay, Shop Pay and cards.",
-            "link_label": "",
-            "link": ""
-          }
-        }
+        "b1": {"type": "benefit", "settings": {"icon_name": "delivery", "title": "Free UK delivery", "text": "On orders over £50.", "link_label": "", "link": ""}},
+        "b2": {"type": "benefit", "settings": {"icon_name": "returns", "title": "30-day returns", "text": "Changed your mind? Send it back within 30 days.", "link_label": "", "link": ""}},
+        "b3": {"type": "benefit", "settings": {"icon_name": "guarantee", "title": "10-year guarantee", "text": "Built to last, backed for a decade.", "link_label": "", "link": ""}},
+        "b4": {"type": "benefit", "settings": {"icon_name": "secure", "title": "Secure checkout", "text": "Apple Pay, Google Pay, Shop Pay and cards.", "link_label": "", "link": ""}}
       },
-      "block_order": [
-        "b1",
-        "b2",
-        "b3",
-        "b4"
-      ],
+      "block_order": ["b1", "b2", "b3", "b4"],
       "settings": {
         "heading": "Why ApexCook",
         "enable_animation": true
@@ -127,14 +79,9 @@
         "background_color": "#222222",
         "text_color": "#FFFFFF",
         "enable_animation": true
-      }
+      },
+      "disabled": true
     }
   },
-  "order": [
-    "hero",
-    "main",
-    "benefits",
-    "banner"
-  ]
+  "order": ["hero", "main", "benefits", "banner"]
 }
-

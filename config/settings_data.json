@@ -87,12 +87,12 @@
     "palette_primary_button_border": "{{ settings.color_palette.color1 }}",
     "palette_primary_button_text": "{{ settings.color_palette.background }}",
     "empty_state_collection": "cookware",
-    "apex_hero_product": "pure-titanium-frying-pan-non-coated-non-stick-pan",
+    "apex_hero_product": "titanium-pro-frying-pan",
     "apex_utility_menu": "apexcook-utility",
     "apex_popular_searches": "apexcook-popular-searches",
     "apex_upsell_page": "complete-your-order"
   },
-  "presets": {
+   "presets": {
     "Default": {
       "logo_height": 36,
       "logo_height_mobile": 28,

@@ -56,19 +56,27 @@
           -%}
           <li class="apex-plp__cat{% if is_current %} is-current{% endif %}">
             <a class="apex-plp__cat-link" href="{{ link.url }}"{% if is_current %} aria-current="page"{% endif %}>
-              <span class="apex-plp__cat-text">
-                <span class="apex-plp__cat-name">{{ link.title | escape }}</span>
-                {%- if is_current and collection.description != blank -%}
-                  <span class="apex-plp__cat-desc">{{ collection.description | strip_html | truncatewords: 8 }}</span>
-                {%- endif -%}
+              {%- liquid
+                assign cat_handle = cat_collection.handle | default: link.handle
+                case cat_handle
+                  when 'cookware'
+                    assign cat_icon = 'ph-cooking-pot-light.svg'
+                  when 'tableware'
+                    assign cat_icon = 'ph-bowl-food-light.svg'
+                  when 'bundles'
+                    assign cat_icon = 'ph-package-light.svg'
+                  when 'knives'
+                    assign cat_icon = 'ph-knife-light.svg'
+                  when 'accessories'
+                    assign cat_icon = 'ph-fork-knife-light.svg'
+                  else
+                    assign cat_icon = 'ph-squares-four-light.svg'
+                endcase
+              -%}
+              <span class="apex-plp__cat-icon" aria-hidden="true">
+                {{- cat_icon | inline_asset_content | replace: '<svg ', '<svg width="36" height="36" focusable="false" ' -}}
               </span>
-              <span class="apex-plp__cat-image">
-                {%- if cat_collection.featured_image -%}
-                  {{ cat_collection.featured_image | image_url: width: 240 | image_tag: loading: 'lazy', alt: '', sizes: '80px' }}
-                {%- elsif cat_collection.products.first.featured_media -%}
-                  {{ cat_collection.products.first.featured_media.preview_image | image_url: width: 240 | image_tag: loading: 'lazy', alt: '', sizes: '80px' }}
-                {%- endif -%}
-              </span>
+              <span class="apex-plp__cat-name">{{ link.title | escape }}</span>
             </a>
           </li>
         {%- endfor -%}
@@ -313,24 +321,15 @@
     display: none;
   }
 
+  /* ProCook-style category tiles: white card, hairline border, line icon above the name. */
   .apex-plp__cat {
-    flex: 0 0 150px;
+    flex: 0 0 140px;
     scroll-snap-align: start;
   }
 
   @media screen and (min-width: 990px) {
     .apex-plp__cat {
-      flex-basis: 192px;
-    }
-  }
-
-  .apex-plp__cat.is-current {
-    flex-basis: 260px;
-  }
-
-  @media screen and (min-width: 990px) {
-    .apex-plp__cat.is-current {
-      flex-basis: 312px;
+      flex-basis: 170px;
     }
   }
 
@@ -338,75 +337,43 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
-    height: 132px;
-    padding: 12px 8px 8px;
-    border: 1px solid transparent;
+    justify-content: center;
+    gap: 10px;
+    height: 100px;
+    padding: 12px 8px;
+    border: 1px solid #dddddd;
     border-radius: 8px;
-    background: #F7F7F7;
+    background: #fff;
     color: #222222;
+    text-align: center;
     text-decoration: none;
-    transition: border-color 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
   .apex-plp__cat-link:hover {
-    border-color: #DDDDDD;
+    border-color: #222222;
   }
 
   .apex-plp__cat.is-current .apex-plp__cat-link {
-    flex-direction: row;
-    align-items: center;
-    padding: 12px 16px;
-    border-color: #222222;
-    background: #fff;
+    border: 2px solid #222222;
+    padding: 11px 7px;
   }
 
-  .apex-plp__cat-text {
+  .apex-plp__cat-icon {
     display: flex;
-    flex-direction: column;
-    gap: 6px;
-    text-align: center;
+    color: #222222;
   }
 
-  .apex-plp__cat.is-current .apex-plp__cat-text {
-    flex: 1;
-    text-align: start;
+  .apex-plp__cat-icon svg {
+    display: block;
+    width: 36px;
+    height: 36px;
   }
 
   .apex-plp__cat-name {
     font-size: 14px;
     font-weight: 600;
-    line-height: 1.33;
-  }
-
-  .apex-plp__cat.is-current .apex-plp__cat-name {
-    font-size: 16px;
-  }
-
-  .apex-plp__cat-desc {
-    font-size: 12px;
-    line-height: 1.33;
-    color: #6A6A6A;
-  }
-
-  .apex-plp__cat-image {
-    display: block;
-    flex: none;
-    width: 72px;
-    height: 72px;
-  }
-
-  .apex-plp__cat.is-current .apex-plp__cat-image {
-    width: 96px;
-    height: 96px;
-  }
-
-  .apex-plp__cat-image img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    mix-blend-mode: multiply;
+    line-height: 1.3;
   }
 
   .apex-plp__cats-controls {

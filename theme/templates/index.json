@@ -25,23 +25,33 @@
       "blocks": {
         "t1": {
           "type": "tile",
-          "settings": {}
+          "settings": {
+            "product": "pure-titanium-frying-pan-non-coated-non-stick-pan"
+          }
         },
         "t2": {
           "type": "tile",
-          "settings": {}
+          "settings": {
+            "product": "titanium-saucepan-hammered"
+          }
         },
         "t3": {
           "type": "tile",
-          "settings": {}
+          "settings": {
+            "product": "induction-cookware-set-12-pcs"
+          }
         },
         "t4": {
           "type": "tile",
-          "settings": {}
+          "settings": {
+            "product": "damascus-steel-kitchen-knife-chef-cutting-knife-universal-knife-household-slice"
+          }
         },
         "t5": {
           "type": "tile",
-          "settings": {}
+          "settings": {
+            "product": "pure-titanium-cutting-board-household-thickened-cutting-board-with-groove"
+          }
         }
       },
       "block_order": [

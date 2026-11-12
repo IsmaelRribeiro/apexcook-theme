@@ -806,22 +806,28 @@
   }
 
   .apex-sr__chip[aria-pressed='true'] {
-    border: 2px solid #222222;
+    border-color: #222222;
+    box-shadow: inset 0 0 0 0.5px #222222;
   }
 
-  .apex-sr__chip--swatch {
+  .apex-sr__chip.apex-sr__chip--swatch {
     position: relative;
-    width: 32px;
-    min-width: 32px;
+    width: 28px;
+    min-width: 28px;
+    height: 28px;
+    min-height: 28px;
     padding: 0;
-    border-radius: 50%;
+    border: 0;
+    border-radius: 50% !important;
+    overflow: hidden;
     background: var(--swatch);
     box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.1);
   }
 
-  .apex-sr__chip--swatch[aria-pressed='true'] {
+  .apex-sr__chip.apex-sr__chip--swatch[aria-pressed='true'] {
     border: 0;
-    outline: 2px solid #222222;
+    box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.1);
+    outline: 1px solid #222222;
     outline-offset: 2px;
   }
 

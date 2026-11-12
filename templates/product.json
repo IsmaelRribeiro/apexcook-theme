@@ -9,12 +9,7 @@
  */
 {
   "sections": {
-    "apex_nav": {
-      "type": "apex-pdp-anchor-nav",
-      "settings": {
-        "views_min": 1
-      }
-    },
+    "apex_nav": {"type": "apex-pdp-anchor-nav", "settings": {"views_min": 1}},
     "main": {
       "type": "product-information",
       "blocks": {
@@ -73,45 +68,15 @@
           "blocks": {
             "variant_picker_R3rGDr": {
               "type": "variant-picker",
-              "settings": {
-                "variant_style": "buttons",
-                "show_swatches": false,
-                "alignment": "left",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
+              "settings": {"variant_style": "buttons", "show_swatches": false, "alignment": "left", "padding-block-start": 0, "padding-block-end": 0, "padding-inline-start": 0, "padding-inline-end": 0},
               "blocks": {}
             },
-            "apex_size_guide": {
-              "type": "apex-size-guide",
-              "settings": {}
-            },
-            "apex_addons": {
-              "type": "apex-addons",
-              "settings": {
-                "visible_count": 3
-              }
-            },
-            "apex_buy_box": {
-              "type": "apex-buy-box",
-              "settings": {}
-            },
-            "apex_precheck": {
-              "type": "apex-prepurchase",
-              "settings": {
-                "delivery_link": "/policies/shipping-policy"
-              }
-            }
+            "apex_size_guide": {"type": "apex-size-guide", "settings": {}},
+            "apex_addons": {"type": "apex-addons", "settings": {"visible_count": 3}},
+            "apex_buy_box": {"type": "apex-buy-box", "settings": {}},
+            "apex_precheck": {"type": "apex-prepurchase", "settings": {"delivery_link": "/policies/shipping-policy"}}
           },
-          "block_order": [
-            "variant_picker_R3rGDr",
-            "apex_size_guide",
-            "apex_addons",
-            "apex_precheck",
-            "apex_buy_box"
-          ]
+          "block_order": ["variant_picker_R3rGDr", "apex_size_guide", "apex_addons", "apex_precheck", "apex_buy_box"]
         }
       },
       "settings": {
@@ -135,119 +100,41 @@
         "background_color": "#222222",
         "text_color": "#FFFFFF",
         "enable_animation": true
-      }
+      },
+      "disabled": true
     },
     "apex_slider": {
       "type": "apex-compare-slider",
       "settings": {
         "heading": "Nothing to chip, peel or flake",
-        "text": "<p>Drag to compare. Coated pans wear with every scrub; ApexCook's titanium has no coating to wear away.</p>",
+        "text": "<p>Drag to compare. Coated pans wear with every scrub; ApexCook's titanium surface has no coating to wear away.</p>",
         "full_width": true,
         "start_position": 50,
-        "left_label": "Pure titanium",
-        "left_stat": "Safe",
+        "left_label": "Titanium surface",
+        "left_stat": "No coating",
         "left_stat_color": "#FF385C",
         "right_label": "Non-stick coating",
-        "right_stat": "Toxic",
+        "right_stat": "Wears over time",
         "right_stat_color": "#6A6A6A"
       }
     },
     "apex_compare": {
       "type": "apex-compare-columns",
       "blocks": {
-        "r1": {
-          "type": "row",
-          "settings": {
-            "label": "Cooking surface",
-            "icon": "pan",
-            "ours_mark": "yes",
-            "ours_value": "Titanium cooking surface",
-            "ours_note": "No coating to chip, peel or wear away",
-            "theirs_mark": "no",
-            "theirs_value": "Stainless steel surface",
-            "theirs_note": "Hard-wearing, but no help with sticking"
-          }
-        },
-        "r2": {
-          "type": "row",
-          "settings": {
-            "label": "Body",
-            "icon": "guarantee",
-            "ours_mark": "yes",
-            "ours_value": "Stainless steel body",
-            "ours_note": "Durable, non-reactive and built to last",
-            "theirs_mark": "yes",
-            "theirs_value": "Stainless steel body",
-            "theirs_note": "Durable, non-reactive and long-lasting"
-          }
-        },
-        "r3": {
-          "type": "row",
-          "settings": {
-            "label": "Non-stick performance",
-            "icon": "leaf",
-            "ours_mark": "yes",
-            "ours_value": "Coating-free easy release",
-            "ours_note": "Made without PFAS coatings; a little oil and medium heat is all it needs",
-            "theirs_mark": "partial",
-            "theirs_value": "Needs technique",
-            "theirs_note": "Food can stick without careful heat control or a coating"
-          }
-        },
-        "r4": {
-          "type": "row",
-          "settings": {
-            "label": "Construction",
-            "icon": "rewards",
-            "ours_mark": "yes",
-            "ours_value": "Layered construction",
-            "ours_note": "Even heat across the base for consistent cooking",
-            "theirs_mark": "partial",
-            "theirs_value": "Varies by design",
-            "theirs_note": "Some are single-ply or disc-based, with rivets that can trap food"
-          }
-        },
-        "r5": {
-          "type": "row",
-          "settings": {
-            "label": "Hob compatibility",
-            "icon": "flame",
-            "ours_mark": "yes",
-            "ours_value": "Works on every hob",
-            "ours_note": "Gas, electric, ceramic and induction",
-            "theirs_mark": "partial",
-            "theirs_value": "Varies by design",
-            "theirs_note": "Not every stainless steel pan works on induction"
-          }
-        },
-        "r6": {
-          "type": "row",
-          "settings": {
-            "label": "Ease of care",
-            "icon": "dishwasher",
-            "ours_mark": "yes",
-            "ours_value": "Dishwasher safe",
-            "ours_note": "Quick to clean after everyday cooking",
-            "theirs_mark": "partial",
-            "theirs_value": "Varies",
-            "theirs_note": "Some need hand washing to keep their finish"
-          }
-        }
+        "r1": {"type": "row", "settings": {"label": "Cooking surface", "icon": "pan", "ours_mark": "yes", "ours_value": "Titanium cooking surface", "ours_note": "No coating to chip, peel or wear away", "theirs_mark": "no", "theirs_value": "Stainless steel surface", "theirs_note": "Hard-wearing, but no help with sticking"}},
+        "r2": {"type": "row", "settings": {"label": "Body", "icon": "guarantee", "ours_mark": "yes", "ours_value": "Stainless steel body", "ours_note": "Durable, non-reactive and built to last", "theirs_mark": "yes", "theirs_value": "Stainless steel body", "theirs_note": "Durable, non-reactive and long-lasting"}},
+        "r3": {"type": "row", "settings": {"label": "Non-stick performance", "icon": "leaf", "ours_mark": "yes", "ours_value": "Coating-free easy release", "ours_note": "Made without PFAS coatings; a little oil and medium heat is all it needs", "theirs_mark": "partial", "theirs_value": "Needs technique", "theirs_note": "Food can stick without careful heat control or a coating"}},
+        "r4": {"type": "row", "settings": {"label": "Construction", "icon": "rewards", "ours_mark": "yes", "ours_value": "Layered construction", "ours_note": "Even heat across the base for consistent cooking", "theirs_mark": "partial", "theirs_value": "Varies by design", "theirs_note": "Some are single-ply or disc-based, with rivets that can trap food"}},
+        "r5": {"type": "row", "settings": {"label": "Hob compatibility", "icon": "flame", "ours_mark": "yes", "ours_value": "Works on every hob", "ours_note": "Gas, electric, ceramic and induction", "theirs_mark": "partial", "theirs_value": "Varies by design", "theirs_note": "Not every stainless steel pan works on induction"}},
+        "r6": {"type": "row", "settings": {"label": "Ease of care", "icon": "dishwasher", "ours_mark": "yes", "ours_value": "Dishwasher safe", "ours_note": "Quick to clean after everyday cooking", "theirs_mark": "partial", "theirs_value": "Varies", "theirs_note": "Some need hand washing to keep their finish"}}
       },
-      "block_order": [
-        "r1",
-        "r2",
-        "r3",
-        "r4",
-        "r5",
-        "r6"
-      ],
+      "block_order": ["r1", "r2", "r3", "r4", "r5", "r6"],
       "settings": {
-        "heading": "Compare Titanium Pro",
+        "heading": "Compare Pure Titanium",
         "specs_heading": "Key specs",
         "visible_rows": 20,
-        "ours_title": "Titanium Pro",
-        "ours_name": "Titanium Pro Frying Pan",
+        "ours_title": "Pure Titanium",
+        "ours_name": "Pure Titanium Frying Pan",
         "ours_text": "A titanium cooking surface with no coating to wear away, on a durable stainless steel body.",
         "theirs_title": "Standard stainless steel",
         "theirs_name": "Standard stainless steel pan",
@@ -257,242 +144,65 @@
     "apex_benefits": {
       "type": "apex-benefits",
       "blocks": {
-        "b1": {
-          "type": "benefit",
-          "settings": {
-            "icon_name": "delivery",
-            "title": "Free UK delivery",
-            "text": "On orders over £50.",
-            "link_label": "Learn more",
-            "link": "/policies/shipping-policy"
-          }
-        },
-        "b2": {
-          "type": "benefit",
-          "settings": {
-            "icon_name": "returns",
-            "title": "30-day returns",
-            "text": "Changed your mind? Send it back within 30 days.",
-            "link_label": "Learn more",
-            "link": "/policies/refund-policy"
-          }
-        },
-        "b3": {
-          "type": "benefit",
-          "settings": {
-            "icon_name": "guarantee",
-            "title": "10-year guarantee",
-            "text": "Built to last, backed for a decade.",
-            "link_label": "",
-            "link": ""
-          }
-        },
-        "b4": {
-          "type": "benefit",
-          "settings": {
-            "icon_name": "secure",
-            "title": "Secure checkout",
-            "text": "Apple Pay, Google Pay, Shop Pay and cards.",
-            "link_label": "",
-            "link": ""
-          }
-        }
+        "b1": {"type": "benefit", "settings": {"icon_name": "delivery", "title": "Free UK delivery", "text": "On orders over £50.", "link_label": "Learn more", "link": "/policies/shipping-policy"}},
+        "b2": {"type": "benefit", "settings": {"icon_name": "returns", "title": "30-day returns", "text": "Changed your mind? Send it back within 30 days.", "link_label": "Learn more", "link": "/policies/refund-policy"}},
+        "b3": {"type": "benefit", "settings": {"icon_name": "guarantee", "title": "10-year guarantee", "text": "Built to last, backed for a decade.", "link_label": "", "link": ""}},
+        "b4": {"type": "benefit", "settings": {"icon_name": "secure", "title": "Secure checkout", "text": "Apple Pay, Google Pay, Shop Pay and cards.", "link_label": "", "link": ""}}
       },
-      "block_order": [
-        "b1",
-        "b2",
-        "b3",
-        "b4"
-      ],
-      "settings": {
-        "heading": "Join ApexCook. Enjoy the benefits",
-        "enable_animation": true
-      }
+      "block_order": ["b1", "b2", "b3", "b4"],
+      "settings": {"heading": "Join ApexCook. Enjoy the benefits", "enable_animation": true}
     },
-    "apex_specs": {
-      "type": "apex-specs",
-      "settings": {
-        "heading": "Specifications",
-        "default_group": "General"
-      }
-    },
-    "apex_reviews": {
-      "type": "apex-reviews",
-      "settings": {
-        "per_page": 10
-      }
-    },
+    "apex_specs": {"type": "apex-specs", "settings": {"heading": "Specifications", "default_group": "General"}},
+    "apex_reviews": {"type": "apex-reviews", "settings": {"per_page": 10}},
     "apex_support": {
       "type": "apex-support",
       "blocks": {
-        "l1": {
-          "type": "link",
-          "settings": {
-            "icon": "support",
-            "title": "Product support",
-            "text": "Care tips, size guides and answers to common questions about your ApexCook pan.",
-            "link_label": "Learn more",
-            "link": "/pages/contact"
-          }
-        },
-        "l2": {
-          "type": "link",
-          "settings": {
-            "icon": "chat",
-            "title": "Contact us",
-            "text": "Questions before you buy? Message us and we reply within one working day.",
-            "link_label": "Learn more",
-            "link": "/pages/contact"
-          }
-        }
+        "l1": {"type": "link", "settings": {"icon": "support", "title": "Product support", "text": "Care tips, size guides and answers to common questions about your ApexCook pan.", "link_label": "Learn more", "link": "/pages/contact"}},
+        "l2": {"type": "link", "settings": {"icon": "chat", "title": "Contact us", "text": "Questions before you buy? Message us and we reply within one working day.", "link_label": "Learn more", "link": "/pages/contact"}}
       },
-      "block_order": [
-        "l1",
-        "l2"
-      ],
-      "settings": {
-        "heading": "Product support",
-        "text": "<p>Find answers to your questions about our products.</p>"
-      }
+      "block_order": ["l1", "l2"],
+      "settings": {"heading": "Product support", "text": "<p>Find answers to your questions about our products.</p>"}
     },
-    "apex_promo_strip": {
-      "type": "apex-promo-strip",
-      "settings": {
-        "text": "Free UK delivery on orders over £50",
-        "background_color": "#222222",
-        "text_color": "#FFFFFF"
-      }
-    },
+    "apex_promo_strip": {"type": "apex-promo-strip", "settings": {"text": "Free UK delivery on orders over £50", "background_color": "#222222", "text_color": "#FFFFFF"}},
     "apex_highlights": {
       "type": "apex-highlights",
       "blocks": {
-        "h1": {
-          "type": "highlight",
-          "settings": {
-            "icon_name": "pan",
-            "title": "Pure titanium",
-            "text": "No coating to chip or peel"
-          }
-        },
-        "h2": {
-          "type": "highlight",
-          "settings": {
-            "icon_name": "leaf",
-            "title": "PFAS-free",
-            "text": "Add your verified claim here"
-          }
-        },
-        "h3": {
-          "type": "highlight",
-          "settings": {
-            "icon_name": "flame",
-            "title": "Every hob",
-            "text": "Gas, electric and induction"
-          }
-        },
-        "h4": {
-          "type": "highlight",
-          "settings": {
-            "icon_name": "guarantee",
-            "title": "10-year guarantee",
-            "text": "Built to last"
-          }
-        }
+        "h1": {"type": "highlight", "settings": {"icon_name": "pan", "title": "Pure titanium", "text": "No coating to chip or peel"}},
+        "h2": {"type": "highlight", "settings": {"icon_name": "leaf", "title": "Metal-utensil safe", "text": "Nothing to scratch off"}},
+        "h3": {"type": "highlight", "settings": {"icon_name": "flame", "title": "Every hob", "text": "Gas, electric and induction"}},
+        "h4": {"type": "highlight", "settings": {"icon_name": "guarantee", "title": "10-year guarantee", "text": "Built to last"}}
       },
-      "block_order": [
-        "h1",
-        "h2",
-        "h3",
-        "h4"
-      ],
-      "settings": {
-        "heading": "Highlights",
-        "enable_animation": true
-      }
+      "block_order": ["h1", "h2", "h3", "h4"],
+      "settings": {"heading": "Highlights", "enable_animation": true}
     },
     "apex_chefs": {
       "type": "apex-chef-cards",
       "blocks": {
-        "chef1": {
-          "type": "chef",
-          "settings": {
-            "eyebrow": "Chef name",
-            "title": "Add the chef's headline quote",
-            "text": "<p>Add the full testimonial here.</p>",
-            "author": ""
-          }
-        },
-        "chef2": {
-          "type": "chef",
-          "settings": {
-            "eyebrow": "Chef name",
-            "title": "Add the chef's headline quote",
-            "text": "<p>Add the full testimonial here.</p>",
-            "author": ""
-          }
-        },
-        "chef3": {
-          "type": "chef",
-          "settings": {
-            "eyebrow": "Chef name",
-            "title": "Add the chef's headline quote",
-            "text": "<p>Add the full testimonial here.</p>",
-            "author": ""
-          }
-        }
+        "chef1": {"type": "chef", "settings": {"eyebrow": "Chef name", "title": "Add the chef's headline quote", "text": "<p>Add the full testimonial here.</p>", "author": ""}},
+        "chef2": {"type": "chef", "settings": {"eyebrow": "Chef name", "title": "Add the chef's headline quote", "text": "<p>Add the full testimonial here.</p>", "author": ""}},
+        "chef3": {"type": "chef", "settings": {"eyebrow": "Chef name", "title": "Add the chef's headline quote", "text": "<p>Add the full testimonial here.</p>", "author": ""}}
       },
-      "block_order": [
-        "chef1",
-        "chef2",
-        "chef3"
-      ],
-      "settings": {
-        "heading": "Trusted by chefs who cook all day",
-        "text": "<p>We asked professional chefs to put ApexCook through a real service. Here is what they told us.</p>"
-      }
+      "block_order": ["chef1", "chef2", "chef3"],
+      "settings": {"heading": "Trusted by chefs who cook all day", "text": "<p>We asked professional chefs to put ApexCook through a real service. Here is what they told us.</p>"},
+      "disabled": true
     },
     "apex_feature": {
       "type": "apex-feature-hero",
       "blocks": {
-        "f1": {
-          "type": "card",
-          "settings": {
-            "eyebrow": "Searing",
-            "title": "A proper crust, every time",
-            "text": "<p>Titanium handles high heat without a coating to protect, so you can preheat properly and let steak, fish or halloumi build real colour.</p>"
-          }
-        },
-        "f2": {
-          "type": "card",
-          "settings": {
-            "eyebrow": "Eggs",
-            "title": "Easy release with a little oil",
-            "text": "<p>Warm the pan on medium, add a little oil and give eggs a moment before you move them. They slide off without a coating to wear out.</p>"
-          }
-        },
-        "f3": {
-          "type": "card",
-          "settings": {
-            "eyebrow": "Sauces",
-            "title": "Deglaze straight in the pan",
-            "text": "<p>Scrape up every bit of flavour with a metal spatula and finish your sauce in the same pan. There is no coating to scratch.</p>"
-          }
-        }
+        "f1": {"type": "card", "settings": {"eyebrow": "Searing", "title": "A proper crust, every time", "text": "<p>Titanium handles high heat without a coating to protect, so you can preheat properly and let steak, fish or halloumi build real colour.</p>"}},
+        "f2": {"type": "card", "settings": {"eyebrow": "Eggs", "title": "Easy release with a little oil", "text": "<p>Warm the pan on medium, add a little oil and give eggs a moment before you move them. They slide off without a coating to wear out.</p>"}},
+        "f3": {"type": "card", "settings": {"eyebrow": "Sauces", "title": "Deglaze straight in the pan", "text": "<p>Scrape up every bit of flavour with a metal spatula and finish your sauce in the same pan. There is no coating to scratch.</p>"}}
       },
-      "block_order": [
-        "f1",
-        "f2",
-        "f3"
-      ],
+      "block_order": ["f1", "f2", "f3"],
       "settings": {
         "anchor": "features",
         "heading": "Built for heat.\nMade to last.",
-        "text": "<p>Titanium Pro is made for real everyday cooking — searing, frying and simmering on any hob. With <strong>no coating to chip or wear away</strong>, it keeps cooking the same way, meal after meal.</p>",
+        "text": "<p>The Pure Titanium Frying Pan is made for real everyday cooking — searing, frying and simmering on any hob. With <strong>no coating to chip or wear away</strong>, it keeps cooking the same way, meal after meal.</p>",
         "stat1_label": "Sizes",
         "stat1_prefix": "",
-        "stat1_value": "22–32",
+        "stat1_value": "22–28",
         "stat1_suffix": "cm",
-        "stat1_note": "Five sizes, with or without a glass lid",
+        "stat1_note": "Three sizes, with or without a glass lid",
         "stat2_label": "Hob compatibility",
         "stat2_prefix": "",
         "stat2_value": "Every hob",
@@ -504,19 +214,5 @@
       }
     }
   },
-  "order": [
-    "apex_promo_strip",
-    "apex_nav",
-    "main",
-    "apex_highlights",
-    "apex_feature",
-    "apex_testimonials",
-    "apex_chefs",
-    "apex_slider",
-    "apex_compare",
-    "apex_benefits",
-    "apex_specs",
-    "apex_reviews",
-    "apex_support"
-  ]
+  "order": ["apex_promo_strip", "apex_nav", "main", "apex_highlights", "apex_feature", "apex_testimonials", "apex_chefs", "apex_slider", "apex_compare", "apex_benefits", "apex_specs", "apex_reviews", "apex_support"]
 }

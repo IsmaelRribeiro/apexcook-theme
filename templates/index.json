@@ -16,7 +16,8 @@
         "heading": "ApexCook deals, all in one place",
         "background_color": "#FF385C",
         "text_color": "#FFFFFF",
-        "enable_animation": true
+        "enable_animation": true,
+        "image": "shopify://shop_images/apexcook-hero-family.jpg"
       }
     },
     "mosaic": {

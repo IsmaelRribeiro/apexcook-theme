@@ -50,68 +50,67 @@
 -%}
 {%- if addons != blank or lid_option -%}
   <div class="apex-addons" data-apex-addons {{ block.shopify_attributes }}>
-    <h2 class="apex-addons__title">{{ 'apex.addons.title' | t }}</h2>
-    <ul class="apex-addons__list" role="list">
-      {%- if lid_option -%}
-        {%- liquid
-          assign lid_price = 0
-          if with_lid_variant and no_lid_variant
-            assign lid_price = with_lid_variant.price | minus: no_lid_variant.price
-            if lid_price < 0
-              assign lid_price = 0
-            endif
+    {%- if lid_option -%}
+      {%- liquid
+        assign lid_price = 0
+        if with_lid_variant and no_lid_variant
+          assign lid_price = with_lid_variant.price | minus: no_lid_variant.price
+          if lid_price < 0
+            assign lid_price = 0
           endif
-          assign lid_available = false
-          if with_lid_variant and with_lid_variant.available
-            assign lid_available = true
-          endif
-          assign lid_image = with_lid_variant.featured_image | default: block.settings.lid_image
-          assign lid_title = 'apex.addons.lid_title' | t: size: size_label
-        -%}
-        <li class="apex-addons__item apex-addons__item--lid">
-          {%- if lid_image -%}
-            {{ lid_image | image_url: width: 240 | image_tag: loading: 'lazy', class: 'apex-addons__image', alt: '' }}
-          {%- else -%}
-            <span class="apex-addons__image" aria-hidden="true"></span>
+        endif
+        assign lid_available = false
+        if with_lid_variant and with_lid_variant.available
+          assign lid_available = true
+        endif
+      -%}
+      <div class="apex-lid apex-addons__item--lid">
+        <div class="apex-lid__head">
+          <h2 class="apex-lid__question">{{ 'apex.addons.lid_question' | t: size: size_label }}</h2>
+          {%- if block.settings.lid_learn_more != blank -%}
+            <a class="apex-lid__learn" href="{{ block.settings.lid_learn_more }}">{{ 'apex.addons.learn_more' | t }}</a>
           {%- endif -%}
-          <div class="apex-addons__info">
-            <p class="apex-addons__name">{{ lid_title }}</p>
-            <ul class="apex-addons__bullets">
-              <li>{{ 'apex.addons.lid_fit' | t: size: size_label }}</li>
-              <li>{{ 'apex.addons.lid_ships' | t }}</li>
-            </ul>
-            {%- if with_lid_variant -%}
-              <div class="apex-price apex-price--compact">
-                <span class="apex-price__now">+{{ lid_price | money }}</span>
-              </div>
-            {%- endif -%}
-          </div>
+        </div>
+        <div class="apex-lid__options" role="group" aria-label="{{ 'apex.addons.lid_question' | t: size: size_label | escape }}">
           <button
             type="button"
-            class="apex-addons__btn"
+            class="apex-lid__option"
             data-apex-lid
-            {% if lid_selected %}
-              data-target-value="{{ no_lid_value | escape }}"
-            {% else %}
-              data-target-value="{{ with_lid_value | escape }}"
-            {% endif %}
             data-option-name="{{ lid_option_name | escape }}"
+            data-target-value="{{ with_lid_value | escape }}"
             aria-pressed="{{ lid_selected }}"
-            aria-label="{% if lid_selected %}{{ 'apex.addons.added' | t }}{% else %}{{ 'apex.addons.add' | t }}{% endif %}: {{ lid_title }}"
             {% unless lid_available or lid_selected %}disabled{% endunless %}
           >
-            {%- if lid_selected -%}
-              {{- 'apex.addons.added' | t -}}
-            {%- elsif lid_available -%}
-              {{- 'apex.addons.add' | t -}}
-            {%- elsif with_lid_variant -%}
-              {{- 'apex.addons.sold_out' | t -}}
-            {%- else -%}
-              {{- 'apex.addons.unavailable' | t -}}
-            {%- endif -%}
+            <span class="apex-lid__label">{{ 'apex.addons.lid_yes' | t }}</span>
+            <span class="apex-lid__note">
+              {%- if with_lid_variant == null -%}
+                {{ 'apex.addons.unavailable' | t }}
+              {%- elsif lid_available or lid_selected -%}
+                (+{{ lid_price | money }})
+              {%- else -%}
+                {{ 'apex.addons.sold_out' | t }}
+              {%- endif -%}
+            </span>
           </button>
-        </li>
-      {%- endif -%}
+          <button
+            type="button"
+            class="apex-lid__option"
+            data-apex-lid
+            data-option-name="{{ lid_option_name | escape }}"
+            data-target-value="{{ no_lid_value | escape }}"
+            aria-pressed="{% if lid_selected %}false{% else %}true{% endif %}"
+          >
+            <span class="apex-lid__label">{{ 'apex.addons.lid_no' | t }}</span>
+          </button>
+        </div>
+      </div>
+    {%- endif -%}
+    {%- if addons != blank -%}
+    <div class="apex-addons__head">
+      <h2 class="apex-addons__title">{{ 'apex.addons.title' | t }}</h2>
+      <p class="apex-addons__sub">{{ 'apex.addons.subtitle' | t }}</p>
+    </div>
+    <ul class="apex-addons__list" role="list">
       {%- for addon in addons -%}
         {%- assign v = addon.selected_or_first_available_variant -%}
         <li class="apex-addons__item{% if forloop.index > block.settings.visible_count %} apex-addons__item--extra{% endif %}" {% if forloop.index > block.settings.visible_count %}hidden{% endif %}>
@@ -145,6 +144,7 @@
     {%- if addons.size > block.settings.visible_count -%}
       <button type="button" class="apex-addons__more" data-apex-addons-more>{{ 'apex.addons.see_more' | t }}</button>
     {%- endif -%}
+    {%- endif -%}
   </div>
 {%- endif -%}
 
@@ -156,7 +156,7 @@
 
     document.addEventListener('click', (event) => {
       const button = event.target instanceof Element ? event.target.closest('[data-apex-lid]') : null;
-      if (!button || button.disabled) return;
+      if (!button || button.disabled || button.getAttribute('aria-pressed') === 'true') return;
       const scope = button.closest('.shopify-section') || document;
       const inputs = scope.querySelectorAll('variant-picker input[type="radio"]');
       const target = Array.from(inputs).find(
@@ -209,9 +209,96 @@
     margin-block: 8px;
   }
 
+  /* Samsung-style lid question: heading, then full-width Yes / No option cards. */
+  .apex-lid {
+    padding: 24px 0 32px;
+    border-top: 1px solid #ebebeb;
+  }
+
+  .apex-lid__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .apex-lid__question {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .apex-lid__learn {
+    flex: none;
+    padding-bottom: 2px;
+    border-bottom: 1px solid currentColor;
+    color: #222222;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .apex-lid__options {
+    display: grid;
+    gap: 8px;
+  }
+
+  .apex-lid__option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    min-height: 68px;
+    padding: 0 24px;
+    border: 1px solid #dddddd;
+    border-radius: 8px;
+    background: #fff;
+    color: #222222;
+    font: inherit;
+    font-size: 16px;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .apex-lid__option:hover:not(:disabled) {
+    border-color: #222222;
+  }
+
+  .apex-lid__option[aria-pressed='true'] {
+    border-color: #222222;
+    box-shadow: inset 0 0 0 0.5px #222222;
+  }
+
+  .apex-lid__option[aria-busy='true'] {
+    opacity: 0.6;
+  }
+
+  .apex-lid__option:disabled {
+    color: #6a6a6a;
+    cursor: not-allowed;
+  }
+
+  .apex-lid__label {
+    font-weight: 600;
+  }
+
+  .apex-addons__head {
+    padding-top: 24px;
+    border-top: 1px solid #ebebeb;
+    margin-bottom: 20px;
+  }
+
+  .apex-addons__sub {
+    margin: 6px 0 0;
+    font-size: 16px;
+  }
+
   .apex-addons__title {
-    margin: 0 0 20px;
-    font-size: 20px;
+    margin: 0;
+    font-size: 24px;
     font-weight: 600;
     line-height: 1.33;
   }
@@ -348,7 +435,8 @@
     { "type": "paragraph", "content": "Pick the add-ons in the product's 'Add-ons' metafield." },
     { "type": "range", "id": "visible_count", "label": "Visible before 'See more'", "min": 1, "max": 6, "step": 1, "default": 3 },
     { "type": "text", "id": "lid_option_name", "label": "Lid option name", "default": "Glass lid", "info": "If the product has this option, the lid shows here as an add-on." },
-    { "type": "image_picker", "id": "lid_image", "label": "Lid image" }
+    { "type": "image_picker", "id": "lid_image", "label": "Lid image" },
+    { "type": "url", "id": "lid_learn_more", "label": "Lid 'Learn more' link", "info": "Optional." }
   ]
 }
 {% endschema %}

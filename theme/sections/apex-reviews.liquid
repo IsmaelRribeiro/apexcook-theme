@@ -2,8 +2,10 @@
   Section contract.
   Reviews for this product from the apex_review metaobjects: average, count, star distribution,
   filters (stars, size, photos), sort and pagination. Every review shows its source and date.
-  Server-renders the first page; apex-reviews-list.js handles filtering. AggregateRating JSON-LD
-  is only emitted when there is at least one review.
+  Samsung UK "Featured Reviews" layout: collapsible panel, score + distribution summary, filter
+  pills and sort, two-column review rows and a "View more" button. apex-reviews-list.js handles
+  filtering. AggregateRating JSON-LD is only emitted for real reviews. With no real reviews and
+  "Show example reviews" on, clearly labelled example reviews fill the layout (never in JSON-LD).
   @example
   <!-- Product template; anchor id "reviews" -->
 {% endcomment %}
@@ -18,79 +20,141 @@
     assign average = sum | times: 10.0 | divided_by: count | round | divided_by: 10.0
   endif
 -%}
+{%- liquid
+  assign examples = false
+  if count == 0 and section.settings.show_examples
+    assign examples = true
+    assign ex_author = 'apex.reviews.example_author' | t
+    assign ex_body = 'apex.reviews.example_body' | t
+    assign ex_source = 'apex.reviews.example' | t
+    assign ex_ratings = '5,5,4,5,3,5,4,5' | split: ','
+    assign shown_count = ex_ratings.size
+    assign ex_sum = 36
+    assign average = ex_sum | times: 10.0 | divided_by: shown_count | round | divided_by: 10.0
+  else
+    assign shown_count = count
+  endif
+-%}
 <script src="{{ 'apex-reviews-list.js' | asset_url }}" type="module" fetchpriority="low"></script>
 <div id="reviews" class="apex-reviews section section--page-width">
-  <apex-reviews-list
-    data-per-page="{{ section.settings.per_page }}"
-    data-t-source-date="{{ 'apex.reviews.source_date' | t: source: '__SOURCE__', date: '__DATE__' | escape }}"
-    data-t-results="{{ 'apex.reviews.results.other' | t: count: '__COUNT__' | escape }}"
-    data-t-results-one="{{ 'apex.reviews.results.one' | t: count: 1 | escape }}"
-    data-t-page="{{ 'apex.reviews.page' | t: page: '__PAGE__', total: '__TOTAL__' | escape }}"
-    data-t-rating="{{ 'apex.reviews.rating_label' | t: rating: '__RATING__' | escape }}"
-  >
-    <h2 class="apex-reviews__heading">{{ 'apex.reviews.title' | t }}</h2>
+  <details class="apex-reviews__panel" open>
+    <summary class="apex-reviews__panel-summary">
+      <span>{{ 'apex.reviews.featured' | t }}</span>
+      {{- 'ph-caret-up.svg' | inline_asset_content | replace: '<svg ', '<svg class="apex-reviews__chev" width="24" height="24" aria-hidden="true" ' -}}
+    </summary>
 
-    {%- if count == 0 -%}
-      <p class="apex-reviews__empty">{{ 'apex.reviews.empty' | t }}</p>
-    {%- else -%}
-      <div class="apex-reviews__summary">
-        <div class="apex-reviews__score">
-          <span class="apex-reviews__average">{{ average }}</span>
-          {% render 'apex-stars', rating: average %}
-          <span class="apex-reviews__count">{{ 'apex.reviews.based_on' | t: count: count }}</span>
+    <apex-reviews-list
+      data-per-page="{{ section.settings.per_page }}"
+      data-t-source-date="{{ 'apex.reviews.posted_on' | t: source: '__SOURCE__' | escape }}"
+      data-t-results="{{ 'apex.reviews.results.other' | t: count: '__COUNT__' | escape }}"
+      data-t-results-one="{{ 'apex.reviews.results.one' | t: count: 1 | escape }}"
+      data-t-page="{{ 'apex.reviews.page' | t: page: '__PAGE__', total: '__TOTAL__' | escape }}"
+      data-t-rating="{{ 'apex.reviews.rating_label' | t: rating: '__RATING__' | escape }}"
+      data-t-example="{{ 'apex.reviews.example' | t | escape }}"
+    >
+      <div class="apex-reviews__top">
+        <h2 class="apex-reviews__title-main">{{ 'apex.reviews.title' | t }}</h2>
+        <span class="apex-reviews__product">{{ product.title | escape }}</span>
+      </div>
+
+      {%- if shown_count == 0 -%}
+        <p class="apex-reviews__empty">{{ 'apex.reviews.empty' | t }}</p>
+      {%- else -%}
+        {%- if examples -%}
+          <p class="apex-reviews__notice">{{ 'apex.reviews.example_notice' | t }}</p>
+        {%- endif -%}
+        <div class="apex-reviews__summary">
+          <div class="apex-reviews__score">
+            <div class="apex-reviews__score-row">
+              {{- 'ph-star-fill.svg' | inline_asset_content | replace: '<svg ', '<svg class="apex-reviews__big-star" width="56" height="56" aria-hidden="true" ' -}}
+              <span class="apex-reviews__average">{{ average }}</span>
+              <span class="apex-reviews__count">({{ 'apex.reviews.count_link' | t: count: shown_count }})</span>
+            </div>
+            {%- if section.settings.write_url != blank -%}
+              <a class="apex-reviews__write" href="{{ section.settings.write_url }}">
+                {{- 'ph-pencil-simple.svg' | inline_asset_content | replace: '<svg ', '<svg width="16" height="16" aria-hidden="true" ' -}}
+                {{ 'apex.reviews.write' | t }}
+              </a>
+            {%- endif -%}
+            <p class="apex-reviews__disclaimer">{{ 'apex.reviews.disclaimer' | t }}</p>
+          </div>
+          <ul class="apex-reviews__bars" role="list" data-apex-bars></ul>
         </div>
-        <ul class="apex-reviews__bars" role="list" data-apex-bars></ul>
-      </div>
 
-      <div class="apex-reviews__controls">
-        <label>
-          <span>{{ 'apex.reviews.filter_rating' | t }}</span>
-          <select data-filter="rating">
-            <option value="">{{ 'apex.reviews.all' | t }}</option>
-            {%- for n in (1..5) reversed -%}
-              <option value="{{ n }}">{{ 'apex.reviews.stars' | t: count: n }}</option>
-            {%- endfor -%}
-          </select>
-        </label>
-        {%- unless product.has_only_default_variant -%}
-          <label>
-            <span>{{ 'apex.reviews.filter_size' | t }}</span>
-            <select data-filter="size">
-              <option value="">{{ 'apex.reviews.all' | t }}</option>
-              {%- for value in product.options_with_values.first.values -%}
-                <option value="{{ value | escape }}">{{ value | escape }}</option>
+        <div class="apex-reviews__controls">
+          <div class="apex-reviews__controls-top">
+            <p class="apex-reviews__total"><strong>{{ 'apex.reviews.count_link' | t: count: shown_count }}</strong></p>
+            <label class="apex-reviews__sort">
+              <span>{{ 'apex.reviews.sort' | t }}</span>
+              <select data-sort>
+                <option value="newest">{{ 'apex.reviews.sort_newest' | t }}</option>
+                <option value="highest">{{ 'apex.reviews.sort_highest' | t }}</option>
+                <option value="lowest">{{ 'apex.reviews.sort_lowest' | t }}</option>
+              </select>
+            </label>
+          </div>
+          <div class="apex-reviews__pills">
+            <label class="apex-reviews__pill">
+              <span class="visually-hidden">{{ 'apex.reviews.overall_rating' | t }}</span>
+              <select data-filter="rating">
+                <option value="">{{ 'apex.reviews.overall_rating' | t }}</option>
+                {%- for n in (1..5) reversed -%}
+                  <option value="{{ n }}">{{ 'apex.reviews.stars' | t: count: n }}</option>
+                {%- endfor -%}
+              </select>
+            </label>
+            {%- unless product.has_only_default_variant -%}
+              <label class="apex-reviews__pill">
+                <span class="visually-hidden">{{ product.options_with_values.first.name | escape }}</span>
+                <select data-filter="size">
+                  <option value="">{{ product.options_with_values.first.name | escape }}</option>
+                  {%- for value in product.options_with_values.first.values -%}
+                    <option value="{{ value | escape }}">{{ value | escape }}</option>
+                  {%- endfor -%}
+                </select>
+              </label>
+            {%- endunless -%}
+            <label class="apex-reviews__pill apex-reviews__pill--check">
+              <input type="checkbox" data-filter="photos">
+              <span>{{ 'apex.reviews.with_photos' | t }}</span>
+            </label>
+          </div>
+        </div>
+
+        <p class="apex-reviews__status visually-hidden" role="status" aria-live="polite" data-apex-status></p>
+        <ol class="apex-reviews__list" role="list" data-apex-list></ol>
+        <div class="apex-reviews__more" data-apex-pager hidden>
+          <button type="button" class="apex-reviews__more-btn" data-page="next">
+            {{ 'apex.reviews.view_more' | t }}
+            {{- 'ph-caret-down.svg' | inline_asset_content | replace: '<svg ', '<svg width="16" height="16" aria-hidden="true" ' -}}
+          </button>
+        </div>
+
+        {%- if examples -%}
+          {%- assign size_values = product.options_with_values.first.values -%}
+          <script type="application/json" data-apex-reviews>
+            [
+              {%- for r in ex_ratings -%}
+                {%- assign days = forloop.index | times: 86400 | times: 4 -%}
+                {%- assign ts = 'now' | date: '%s' | minus: days -%}
+                {%- assign sz = nil -%}
+                {%- unless product.has_only_default_variant -%}
+                  {%- assign si = forloop.index0 | modulo: size_values.size -%}
+                  {%- assign sz = size_values[si] -%}
+                {%- endunless -%}
+                {"rating":{{ r | plus: 0 }},"author":{{ ex_author | json }},"title":"","body":{{ ex_body | json }},"date":{{ ts | date: '%Y-%m-%d' | json }},"displayDate":{{ ts | date: '%Y-%m-%d' | json }},"source":{{ ex_source | json }},"size":{{ sz | json }},"photos":[],"example":true}{% unless forloop.last %},{% endunless %}
               {%- endfor -%}
-            </select>
-          </label>
-        {%- endunless -%}
-        <label class="apex-reviews__check">
-          <input type="checkbox" data-filter="photos">
-          <span>{{ 'apex.reviews.with_photos' | t }}</span>
-        </label>
-        <label>
-          <span>{{ 'apex.reviews.sort' | t }}</span>
-          <select data-sort>
-            <option value="newest">{{ 'apex.reviews.sort_newest' | t }}</option>
-            <option value="highest">{{ 'apex.reviews.sort_highest' | t }}</option>
-            <option value="lowest">{{ 'apex.reviews.sort_lowest' | t }}</option>
-          </select>
-        </label>
-      </div>
-
-      <p class="apex-reviews__status" role="status" aria-live="polite" data-apex-status></p>
-      <ol class="apex-reviews__list" role="list" data-apex-list></ol>
-      <nav class="apex-reviews__pager" data-apex-pager hidden>
-        <button type="button" data-page="prev">{{ 'apex.reviews.previous' | t }}</button>
-        <span data-apex-page></span>
-        <button type="button" data-page="next">{{ 'apex.reviews.next' | t }}</button>
-      </nav>
-
-      <script type="application/json" data-apex-reviews>{{ reviews_json }}</script>
-      <noscript>
-        <p>{{ 'apex.reviews.based_on' | t: count: count }}</p>
-      </noscript>
-    {%- endif -%}
-  </apex-reviews-list>
+            ]
+          </script>
+        {%- else -%}
+          <script type="application/json" data-apex-reviews>{{ reviews_json }}</script>
+        {%- endif -%}
+        <noscript>
+          <p>{{ 'apex.reviews.based_on' | t: count: shown_count }}</p>
+        </noscript>
+      {%- endif -%}
+    </apex-reviews-list>
+  </details>
 </div>
 
 {%- if count > 0 -%}
@@ -115,93 +179,241 @@
     padding-block: var(--apex-space);
   }
 
-  .apex-reviews__heading {
+  .apex-reviews__panel {
+    border-bottom: 1px solid #dddddd;
+  }
+
+  .apex-reviews__panel-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 0;
+    border-top: 1px solid #dddddd;
+    color: #222222;
+    font-size: 24px;
+    font-weight: 600;
+    list-style: none;
+    cursor: pointer;
+  }
+
+  .apex-reviews__panel-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .apex-reviews__chev {
+    flex: none;
+    transition: transform 0.2s ease;
+  }
+
+  .apex-reviews__panel:not([open]) .apex-reviews__chev {
+    transform: rotate(180deg);
+  }
+
+  .apex-reviews__top {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin: 16px 0 32px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #b0b0b0;
+  }
+
+  .apex-reviews__title-main {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .apex-reviews__product {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .apex-reviews__notice {
     margin: 0 0 24px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    background: #fff8e1;
+    color: #6a4b00;
+    font-size: 14px;
+  }
+
+  .apex-reviews__empty {
+    margin: 0 0 24px;
+    font-size: 16px;
   }
 
   .apex-reviews__summary {
     display: grid;
-    gap: 24px;
-    margin-bottom: 24px;
+    gap: 32px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid #ebebeb;
   }
 
   .apex-reviews__score {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     align-items: center;
     gap: 12px;
+    text-align: center;
   }
 
-  .apex-reviews__average {
-    font-size: 2.5rem;
-    font-weight: 600;
-  }
-
-  .apex-reviews__count {
-    font-size: 0.875rem;
-    opacity: 0.75;
-  }
-
-  .apex-reviews__bars {
-    display: grid;
-    gap: 4px;
-    max-width: 360px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    font-size: 0.8125rem;
-  }
-
-  .apex-reviews__bar {
-    display: grid;
-    grid-template-columns: 3ch 1fr 3ch;
+  .apex-reviews__score-row {
+    display: flex;
     align-items: center;
     gap: 8px;
   }
 
+  .apex-reviews__big-star {
+    color: #222222;
+  }
+
+  .apex-reviews__average {
+    font-size: 48px;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .apex-reviews__count {
+    align-self: flex-end;
+    font-size: 14px;
+    text-decoration: underline;
+  }
+
+  .apex-reviews__write {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 36px;
+    padding: 0 20px;
+    border: 1px solid #222222;
+    border-radius: 999px;
+    color: #222222;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .apex-reviews__disclaimer {
+    max-width: 320px;
+    margin: 0;
+    color: #6a6a6a;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  .apex-reviews__bars {
+    display: grid;
+    align-content: center;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 14px;
+  }
+
+  .apex-reviews__bar {
+    display: grid;
+    grid-template-columns: 3ch minmax(0, 1fr) 9ch;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .apex-reviews__bar > span:first-child {
+    font-weight: 600;
+  }
+
   .apex-reviews__bar-track {
-    height: 6px;
-    background: rgb(var(--color-foreground-rgb) / 0.1);
+    height: 8px;
+    border-radius: 999px;
+    background: #dddddd;
+    overflow: hidden;
   }
 
   .apex-reviews__bar-fill {
     display: block;
     height: 100%;
+    border-radius: 999px;
     background: #222222;
   }
 
+  .apex-reviews__bar-pct {
+    color: #6a6a6a;
+    white-space: nowrap;
+  }
+
+  .apex-reviews__bar-pct strong {
+    color: #222222;
+    font-weight: 600;
+  }
+
   .apex-reviews__controls {
+    padding: 24px 0 16px;
+  }
+
+  .apex-reviews__controls-top {
     display: flex;
-    flex-wrap: wrap;
-    gap: 12px 16px;
-    align-items: end;
-    padding-block: 16px;
-    border-block: 1px solid rgb(var(--color-foreground-rgb) / 0.12);
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #ebebeb;
   }
 
-  .apex-reviews__controls label {
-    display: grid;
-    gap: 4px;
-    font-size: 0.75rem;
+  .apex-reviews__total {
+    margin: 0;
+    font-size: 14px;
   }
 
-  .apex-reviews__controls .apex-reviews__check {
+  .apex-reviews__sort {
     display: flex;
     align-items: center;
     gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
   }
 
-  .apex-reviews__controls select {
-    min-width: 140px;
-    padding: 8px;
+  .apex-reviews__sort select,
+  .apex-reviews__pill select {
+    padding: 0 28px 0 0;
+    border: 0;
+    background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 256 256'%3E%3Cpath fill='%23222' d='M213.66 101.66l-80 80a8 8 0 0 1-11.32 0l-80-80a8 8 0 0 1 11.32-11.32L128 164.69l74.34-74.35a8 8 0 0 1 11.32 11.32Z'/%3E%3C/svg%3E") no-repeat right 4px center;
+    appearance: none;
+    color: #6a6a6a;
     font: inherit;
-    font-size: 0.875rem;
+    font-size: 14px;
+    font-weight: 400;
+    cursor: pointer;
   }
 
-  .apex-reviews__status {
-    margin: 12px 0 0;
-    font-size: 0.8125rem;
-    opacity: 0.75;
+  .apex-reviews__pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-top: 16px;
+  }
+
+  .apex-reviews__pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 36px;
+    padding: 0 14px;
+    border: 1px solid #b0b0b0;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .apex-reviews__pill select {
+    color: #222222;
+    font-weight: 600;
+  }
+
+  .apex-reviews__pill--check input {
+    accent-color: #222222;
   }
 
   .apex-reviews__list {
@@ -212,53 +424,138 @@
 
   .apex-reviews__item {
     display: grid;
-    gap: 8px;
-    padding-block: 24px;
-    border-bottom: 1px solid rgb(var(--color-foreground-rgb) / 0.12);
+    gap: 16px;
+    padding-block: 32px;
+    border-bottom: 1px solid #ebebeb;
+  }
+
+  .apex-reviews__author {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 8px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .apex-reviews__avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #f7f7f7;
   }
 
   .apex-reviews__meta {
-    font-size: 0.75rem;
-    opacity: 0.7;
+    margin: 0 0 4px;
+    color: #6a6a6a;
+    font-size: 12px;
+  }
+
+  .apex-reviews__variant {
+    margin: 0;
+    font-size: 12px;
+  }
+
+  .apex-reviews__rating {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 12px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .apex-reviews__badge {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #fff8e1;
+    color: #6a4b00;
+    font-size: 12px;
+    font-weight: 600;
   }
 
   .apex-reviews__title {
-    margin: 0;
-    font-size: 1rem;
+    margin: 0 0 8px;
+    font-size: 16px;
+    font-weight: 600;
   }
 
   .apex-reviews__body {
+    margin: 0 0 16px;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .apex-reviews__source {
     margin: 0;
-    font-size: 0.875rem;
+    color: #6a6a6a;
+    font-size: 14px;
   }
 
   .apex-reviews__photos {
     display: flex;
     gap: 8px;
+    margin-bottom: 16px;
   }
 
   .apex-reviews__photos img {
-    width: 72px;
-    height: 72px;
+    width: 88px;
+    height: 88px;
+    border-radius: 8px;
     object-fit: cover;
   }
 
-  .apex-reviews__pager {
+  .apex-reviews__more {
     display: flex;
-    align-items: center;
     justify-content: center;
-    gap: 16px;
-    padding-top: 16px;
+    padding: 32px 0;
+  }
+
+  .apex-reviews__more-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 0 24px;
+    border: 1px solid #222222;
+    border-radius: 999px;
+    background: #fff;
+    color: #222222;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
   }
 
   @media screen and (min-width: 750px) {
     .apex-reviews__summary {
-      grid-template-columns: auto 1fr;
+      grid-template-columns: minmax(260px, 1fr) minmax(0, 1.4fr);
       align-items: center;
+      gap: 48px;
+    }
+
+    .apex-reviews__bars {
+      max-width: 480px;
     }
 
     .apex-reviews__item {
-      grid-template-columns: 200px 1fr;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 32px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .apex-reviews__panel-summary {
+      font-size: 20px;
+    }
+
+    .apex-reviews__title-main {
+      font-size: 24px;
     }
   }
 {% endstylesheet %}
@@ -271,6 +568,8 @@
   "enabled_on": { "templates": ["product"] },
   "settings": [
     { "type": "range", "id": "per_page", "label": "Reviews per page", "min": 5, "max": 20, "step": 5, "default": 10 },
+    { "type": "url", "id": "write_url", "label": "Write a review link", "info": "Optional. Where the \"Write a review\" button goes, e.g. your review app or contact page." },
+    { "type": "checkbox", "id": "show_examples", "label": "Show example reviews while there are none", "info": "Fills the layout with clearly labelled examples. Turn off before launch.", "default": true },
     { "type": "paragraph", "content": "Reviews come from Content → Metaobjects → Review. Publish every genuine review (including negative ones) with its original source." }
   ],
   "presets": [{ "name": "ApexCook reviews" }]

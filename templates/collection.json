@@ -17,14 +17,16 @@
           "settings": {
             "position": 4,
             "style": "dark",
-            "heading": "Pan sets",
-            "text": "Two pans and a turner for less than buying the pans one by one.",
+            "heading": "Bundle and save",
+            "text": "Get three pans in one set and pay less than buying them one by one.",
             "link_label": "Shop sets",
             "link": "shopify://collections/bundles"
           }
         }
       },
-      "block_order": ["promo_sets"],
+      "block_order": [
+        "promo_sets"
+      ],
       "settings": {
         "heading_prefix": "Explore",
         "category_menu": "apexcook-main",
@@ -34,17 +36,61 @@
     "benefits": {
       "type": "apex-benefits",
       "blocks": {
-        "b1": {"type": "benefit", "settings": {"icon_name": "delivery", "title": "Free UK delivery", "text": "On orders over £50.", "link_label": "Learn more", "link": "/policies/shipping-policy"}},
-        "b2": {"type": "benefit", "settings": {"icon_name": "returns", "title": "30-day returns", "text": "Changed your mind? Send it back within 30 days.", "link_label": "Learn more", "link": "/policies/refund-policy"}},
-        "b3": {"type": "benefit", "settings": {"icon_name": "recipes", "title": "Recipes to get you started", "text": "Ideas and tips for cooking without a coating.", "link_label": "Learn more", "link": "shopify://blogs/recipes"}},
-        "b4": {"type": "benefit", "settings": {"icon_name": "support", "title": "Real support", "text": "Questions about sizes or care? We reply by email.", "link_label": "Contact us", "link": "shopify://pages/contact"}}
+        "b1": {
+          "type": "benefit",
+          "settings": {
+            "icon_name": "delivery",
+            "title": "Free UK delivery",
+            "text": "On orders over £50.",
+            "link_label": "Learn more",
+            "link": "/policies/shipping-policy"
+          }
+        },
+        "b2": {
+          "type": "benefit",
+          "settings": {
+            "icon_name": "returns",
+            "title": "30-day returns",
+            "text": "Changed your mind? Send it back within 30 days.",
+            "link_label": "Learn more",
+            "link": "/policies/refund-policy"
+          }
+        },
+        "b3": {
+          "type": "benefit",
+          "settings": {
+            "icon_name": "recipes",
+            "title": "Recipes to get you started",
+            "text": "Ideas and tips for cooking without a coating.",
+            "link_label": "Learn more",
+            "link": "shopify://blogs/recipes"
+          }
+        },
+        "b4": {
+          "type": "benefit",
+          "settings": {
+            "icon_name": "support",
+            "title": "Real support",
+            "text": "Questions about sizes or care? We reply by email.",
+            "link_label": "Contact us",
+            "link": "shopify://pages/contact"
+          }
+        }
       },
-      "block_order": ["b1", "b2", "b3", "b4"],
+      "block_order": [
+        "b1",
+        "b2",
+        "b3",
+        "b4"
+      ],
       "settings": {
         "heading": "Buy direct. Get more.",
         "enable_animation": true
       }
     }
   },
-  "order": ["main", "benefits"]
+  "order": [
+    "main",
+    "benefits"
+  ]
 }

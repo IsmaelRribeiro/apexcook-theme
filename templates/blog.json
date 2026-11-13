@@ -12,18 +12,51 @@
     "main": {
       "type": "apex-pantry",
       "blocks": {
-        "row_recipes": {"type": "row", "settings": {"title": "Recipes", "tag": "", "count": 7, "view_all_label": "View all recipes", "tinted": false}},
-        "row_breakfast": {"type": "row", "settings": {"title": "Breakfast", "tag": "Breakfast", "count": 7, "view_all_label": "View all breakfast recipes", "tinted": true}},
-        "row_guides": {"type": "row", "settings": {"title": "How-to guides", "tag": "Guide", "count": 7, "view_all_label": "View all guides", "tinted": false}}
+        "row_recipes": {
+          "type": "row",
+          "settings": {
+            "title": "Recipes",
+            "tag": "",
+            "count": 7,
+            "view_all_label": "View all recipes",
+            "tinted": false
+          }
+        },
+        "row_breakfast": {
+          "type": "row",
+          "settings": {
+            "title": "Breakfast",
+            "tag": "Breakfast",
+            "count": 7,
+            "view_all_label": "View all breakfast recipes",
+            "tinted": true
+          }
+        },
+        "row_guides": {
+          "type": "row",
+          "settings": {
+            "title": "How-to guides",
+            "tag": "Guide",
+            "count": 7,
+            "view_all_label": "View all guides",
+            "tinted": false
+          }
+        }
       },
-      "block_order": ["row_recipes", "row_breakfast", "row_guides"],
+      "block_order": [
+        "row_recipes",
+        "row_breakfast",
+        "row_guides"
+      ],
       "settings": {
         "hero_title": "Step into the ApexCook kitchen",
         "hero_text": "Recipes, cooking tips and care guides for uncoated pans — everything you need to get the best from your ApexCook kit, in one place.",
         "hub_label": "The Kitchen",
-        "hide_test": true
+        "hide_test": false
       }
     }
   },
-  "order": ["main"]
+  "order": [
+    "main"
+  ]
 }

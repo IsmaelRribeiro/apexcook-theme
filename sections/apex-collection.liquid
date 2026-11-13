@@ -293,9 +293,15 @@
   .apex-plp__title {
     margin: 0;
     padding: 32px 0 16px;
-    font-size: 28px;
+    font-size: 25px;
     font-weight: 600;
     line-height: 1.15;
+  }
+
+  @media screen and (min-width: 750px) {
+    .apex-plp__title {
+      font-size: 32px;
+    }
   }
 
   @media screen and (min-width: 990px) {
@@ -660,11 +666,6 @@
     font-size: 18px;
   }
 
-  @media screen and (min-width: 990px) {
-    .apex-sr__card--plp .apex-sr__price .apex-price__now {
-      font-size: 20px;
-    }
-  }
 
   .apex-sr__card--plp .apex-sr__sku {
     display: none;

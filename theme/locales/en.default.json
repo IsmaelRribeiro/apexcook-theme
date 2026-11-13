@@ -37,7 +37,12 @@
       "unavailable": "Not available",
       "lid_title": "Tempered glass lid – {{ size }}",
       "lid_fit": "Made to fit the {{ size }} pan",
-      "lid_ships": "Ships together with your pan"
+      "lid_ships": "Ships together with your pan",
+      "lid_question": "Add a tempered glass lid for your {{ size }} pan?",
+      "lid_yes": "Yes",
+      "lid_no": "No",
+      "learn_more": "Learn more",
+      "subtitle": "Additional items to complement your purchase"
     },
     "size_guide": {
       "link": "Which size should I buy?",

@@ -2,7 +2,7 @@
   Section contract.
   Reviews for this product from the apex_review metaobjects: average, count, star distribution,
   filters (stars, size, photos), sort and pagination. Every review shows its source and date.
-  Samsung UK "Featured Reviews" layout: collapsible panel, score + distribution summary, filter
+  Samsung UK "Featured Reviews" layout: score + distribution summary, filter
   pills and sort, two-column review rows and a "View more" button. apex-reviews-list.js handles
   filtering. AggregateRating JSON-LD is only emitted for real reviews. With no real reviews and
   "Show example reviews" on, clearly labelled example reviews fill the layout (never in JSON-LD).
@@ -37,12 +37,6 @@
 -%}
 <script src="{{ 'apex-reviews-list.js' | asset_url }}" type="module" fetchpriority="low"></script>
 <div id="reviews" class="apex-reviews section section--page-width">
-  <details class="apex-reviews__panel" open>
-    <summary class="apex-reviews__panel-summary">
-      <span>{{ 'apex.reviews.featured' | t }}</span>
-      {{- 'ph-caret-up.svg' | inline_asset_content | replace: '<svg ', '<svg class="apex-reviews__chev" width="24" height="24" aria-hidden="true" ' -}}
-    </summary>
-
     <apex-reviews-list
       data-per-page="{{ section.settings.per_page }}"
       data-t-source-date="{{ 'apex.reviews.posted_on' | t: source: '__SOURCE__' | escape }}"
@@ -154,7 +148,6 @@
         </noscript>
       {%- endif -%}
     </apex-reviews-list>
-  </details>
 </div>
 
 {%- if count > 0 -%}
@@ -179,42 +172,11 @@
     padding-block: var(--apex-space);
   }
 
-  .apex-reviews__panel {
-    border-bottom: 1px solid #dddddd;
-  }
-
-  .apex-reviews__panel-summary {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 20px 0;
-    border-top: 1px solid #dddddd;
-    color: #222222;
-    font-size: 24px;
-    font-weight: 600;
-    list-style: none;
-    cursor: pointer;
-  }
-
-  .apex-reviews__panel-summary::-webkit-details-marker {
-    display: none;
-  }
-
-  .apex-reviews__chev {
-    flex: none;
-    transition: transform 0.2s ease;
-  }
-
-  .apex-reviews__panel:not([open]) .apex-reviews__chev {
-    transform: rotate(180deg);
-  }
-
   .apex-reviews__top {
     display: flex;
     align-items: baseline;
     gap: 16px;
-    margin: 16px 0 32px;
+    margin: 0 0 32px;
     padding-bottom: 12px;
     border-bottom: 1px solid #b0b0b0;
   }
@@ -550,10 +512,6 @@
   }
 
   @media screen and (max-width: 749px) {
-    .apex-reviews__panel-summary {
-      font-size: 20px;
-    }
-
     .apex-reviews__title-main {
       font-size: 24px;
     }

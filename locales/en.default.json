@@ -81,7 +81,21 @@
       "previous": "Previous",
       "next": "Next",
       "page": "Page {{ page }} of {{ total }}",
-      "rating_label": "{{ rating }} out of 5 stars"
+      "rating_label": "{{ rating }} out of 5 stars",
+      "featured": "Featured Reviews",
+      "count_link": {
+        "one": "{{ count }} Review",
+        "other": "{{ count }} Reviews"
+      },
+      "write": "Write a review",
+      "disclaimer": "The overall rating is the average of all published reviews. We publish every genuine review, positive or negative.",
+      "view_more": "View more",
+      "posted_on": "Originally posted on {{ source }}",
+      "example": "Example",
+      "example_notice": "Example reviews shown for layout only. They are replaced automatically when real reviews are published.",
+      "example_author": "Example customer",
+      "example_body": "This is an example review. Your customers' real reviews will appear here.",
+      "overall_rating": "Overall rating"
     },
     "nav": {
       "label": "Product sections",

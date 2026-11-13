@@ -41,7 +41,7 @@ class ApexReviewsList extends HTMLElement {
   #onClick = (event) => {
     const button = event.target instanceof Element ? event.target.closest('[data-page]') : null;
     if (!(button instanceof HTMLButtonElement)) return;
-    this.#update(this.#page + (button.dataset.page === 'next' ? 1 : -1));
+    this.#update(this.#page + (button.dataset.page === 'next' ? 1 : -1), false);
   };
 
   #renderBars() {
@@ -53,8 +53,9 @@ class ApexReviewsList extends HTMLElement {
         const n = distribution[/** @type {1|2|3|4|5} */ (stars)];
         const li = document.createElement('li');
         li.className = 'apex-reviews__bar';
-        li.innerHTML = `<span>${stars}★</span><span class="apex-reviews__bar-track"><span class="apex-reviews__bar-fill"></span></span><span>${n}</span>`;
-        /** @type {HTMLElement} */ (li.querySelector('.apex-reviews__bar-fill')).style.width = `${count ? (n / count) * 100 : 0}%`;
+        const pct = count ? Math.round((n / count) * 100) : 0;
+        li.innerHTML = `<span>${stars}.0</span><span class="apex-reviews__bar-track"><span class="apex-reviews__bar-fill"></span></span><span class="apex-reviews__bar-pct"><strong>${pct}%</strong> (${n})</span>`;
+        /** @type {HTMLElement} */ (li.querySelector('.apex-reviews__bar-fill')).style.width = `${pct}%`;
         return li;
       })
     );
@@ -71,22 +72,17 @@ class ApexReviewsList extends HTMLElement {
       withPhotos: Boolean(photos?.checked),
     });
     const sorted = sortReviews(filtered, /** @type {'newest'|'highest'|'lowest'} */ (value('[data-sort]') || 'newest'));
-    const result = paginate(sorted, page, Number(this.dataset.perPage) || 10);
+    const perPage = Number(this.dataset.perPage) || 10;
+    const result = paginate(sorted, page, perPage);
     this.#page = result.page;
 
+    // "View more": show every page up to the current one (Samsung-style list that grows).
+    const shown = sorted.slice(0, result.page * perPage);
     const list = this.querySelector('[data-apex-list]');
-    list?.replaceChildren(...result.items.map((review) => this.#item(review)));
+    list?.replaceChildren(...shown.map((review) => this.#item(review)));
 
     const pager = /** @type {HTMLElement | null} */ (this.querySelector('[data-apex-pager]'));
-    if (pager) {
-      pager.hidden = result.totalPages <= 1;
-      /** @type {HTMLElement} */ (pager.querySelector('[data-apex-page]')).textContent = this.#t('tPage', {
-        PAGE: result.page,
-        TOTAL: result.totalPages,
-      });
-      /** @type {HTMLButtonElement} */ (pager.querySelector('[data-page="prev"]')).disabled = result.page <= 1;
-      /** @type {HTMLButtonElement} */ (pager.querySelector('[data-page="next"]')).disabled = result.page >= result.totalPages;
-    }
+    if (pager) pager.hidden = result.page >= result.totalPages;
 
     const status = this.querySelector('[data-apex-status]');
     if (status && announce) {
@@ -94,12 +90,34 @@ class ApexReviewsList extends HTMLElement {
     }
   }
 
-  /** @param {import('./apex-reviews.js').Review & {displayDate?: string}} review */
+  /** @param {import('./apex-reviews.js').Review & {displayDate?: string, example?: boolean}} review */
   #item(review) {
     const li = document.createElement('li');
     li.className = 'apex-reviews__item';
 
     const aside = document.createElement('div');
+    const author = document.createElement('p');
+    author.className = 'apex-reviews__author';
+    const avatar = document.createElement('span');
+    avatar.className = 'apex-reviews__avatar';
+    avatar.setAttribute('aria-hidden', 'true');
+    avatar.innerHTML =
+      '<svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M230.92 212c-15.23-26.33-38.7-45.21-66.09-54.16a72 72 0 1 0-73.66 0C63.78 166.78 40.31 185.66 25.08 212a8 8 0 1 0 13.85 8c18.84-32.56 52.14-52 89.07-52s70.23 19.44 89.07 52a8 8 0 1 0 13.85-8ZM72 96a56 56 0 1 1 56 56 56.06 56.06 0 0 1-56-56Z"/></svg>';
+    author.append(avatar, document.createTextNode(review.author));
+    const date = document.createElement('p');
+    date.className = 'apex-reviews__meta';
+    date.textContent = review.displayDate || review.date;
+    aside.append(author, date);
+    if (review.size) {
+      const size = document.createElement('p');
+      size.className = 'apex-reviews__variant';
+      size.textContent = review.size;
+      aside.append(size);
+    }
+
+    const main = document.createElement('div');
+    const rating = document.createElement('p');
+    rating.className = 'apex-reviews__rating';
     const stars = document.createElement('span');
     stars.className = 'apex-stars';
     stars.setAttribute('role', 'img');
@@ -110,25 +128,23 @@ class ApexReviewsList extends HTMLElement {
     fill.textContent = '★★★★★';
     fill.style.setProperty('--apex-stars', `${review.rating * 20}%`);
     stars.append(fill);
-    const author = document.createElement('p');
-    author.textContent = review.author;
-    const meta = document.createElement('p');
-    meta.className = 'apex-reviews__meta';
-    meta.textContent = this.#t('tSourceDate', { SOURCE: review.source, DATE: review.displayDate || review.date });
-    aside.append(stars, author, meta);
+    const number = document.createElement('span');
+    number.setAttribute('aria-hidden', 'true');
+    number.textContent = String(review.rating);
+    rating.append(stars, number);
+    if (review.example) {
+      const badge = document.createElement('span');
+      badge.className = 'apex-reviews__badge';
+      badge.textContent = this.dataset.tExample ?? 'Example';
+      rating.append(badge);
+    }
+    main.append(rating);
 
-    const main = document.createElement('div');
     if (review.title) {
       const title = document.createElement('h3');
       title.className = 'apex-reviews__title';
       title.textContent = review.title;
       main.append(title);
-    }
-    if (review.size) {
-      const size = document.createElement('p');
-      size.className = 'apex-reviews__meta';
-      size.textContent = review.size;
-      main.append(size);
     }
     const body = document.createElement('p');
     body.className = 'apex-reviews__body';
@@ -146,6 +162,10 @@ class ApexReviewsList extends HTMLElement {
       }
       main.append(photos);
     }
+    const source = document.createElement('p');
+    source.className = 'apex-reviews__source';
+    source.textContent = this.#t('tSourceDate', { SOURCE: review.source });
+    main.append(source);
 
     li.append(aside, main);
     return li;

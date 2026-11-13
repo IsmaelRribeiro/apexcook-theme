@@ -5,7 +5,7 @@
   <!-- Add "ApexCook FAQ" and add question blocks -->
 {% endcomment %}
 {% render 'apex-accordion-styles' %}
-<div id="faq" class="apex-faq apex-faq--{{ section.settings.alignment | default: 'left' }} section section--page-width">
+<div id="faq" class="apex-faq apex-faq--{{ section.settings.alignment | default: 'left' }} section section--full-width">
   <apex-expand-all>
     <div class="apex-accordion__header">
       <h2 class="apex-faq__heading">{{ section.settings.heading | escape }}</h2>
@@ -58,46 +58,86 @@
     margin: 0;
   }
 
-  /* Samsung UK FAQ scale: 31/48 px title, 21/28 px questions, 2 px light dividers. */
+  /* Samsung UK FAQ: centred 48/31 px title, full-width grey rows (#EEE) split by 2 px white lines,
+     28/21 px questions with a thin +/− on the right, open answer on #F7F7F7. */
+  .apex-faq.apex-faq {
+    max-width: none;
+    padding-inline: 0;
+  }
+
+  .apex-faq apex-expand-all {
+    display: block;
+    max-width: none;
+  }
+
+  .apex-faq .apex-accordion__header {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 40px;
+    padding-inline: 24px;
+    text-align: center;
+  }
+
   body .shopify-section .apex-faq .apex-faq__heading {
     font-size: 31px;
     line-height: 1.2;
   }
 
-  .apex-faq .apex-accordion__header {
-    margin-bottom: 24px;
+  .apex-faq .apex-accordion__expand {
+    font-size: 14px;
   }
 
   .apex-faq .apex-accordion__item {
-    border-bottom: 2px solid #f7f7f7;
-  }
-
-  .apex-faq .apex-accordion__item:first-of-type {
-    border-top: 2px solid #f7f7f7;
+    border: 0;
+    border-bottom: 2px solid #fff;
+    background: #eeeeee;
   }
 
   .apex-faq .apex-accordion__summary {
-    padding: 20px 8px 20px 20px;
+    padding: 20px 20px 20px 24px;
     font-size: 21px;
     font-weight: 600;
-    line-height: 1.3;
+    line-height: 1.4;
   }
 
   .apex-faq .apex-accordion__summary::after {
+    content: '';
     flex: none;
-    width: 28px;
-    text-align: center;
-    font-weight: 400;
+    width: 24px;
+    height: 24px;
+    background: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3v18M3 12h18' stroke='black' stroke-width='1.5' fill='none'/%3E%3C/svg%3E") center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3v18M3 12h18' stroke='black' stroke-width='1.5' fill='none'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+
+  .apex-faq .apex-accordion__item[open] > .apex-accordion__summary::after {
+    content: '';
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 12h18' stroke='black' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 12h18' stroke='black' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
   }
 
   .apex-faq .apex-accordion__body {
-    padding: 0 60px 24px 20px;
-    color: #6a6a6a;
+    padding: 28px 28px 32px;
+    background: #f7f7f7;
+    color: #222222;
     font-size: 16px;
     line-height: 1.5;
   }
 
+  .apex-faq .apex-accordion__body > :first-child {
+    margin-top: 0;
+  }
+
+  .apex-faq .apex-accordion__body > :last-child {
+    margin-bottom: 0;
+  }
+
   @media screen and (min-width: 990px) {
+    .apex-faq .apex-accordion__header {
+      margin-bottom: 56px;
+    }
+
     body .shopify-section .apex-faq .apex-faq__heading {
       font-size: 48px;
     }
@@ -109,23 +149,12 @@
 
   @media screen and (max-width: 749px) {
     .apex-faq .apex-accordion__summary {
-      padding-left: 0;
+      padding: 16px 16px 16px 16px;
     }
 
     .apex-faq .apex-accordion__body {
-      padding: 0 0 20px;
+      padding: 20px 16px 24px;
     }
-  }
-  .apex-faq--center apex-expand-all {
-    display: block;
-    max-width: 880px;
-    margin-inline: auto;
-  }
-
-  .apex-faq--center .apex-accordion__header {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
   }
 {% endstylesheet %}
 
